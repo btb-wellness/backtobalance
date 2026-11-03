@@ -1,507 +1,150 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>NeckBackRelief</title>
+<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NeckBackRelief</title>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
+<style>
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{margin:0;background:#eef2f3;display:flex;justify-content:center}
+.app{width:100%;max-width:420px;min-height:100dvh;background:#fff;box-shadow:0 0 15px #0001}
+.page{display:none;flex-direction:column;padding:20px;min-height:100dvh;gap:10px}.page.on{display:flex}
+h2,h3{color:#2c3e50;text-align:center;margin:8px 0}p{color:#7f8c8d;font-size:14px;text-align:center;margin:0}
+label{font-size:14px;font-weight:600;color:#34495e;margin-top:6px}
+input{width:100%;padding:12px;border:1px solid #bdc3c7;border-radius:8px;font-size:16px}
+.btn{width:100%;padding:14px;background:#3b7a87;color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700}
+.btn:disabled{opacity:.5}.red{background:#e74c3c}.ghost{background:#fff;color:#3b7a87;border:1px solid #3b7a87}
+.row{display:flex;gap:8px}.row>*{flex:1}.sp{margin-top:auto}
+.seg{padding:12px;border:1px solid #3b7a87;border-radius:8px;background:#fff;color:#3b7a87;font-weight:700}.seg.on{background:#3b7a87;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{padding:14px 0;border-radius:8px;border:0;font-weight:700;background:#e5e8ea;color:#aab}
+.tile.active{background:#fff;color:#3b7a87;border:2px solid #3b7a87}.tile.done{background:#3b7a87;color:#fff}
+.bar{height:8px;background:#e9ecef;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:#3b7a87;width:0}
+.box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:12px;font-size:14px;color:#34495e;line-height:1.5}
+.vid{position:relative;height:320px;background:#000;border-radius:16px;overflow:hidden}
+#cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+#cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.dash{display:flex;justify-content:space-around;text-align:center}.dash small{font-size:11px;color:#95a5a6;font-weight:700}.dash b{display:block;font-size:20px;color:#2c3e50}
+#fb{text-align:center;font-weight:700;min-height:24px}.warn{display:none;background:#fff3cd;color:#856404;padding:10px;border-radius:8px;font-size:12px}
+</style></head><body><div class="app">
 
-  <!-- MediaPipe Pose (ล็อกเวอร์ชันเพื่อไม่ให้พังเมื่อมีอัปเดต) -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
+<div id="home" class="page on"><div style="margin-top:70px"><h2>NeckBackRelief</h2><p>Revitalize Your Neck, Shoulders &amp; Upper Back</p></div>
+<div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome</div>
+<button class="btn sp" onclick="start()">Get Started</button></div>
 
-  <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    html, body { margin: 0; padding: 0; }
-    body { background-color: #eef2f3; display: flex; justify-content: center; }
+<div id="login" class="page"><h2>Log In</h2>
+<label>ชื่อผู้ใช้</label><input id="un"><label>อีเมล</label><input id="em" type="email">
+<button class="btn sp" onclick="login()">เข้าสู่ระบบ</button></div>
 
-    .app-container {
-      width: 100%;
-      max-width: 420px;
-      min-height: 100vh;
-      min-height: 100dvh;
-      background: #ffffff;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
+<div id="profile" class="page"><h2>Personalize Your Plan</h2>
+<label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
+<label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" value="65"><label>ส่วนสูง (cm)</label><input id="ht" type="number" value="172">
+<button class="btn sp" onclick="saveProfile()">Next</button></div>
 
-    .page {
-      display: none;
-      flex-direction: column;
-      padding: 24px;
-      min-height: 100vh;
-      min-height: 100dvh;
-      justify-content: space-between;
-    }
-    .page.active { display: flex; }
+<div id="program" class="page"><h3>โปรแกรมยางยืด 5 สัปดาห์</h3><div class="bar"><i id="pbar"></i></div><p id="ptxt"></p>
+<div id="weeks"></div><div id="cvaNote" class="box" style="display:none"></div>
+<div class="row sp"><button class="btn ghost" onclick="startCva()">วัดมุม CVA</button><button class="btn ghost" onclick="logout()">ออกจากระบบ</button></div></div>
 
-    h2 { color: #2c3e50; text-align: center; margin-bottom: 8px; }
-    p { color: #7f8c8d; text-align: center; font-size: 14px; margin-top: 0; }
+<div id="detail" class="page"><h3 id="dt"></h3><div class="row" id="tabs" style="flex-wrap:wrap"></div>
+<div class="box" id="dinfo"></div><label>Workout Mode</label>
+<div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
+<button class="btn sp" onclick="train('ex')">START EXERCISE</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
 
-    .form-group { margin-bottom: 16px; text-align: left; }
-    label { display: block; font-size: 14px; color: #34495e; margin-bottom: 6px; font-weight: 600; }
-    input[type="number"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #bdc3c7;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-    }
+<div id="train" class="page"><h3 id="tt"></h3><div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
+<div class="box dash"><div><small>TIME REMAINING</small><b id="tm">05:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
+<div class="bar"><i id="hb"></i></div><div id="tg" class="box"></div><div id="fb"></div>
+<div class="row sp"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
+<button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button></div>
 
-    .btn {
-      width: 100%;
-      padding: 14px;
-      background-color: #3b7a87;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.2s;
-      text-align: center;
-      text-decoration: none;
-      display: block;
-    }
-    .btn:active { background-color: #2c5e69; }
-    .btn:disabled { opacity: 0.6; cursor: default; }
-    .btn-danger { background-color: #e74c3c; }
-
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      height: 320px;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    /* canvas แสดงภาพ (กลับด้านเหมือนกระจก) */
-    #output_canvas {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1);
-    }
-    /* video ต้อง "ไม่" ใช้ display:none ไม่งั้น iOS ไม่ส่งเฟรม */
-    #webcam {
-      position: absolute;
-      top: 0; left: 0;
-      width: 1px; height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .dashboard {
-      display: flex;
-      justify-content: space-around;
-      background: #f8f9fa;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #e9ecef;
-      margin-top: 10px;
-    }
-    .dash-box { text-align: center; }
-    .dash-label { font-size: 11px; color: #95a5a6; font-weight: bold; }
-    .dash-val { font-size: 20px; color: #2c3e50; font-weight: bold; }
-
-    .feedback-text {
-      text-align: center;
-      font-size: 15px;
-      font-weight: bold;
-      min-height: 24px;
-      margin: 10px 0;
-      color: #27ae60;
-    }
-
-    .notice {
-      display: none;
-      background: #fff3cd;
-      color: #856404;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-bottom: 10px;
-      text-align: center;
-      border: 1px solid #ffeeba;
-    }
-  </style>
-</head>
-<body>
-
-<div class="app-container">
-
-  <!-- หน้า 1: Welcome -->
-  <div id="page-login" class="page active">
-    <div style="margin-top: 60px;">
-      <h2>NeckBackRelief</h2>
-      <p>Revitalize Your Neck, Shoulders & Upper Back</p>
-    </div>
-    <div style="margin-bottom: 40px;">
-      <button class="btn" onclick="showPage('page-personal')">Get Started</button>
-    </div>
-  </div>
-
-  <!-- หน้า 2: ข้อมูลส่วนตัว -->
-  <div id="page-personal" class="page">
-    <div>
-      <h2>Personalize Plan</h2>
-      <p>กรอกข้อมูลส่วนตัวเพื่อคำนวณผลลัพธ์</p>
-
-      <div class="form-group" style="margin-top: 20px;">
-        <label for="weight">น้ำหนัก (kg)</label>
-        <input type="number" id="weight" value="65" min="20" max="250">
-      </div>
-      <div class="form-group">
-        <label for="height">ส่วนสูง (cm)</label>
-        <input type="number" id="height" value="172" min="100" max="250">
-      </div>
-    </div>
-    <button class="btn" onclick="showPage('page-exercise')">ถัดไป</button>
-  </div>
-
-  <!-- หน้า 3: ฝึก (MediaPipe) -->
-  <div id="page-exercise" class="page">
-    <div>
-      <h3 style="margin: 0 0 10px 0; text-align:center;">Modified Band IYT</h3>
-
-      <div id="inapp-alert" class="notice">
-        ดูเหมือนคุณเปิดผ่านแอป (LINE / Facebook / Messenger) ซึ่งมักใช้กล้องไม่ได้
-        กรุณากด "..." แล้วเลือก "เปิดใน Safari / Chrome"
-      </div>
-
-      <div class="video-wrapper">
-        <video id="webcam" playsinline muted autoplay></video>
-        <canvas id="output_canvas"></canvas>
-      </div>
-
-      <div class="dashboard">
-        <div class="dash-box">
-          <div class="dash-label">TIME REMAINING</div>
-          <div class="dash-val" id="timer">05:00</div>
-        </div>
-        <div class="dash-box">
-          <div class="dash-label">SCORE</div>
-          <div class="dash-val" id="score">0</div>
-        </div>
-      </div>
-
-      <div class="feedback-text" id="feedback">กดปุ่มเพื่อเริ่มเปิดกล้อง</div>
-    </div>
-
-    <div>
-      <button class="btn" id="start-btn" onclick="startExercise()">เปิดกล้องและเริ่ม</button>
-      <button class="btn btn-danger" onclick="finishExercise()">จบการฝึก</button>
-    </div>
-  </div>
-
-  <!-- หน้า 4: สรุปผล -->
-  <div id="page-summary" class="page">
-    <div style="margin-top: 40px;">
-      <h2>DAY 1: Completed!</h2>
-      <p>สรุปผลการออกกำลังกายวันนี้</p>
-
-      <div style="background: #f8f9fa; padding: 20px; border-radius: 16px; margin-top: 20px; text-align: center;">
-        <p style="margin: 8px 0;">คะแนนรวม: <strong id="final-score" style="font-size: 22px; color: #3b7a87;">0</strong> คะแนน</p>
-        <p style="margin: 8px 0;">เผาผลาญประมาณ: <strong id="calories" style="font-size: 22px; color: #e67e22;">0</strong> kcal</p>
-        <p style="margin: 8px 0;">ความถูกต้อง: <strong id="accuracy" style="color: #27ae60;">0%</strong></p>
-        <p id="save-status" style="margin: 12px 0 0; font-size: 12px;"></p>
-      </div>
-    </div>
-
-    <button class="btn" onclick="showPage('page-login')">กลับหน้าหลัก</button>
-  </div>
-
+<div id="result" class="page"><div style="margin-top:30px"><h2 id="rt"></h2></div>
+<div class="box" style="text-align:center;line-height:2">TOTAL POINTS <b id="r1" style="font-size:28px"></b><br>CALORIES BURNED <b id="r2" style="font-size:24px"></b> kcal<br>Exercise Time: <b id="r3"></b> | Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div>
+<button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
 </div>
-
 <script>
-  // ============ ตั้งค่า ============
-  // วาง URL ของ Apps Script Web App (ลงท้ายด้วย /exec) ที่นี่
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySWfDQ62PTsdxk9DHrkpjSdHTVgZqkTorPk0AosAoWODjlWYnKknf-K_QYLpLdo-dAqQ/exec';
-  const SESSION_SECONDS = 300;      // 5 นาที
-  const MET_VALUE = 3.0;            // ค่าประมาณความหนักของท่า (กายบริหารเบา ๆ)
-  const MODEL_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/';
-
-  // ============ สถานะ ============
-  let pose = null;
-  let stream = null;
-  let rafId = null;
-  let timerInterval = null;
-  let isRunning = false;
-  let busy = false;
-
-  let secondsLeft = SESSION_SECONDS;
-  let goodSeconds = 0;     // เวลาที่ท่าถูกต้อง (วินาที)
-  let totalFrames = 0;     // เฟรมที่ตรวจเจอคน
-  let goodFrames = 0;      // เฟรมที่ท่าถูกต้อง
-  let lastTs = 0;
-
-  // ============ ตัวช่วย ============
-  const $ = id => document.getElementById(id);
-
-  window.addEventListener('load', function () {
-    const ua = navigator.userAgent || '';
-    if (/Line\/|FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(ua)) {
-      $('inapp-alert').style.display = 'block';
-    }
-  });
-
-  function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-    const target = $(pageId);
-    if (target) target.classList.add('active');
-  }
-
-  function calculateAngle(A, B, C) {
-    const radians = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
-    let angle = Math.abs((radians * 180.0) / Math.PI);
-    if (angle > 180.0) angle = 360 - angle;
-    return angle;
-  }
-
-  function formatTime(sec) {
-    const m = String(Math.floor(sec / 60)).padStart(2, '0');
-    const s = String(sec % 60).padStart(2, '0');
-    return m + ':' + s;
-  }
-
-  function resetSession() {
-    secondsLeft = SESSION_SECONDS;
-    goodSeconds = 0;
-    totalFrames = 0;
-    goodFrames = 0;
-    lastTs = 0;
-    $('timer').innerText = formatTime(secondsLeft);
-    $('score').innerText = '0';
-  }
-
-  // ============ ตรวจท่า ============
-  // เกณฑ์แบบง่าย: แขนทั้งสองข้างเหยียดตรง (>150°) และข้อมือสูงกว่าไหล่
-  function isGoodPose(lm) {
-    const pts = [11, 12, 13, 14, 15, 16];
-    for (const i of pts) {
-      if (!lm[i] || (lm[i].visibility !== undefined && lm[i].visibility < 0.5)) return null; // มองไม่เห็น
-    }
-    const leftAngle  = calculateAngle(lm[11], lm[13], lm[15]);
-    const rightAngle = calculateAngle(lm[12], lm[14], lm[16]);
-    const leftUp  = lm[15].y < lm[11].y;
-    const rightUp = lm[16].y < lm[12].y;
-    return leftAngle > 150 && rightAngle > 150 && leftUp && rightUp;
-  }
-
-  function drawSkeleton(ctx, lm, w, h, good) {
-    const links = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24]];
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = good ? '#2ecc71' : '#f1c40f';
-    links.forEach(([a, b]) => {
-      if (!lm[a] || !lm[b]) return;
-      ctx.beginPath();
-      ctx.moveTo(lm[a].x * w, lm[a].y * h);
-      ctx.lineTo(lm[b].x * w, lm[b].y * h);
-      ctx.stroke();
-    });
-    ctx.fillStyle = '#ffffff';
-    [11,12,13,14,15,16].forEach(i => {
-      if (!lm[i]) return;
-      ctx.beginPath();
-      ctx.arc(lm[i].x * w, lm[i].y * h, 5, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  }
-
-  function onResults(results) {
-    const canvas = $('output_canvas');
-    const ctx = canvas.getContext('2d');
-    const w = results.image.width;
-    const h = results.image.height;
-    canvas.width = w;
-    canvas.height = h;
-
-    ctx.save();
-    ctx.clearRect(0, 0, w, h);
-    ctx.drawImage(results.image, 0, 0, w, h);
-
-    const feedback = $('feedback');
-    const now = performance.now();
-    const dt = lastTs ? Math.min((now - lastTs) / 1000, 0.5) : 0;
-    lastTs = now;
-
-    if (results.poseLandmarks) {
-      const good = isGoodPose(results.poseLandmarks);
-      if (good === null) {
-        feedback.innerText = 'ถอยออกให้เห็นลำตัวและแขนทั้งสองข้าง';
-        feedback.style.color = '#e67e22';
-      } else {
-        totalFrames++;
-        if (good) {
-          goodFrames++;
-          goodSeconds += dt;
-          feedback.innerText = 'Good! Keep your posture';
-          feedback.style.color = '#27ae60';
-          $('score').innerText = Math.floor(goodSeconds);
-        } else {
-          feedback.innerText = 'เหยียดแขนทั้งสองข้างขึ้นให้ตรง';
-          feedback.style.color = '#e74c3c';
-        }
-        drawSkeleton(ctx, results.poseLandmarks, w, h, good);
-      }
-    } else {
-      feedback.innerText = 'ไม่พบตัวคุณในภาพ';
-      feedback.style.color = '#e67e22';
-    }
-    ctx.restore();
-  }
-
-  // ============ กล้อง ============
-  async function frameLoop() {
-    if (!isRunning) return;
-    const video = $('webcam');
-    if (!busy && video.readyState >= 2) {
-      busy = true;
-      try { await pose.send({ image: video }); } catch (e) { console.error(e); }
-      busy = false;
-    }
-    rafId = requestAnimationFrame(frameLoop);
-  }
-
-  function cameraErrorMessage(err) {
-    switch (err && err.name) {
-      case 'NotAllowedError':
-      case 'SecurityError':
-        return 'ไม่ได้รับอนุญาตใช้กล้อง — กดอนุญาตกล้องในเบราว์เซอร์ หรือเปิดผ่าน HTTPS / Safari / Chrome';
-      case 'NotFoundError':
-      case 'OverconstrainedError':
-        return 'ไม่พบกล้องในอุปกรณ์นี้';
-      case 'NotReadableError':
-      case 'AbortError':
-        return 'กล้องถูกใช้งานโดยแอปอื่นอยู่ ปิดแอปนั้นแล้วลองใหม่';
-      default:
-        return 'ไม่สามารถเปิดกล้องได้: ' + (err && err.name ? err.name : 'unknown');
-    }
-  }
-
-  async function startExercise() {
-    if (isRunning) return;
-    const feedback = $('feedback');
-    const btn = $('start-btn');
-
-    if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      feedback.innerText = 'ต้องเปิดผ่าน HTTPS และเบราว์เซอร์ที่รองรับกล้อง';
-      feedback.style.color = '#e74c3c';
-      return;
-    }
-
-    btn.disabled = true;
-    resetSession();
-    feedback.style.color = '#7f8c8d';
-    feedback.innerText = 'กำลังขอสิทธิ์เปิดกล้อง...';
-
-    try {
-      // 1) ขอกล้อง (ต้องเรียกจากการกดปุ่มโดยตรง เพื่อให้ iOS อนุญาต)
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
-        audio: false
-      });
-      const video = $('webcam');
-      video.srcObject = stream;
-      await video.play();
-
-      // 2) โหลดโมเดล
-      feedback.innerText = 'กำลังโหลดโมเดลตรวจจับท่า...';
-      if (!pose) {
-        pose = new Pose({ locateFile: f => MODEL_BASE + f });
-        pose.setOptions({
-          modelComplexity: 1,
-          smoothLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5
-        });
-        pose.onResults(onResults);
-        await pose.initialize();
-      }
-
-      // 3) เริ่มทำงาน
-      isRunning = true;
-      btn.style.display = 'none';
-      feedback.innerText = 'เริ่มได้เลย! ยกแขนขึ้นให้ตรง';
-      startTimer();
-      frameLoop();
-    } catch (err) {
-      console.error(err);
-      stopCamera();
-      btn.disabled = false;
-      feedback.innerText = cameraErrorMessage(err);
-      feedback.style.color = '#e74c3c';
-    }
-  }
-
-  function stopCamera() {
-    isRunning = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = null;
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      stream = null;
-    }
-    const video = $('webcam');
-    video.srcObject = null;
-  }
-
-  function startTimer() {
-    clearInterval(timerInterval);
-    timerInterval = setInterval(function () {
-      secondsLeft--;
-      $('timer').innerText = formatTime(Math.max(secondsLeft, 0));
-      if (secondsLeft <= 0) finishExercise();
-    }, 1000);
-  }
-
-  // ============ จบการฝึก + บันทึก ============
-  function finishExercise() {
-    clearInterval(timerInterval);
-    const wasRunning = isRunning;
-    stopCamera();
-    $('start-btn').style.display = 'block';
-    $('start-btn').disabled = false;
-
-    const elapsed = SESSION_SECONDS - Math.max(secondsLeft, 0);
-    const score = Math.floor(goodSeconds);
-    const accuracy = totalFrames > 0 ? Math.round((goodFrames / totalFrames) * 100) : 0;
-    const weight = parseFloat($('weight').value) || 0;
-    const height = parseFloat($('height').value) || 0;
-    // kcal = MET × น้ำหนัก(kg) × ชั่วโมง
-    const calories = Math.round(MET_VALUE * weight * (elapsed / 3600));
-
-    $('final-score').innerText = score;
-    $('calories').innerText = calories;
-    $('accuracy').innerText = accuracy + '%';
-    $('save-status').innerText = '';
-    showPage('page-summary');
-
-    if (wasRunning) saveWorkout({ weight, height, score, calories, accuracy });
-  }
-
-  function saveWorkout(data) {
-    const status = $('save-status');
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_') === 0) {
-      status.innerText = '(ยังไม่ได้ตั้งค่า URL สำหรับบันทึกข้อมูล)';
-      return;
-    }
-    status.innerText = 'กำลังบันทึกข้อมูล...';
-    // text/plain = simple request ไม่ติด CORS preflight; no-cors = ส่งได้แต่อ่านผลลัพธ์ไม่ได้
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(data)
-    })
-      .then(() => { status.innerText = 'ส่งข้อมูลไปบันทึกแล้ว'; })
-      .catch(() => { status.innerText = 'บันทึกข้อมูลไม่สำเร็จ (ตรวจสอบอินเทอร์เน็ต)'; });
-  }
-</script>
-
-</body>
-</html>
+const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=300, DAYS=15, PER=3;
+const EX=[
+{id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
+{id:'w',n:'Modified Band W',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 5 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
+{id:'neck',n:'Neck Isometric Extension',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้าง 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอ',video:''},
+{id:'pec',n:'Pectoral Stretch',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดหน้าอก ค้าง 15 วินาที',ben:'ยืดกล้ามเนื้อหน้าอกและหัวไหล่',video:''}];
+const STG=[{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',r:[70,100]},{t:'ท่า Y: กางแขนเฉียงประมาณ 45°',r:[25,65]},{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',r:[-20,20]}];
+const $=i=>document.getElementById(i);
+let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}S.done=S.done||{};S.cva=S.cva||[];
+const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
+function send(a,d){if(!API||API.indexOf('PASTE_')==0)return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:a,...d})}).catch(()=>{})}
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');if(id=='program')renderProgram()}
+if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
+// ---- ผู้ใช้ ----
+function start(){S.user?show('program'):show('login')}
+function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
+S.user={...(S.user||{}),username:u,email:e};save();send('login',{username:u,email:e});S.user.weight?show('program'):show('profile')}
+function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g=='ชาย');$('g2').classList.toggle('on',g=='หญิง')}
+function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
+Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();send('profile',S.user);show('program')}
+function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home')}}
+// ---- โปรแกรม 5 สัปดาห์ ----
+const dayDone=d=>(S.done[d]||[]).length>=EX.length;
+function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c}
+function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน';
+let h='';for(let w=1;w<=5;w++){h+='<label>สัปดาห์ที่ '+w+'</label><div class="grid">';
+for(let i=1;i<=PER;i++){const d=(w-1)*PER+i,s=dayDone(d)?'done':d==c?'active':'lock';h+=`<button class="tile ${s}" ${s=='lock'?'disabled':''} onclick="openDay(${d})">Day ${d}</button>`}h+='</div>'}
+$('weeks').innerHTML=h;const wk=Math.ceil(Math.min(c,DAYS)/PER),prev=wk-1,nt=$('cvaNote');
+nt.style.display=(prev>=1&&!S.cva.some(x=>x.week==prev))?'block':'none';nt.innerText='ครบสัปดาห์ที่ '+prev+' แล้ว กรุณากด "วัดมุม CVA" เพื่อบันทึกการเปลี่ยนแปลง'}
+let day=1,ei=0,md='without';
+function openDay(d){day=d;ei=0;mode('without');renderDetail();show('detail')}
+function renderDetail(){$('dt').innerText='Day '+day+' (สัปดาห์ที่ '+Math.ceil(day/PER)+')';const dn=S.done[day]||[];
+$('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ${i==ei?'on':''}" onclick="ei=${i};renderDetail()">${dn.includes(e.id)?'✓ ':''}${e.n}</button>`).join('');
+const e=EX[ei];$('dinfo').innerHTML='<b>วิธีปฏิบัติ:</b> '+e.how+'<br><b>ประโยชน์:</b> '+e.ben+(e.video?`<br><iframe src="${e.video}" style="width:100%;height:180px;border:0" allowfullscreen></iframe>`:'')}
+function mode(m){md=m;$('m1').classList.toggle('on',m=='without');$('m2').classList.toggle('on',m=='battle')}
+// ---- ตรวจท่า ----
+const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r};
+let T={};
+function evalPose(lm,id){
+ if(id=='neck'){const L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[e,s]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];
+  if(Math.min(e.visibility,s.visibility)<.5)return null;const cva=Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI,ok=cva>=50;
+  return{ok,cva,h:5,t:'ยืนตะแคงให้เห็นหูและไหล่',m:ok?'ศีรษะตรงกับไหล่ ค้างไว้':'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'}}
+ for(const i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
+ const A=[[11,13,15],[12,14,16]],el=A.map(a=>ang(lm[a[0]],lm[a[1]],lm[a[2]])),
+ ev=A.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),
+ sw=Math.abs(lm[11].x-lm[12].x),wd=Math.abs(lm[15].x-lm[16].x),str=el[0]>150&&el[1]>150;
+ if(id=='iyt'){const s=STG[T.st],ok=str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);return{ok,h:5,t:s.t,m:ok?'Good! ค้างไว้':str?'ปรับแขนตามท่า':'เหยียดข้อศอกให้ตรง'}}
+ if(id=='w'){const ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y&&[13,14].every((k,i)=>lm[k].y>lm[11+i].y-.05&&lm[k].y<lm[11+i].y+.25);
+  return{ok,h:5,t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',m:ok?'Good! ค้างไว้':'งอศอก ยกมือเหนือข้อศอก'}}
+ const ok=str&&(ev[0]+ev[1])/2>=-45&&(ev[0]+ev[1])/2<=15&&wd>2*sw;
+ return{ok,h:15,t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',m:ok?'Good! ค้างไว้':'เหยียดแขนตรงและกางออกให้กว้างขึ้น'}}
+function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22'}
+function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
+ if(!T.run||T.pause)return;const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
+ if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');const lm=r.poseLandmarks,e=EX[T.ex],q=evalPose(lm,e.id);
+ if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
+ x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke()});
+ if(T.cva){if(q.cva!==undefined){T.samples.push(q.cva);fb('กำลังวัด CVA: '+q.cva.toFixed(1)+'°','#27ae60')}return}
+ T.total++;if(q.ok){T.good++;T.hold+=dt;T.score+=dt*10;fb(q.m,'#27ae60');
+  if(T.hold>=q.h){T.reps++;T.score+=100;T.hold=0;if(e.id=='iyt')T.st=(T.st+1)%3;fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
+ $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(T.score);$('rp').innerText=T.reps}
+// ---- กล้อง/ตัวจับเวลา ----
+let pose,stream,raf,iv,busy=false;
+function train(k){T={ex:ei,cva:k=='cva',run:false,pause:false,st:0,hold:0,reps:0,score:0,good:0,total:0,last:0,samples:[],left:k=='cva'?15:SEC};
+ $('tt').innerText=T.cva?'วัดมุม CVA (ยืนตะแคง)':EX[ei].n;$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText=T.cva?'ยืนตะแคงข้างให้กล้องเห็นหูและไหล่ นิ่งไว้ 15 วินาที':EX[ei].how;fb('');$('go').style.display='block';show('train')}
+function startCva(){ei=2;train('cva')}
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+async function camStart(){if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
+ $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+  const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
+  if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize()}
+  T.run=true;$('go').style.display='none';$('go').disabled=false;fb('เริ่มได้เลย!','#27ae60');
+  iv=setInterval(()=>{if(T.pause)return;T.left--;$('tm').innerText=fmt(Math.max(T.left,0));if(T.left<=0)finish(false)},1000);loop()}
+ catch(e){stopCam();$('go').disabled=false;fb(e.name=='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c')}}
+async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false}raf=requestAnimationFrame(loop)}
+function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').srcObject=null}
+function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE'}
+// ---- จบ/บันทึก ----
+function finish(manual){if(!T.run){show(T.cva?'program':'detail');return}const used=(T.cva?15:SEC)-Math.max(T.left,0),was=T.left<=0;stopCam();$('pz').innerText='PAUSE';
+ if(T.cva){if(T.samples.length<10){alert('วัดไม่สำเร็จ ลองใหม่โดยยืนตะแคงให้เห็นหูและไหล่');return show('program')}
+  const a=T.samples.reduce((x,y)=>x+y,0)/T.samples.length,wk=Math.ceil(Math.min(curDay(),DAYS)/PER);S.cva.push({week:wk,cva:+a.toFixed(1)});save();
+  send('cva',{email:S.user.email,week:wk,cva:+a.toFixed(1)});alert('ค่า CVA โดยประมาณ: '+a.toFixed(1)+'° (ปกติประมาณ ≥ 50°)');return show('program')}
+ const bt=md=='battle',score=Math.round(T.score*(bt?1.5:1)),acc=T.total?Math.round(T.good/T.total*100):0,kcal=Math.round((bt?3.8:3)*S.user.weight*used/3600);
+ const e=EX[T.ex];if(was){S.done[day]=[...new Set([...(S.done[day]||[]),e.id])];save()}
+ send('session',{email:S.user.email,day,exercise:e.id,mode:md,score,reps:T.reps,accuracy:acc,calories:kcal,seconds:used,completed:was});
+ const left=EX.length-(S.done[day]||[]).length;$('rt').innerText='DAY '+day+(left?': '+e.n:': Completed!');$('r1').innerText=score;$('r2').innerText=kcal;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';
+ $('r5').innerText=was?'วันนี้ทำแล้ว '+(EX.length-left)+'/'+EX.length+' ท่า':'จบก่อนเวลา (ยังไม่นับว่าท่านี้สำเร็จ)';show('result')}
+function nextEx(){const dn=S.done[day]||[],i=EX.findIndex(e=>!dn.includes(e.id));if(i<0)return show('program');ei=i;renderDetail();show('detail')}
+</script></body></html>
