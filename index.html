@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NeckBackRelief</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Back to Balance</title>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
@@ -25,7 +25,7 @@ input{width:100%;padding:12px;border:1px solid #bdc3c7;border-radius:8px;font-si
 #fb{text-align:center;font-weight:700;min-height:24px}.warn{display:none;background:#fff3cd;color:#856404;padding:10px;border-radius:8px;font-size:12px}
 </style></head><body><div class="app">
 
-<div id="home" class="page on"><div style="margin-top:70px"><h2>NeckBackRelief</h2><p>Revitalize Your Neck, Shoulders &amp; Upper Back</p></div>
+<div id="home" class="page on"><div style="margin-top:70px"><h2>Back to Balance</h2><p>Revitalize Your Neck, Shoulders &amp; Upper Back</p></div>
 <div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome</div>
 <button class="btn sp" onclick="start()">Get Started</button></div>
 
@@ -42,13 +42,13 @@ input{width:100%;padding:12px;border:1px solid #bdc3c7;border-radius:8px;font-si
 <div id="weeks"></div><div id="cvaNote" class="box" style="display:none"></div>
 <div class="row sp"><button class="btn ghost" onclick="startCva()">วัดมุม CVA</button><button class="btn ghost" onclick="logout()">ออกจากระบบ</button></div></div>
 
-<div id="detail" class="page"><h3 id="dt"></h3><div class="row" id="tabs" style="flex-wrap:wrap"></div>
+<div id="detail" class="page"><h3 id="dt"></h3><p>เลือกท่าที่ต้องการ (1-4 ท่า) ระบบจะสุ่มสลับท่าให้ตลอด 15 นาที</p><div class="row" id="tabs" style="flex-wrap:wrap"></div>
 <div class="box" id="dinfo"></div><label>Workout Mode</label>
 <div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
-<button class="btn sp" onclick="train('ex')">START EXERCISE</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
+<button class="btn sp" onclick="train('ex')">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
 
-<div id="train" class="page"><h3 id="tt"></h3><div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
-<div class="box dash"><div><small>TIME REMAINING</small><b id="tm">05:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
+<div id="train" class="page"><h3 id="tt"></h3><div class="box" style="text-align:center"><div id="sym" style="font-size:44px"></div><b id="nm" style="font-size:18px"></b><p id="bl"></p></div><div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
+<div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
 <div class="bar"><i id="hb"></i></div><div id="tg" class="box"></div><div id="fb"></div>
 <div class="row sp"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
 <button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button></div>
@@ -58,7 +58,8 @@ input{width:100%;padding:12px;border:1px solid #bdc3c7;border-radius:8px;font-si
 <button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
 </div>
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=300, DAYS=15, PER=3;
+const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=60, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
+const SYM={iyt:'🙆',w:'💪',neck:'🧘',pec:'🤸'};
 const EX=[
 {id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
 {id:'w',n:'Modified Band W',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 5 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
@@ -71,27 +72,29 @@ const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 function send(a,d){if(!API||API.indexOf('PASTE_')==0)return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:a,...d})}).catch(()=>{})}
 function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');if(id=='program')renderProgram()}
 if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
-// ---- ผู้ใช้ ----
-function start(){S.user?show('program'):show('login')}
+// ---- ผู้ใช้ + บันทึกการเข้าใช้งานทุกครั้ง ----
+function visit(ev){send('visit',{event:ev,username:S.user.username,email:S.user.email,ua:navigator.userAgent})}
+function start(){if(S.user){visit('open');show('program')}else show('login')}
 function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
-S.user={...(S.user||{}),username:u,email:e};save();send('login',{username:u,email:e});S.user.weight?show('program'):show('profile')}
+S.user={...(S.user||{}),username:u,email:e};save();visit('login');S.user.weight?show('program'):show('profile')}
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g=='ชาย');$('g2').classList.toggle('on',g=='หญิง')}
 function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
 Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();send('profile',S.user);show('program')}
 function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home')}}
-// ---- โปรแกรม 5 สัปดาห์ ----
-const dayDone=d=>(S.done[d]||[]).length>=EX.length;
+// ---- โปรแกรม ----
+const dayDone=d=>!!S.done[d];
 function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c}
-function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน';
+function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน (วันละ 15 นาที)';
 let h='';for(let w=1;w<=5;w++){h+='<label>สัปดาห์ที่ '+w+'</label><div class="grid">';
 for(let i=1;i<=PER;i++){const d=(w-1)*PER+i,s=dayDone(d)?'done':d==c?'active':'lock';h+=`<button class="tile ${s}" ${s=='lock'?'disabled':''} onclick="openDay(${d})">Day ${d}</button>`}h+='</div>'}
 $('weeks').innerHTML=h;const wk=Math.ceil(Math.min(c,DAYS)/PER),prev=wk-1,nt=$('cvaNote');
 nt.style.display=(prev>=1&&!S.cva.some(x=>x.week==prev))?'block':'none';nt.innerText='ครบสัปดาห์ที่ '+prev+' แล้ว กรุณากด "วัดมุม CVA" เพื่อบันทึกการเปลี่ยนแปลง'}
-let day=1,ei=0,md='without';
-function openDay(d){day=d;ei=0;mode('without');renderDetail();show('detail')}
-function renderDetail(){$('dt').innerText='Day '+day+' (สัปดาห์ที่ '+Math.ceil(day/PER)+')';const dn=S.done[day]||[];
-$('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ${i==ei?'on':''}" onclick="ei=${i};renderDetail()">${dn.includes(e.id)?'✓ ':''}${e.n}</button>`).join('');
-const e=EX[ei];$('dinfo').innerHTML='<b>วิธีปฏิบัติ:</b> '+e.how+'<br><b>ประโยชน์:</b> '+e.ben+(e.video?`<br><iframe src="${e.video}" style="width:100%;height:180px;border:0" allowfullscreen></iframe>`:'')}
+let day=1,sel=[0,1,2,3],md='without';
+function openDay(d){day=d;mode('without');renderDetail();show('detail')}
+function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!=i)}else sel.push(i);renderDetail()}
+function renderDetail(){$('dt').innerText='Day '+day+' (สัปดาห์ที่ '+Math.ceil(day/PER)+')';
+$('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ${sel.includes(i)?'on':''}" onclick="tog(${i})">${sel.includes(i)?'✓ ':''}${SYM[e.id]} ${e.n}</button>`).join('');
+$('dinfo').innerHTML=sel.map(i=>`<b>${SYM[EX[i].id]} ${EX[i].n}</b><br>${EX[i].how}<br><i>ประโยชน์: ${EX[i].ben}</i>`+(EX[i].video?`<br><iframe src="${EX[i].video}" style="width:100%;height:160px;border:0" allowfullscreen></iframe>`:'')).join('<hr>')}
 function mode(m){md=m;$('m1').classList.toggle('on',m=='without');$('m2').classList.toggle('on',m=='battle')}
 // ---- ตรวจท่า ----
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r};
@@ -110,41 +113,60 @@ function evalPose(lm,id){
  const ok=str&&(ev[0]+ev[1])/2>=-45&&(ev[0]+ev[1])/2<=15&&wd>2*sw;
  return{ok,h:15,t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',m:ok?'Good! ค้างไว้':'เหยียดแขนตรงและกางออกให้กว้างขึ้น'}}
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22'}
+const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
- if(!T.run||T.pause)return;const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
- if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');const lm=r.poseLandmarks,e=EX[T.ex],q=evalPose(lm,e.id);
- if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
+ if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
+ const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0)return;
+ if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
+ const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
  x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke()});
  if(T.cva){if(q.cva!==undefined){T.samples.push(q.cva);fb('กำลังวัด CVA: '+q.cva.toFixed(1)+'°','#27ae60')}return}
- T.total++;if(q.ok){T.good++;T.hold+=dt;T.score+=dt*10;fb(q.m,'#27ae60');
-  if(T.hold>=q.h){T.reps++;T.score+=100;T.hold=0;if(e.id=='iyt')T.st=(T.st+1)%3;fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
- $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(T.score);$('rp').innerText=T.reps}
+ const s=T.stats[T.cur];T.total++;s.total++;
+ if(q.ok){T.good++;s.good++;T.hold+=dt;s.score+=dt*10;fb(q.m,'#27ae60');
+  if(T.hold>=q.h){T.reps++;s.reps++;s.score+=100;T.hold=0;if(id=='iyt')T.st=(T.st+1)%3;fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
+ $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps}
+// ---- สุ่มท่า ----
+function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)]}
+function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];
+ $('sym').innerText=SYM[e.id];$('nm').innerText=e.n;$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200)}
 // ---- กล้อง/ตัวจับเวลา ----
 let pose,stream,raf,iv,busy=false;
-function train(k){T={ex:ei,cva:k=='cva',run:false,pause:false,st:0,hold:0,reps:0,score:0,good:0,total:0,last:0,samples:[],left:k=='cva'?15:SEC};
- $('tt').innerText=T.cva?'วัดมุม CVA (ยืนตะแคง)':EX[ei].n;$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText=T.cva?'ยืนตะแคงข้างให้กล้องเห็นหูและไหล่ นิ่งไว้ 15 วินาที':EX[ei].how;fb('');$('go').style.display='block';show('train')}
-function startCva(){ei=2;train('cva')}
+function train(k){const c=k=='cva';T={cva:c,run:false,pause:false,prep:0,cur:c?2:null,blockLeft:BLOCK,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,samples:[],left:c?15:SEC,stats:{}};
+ if(!c)sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
+ $('tt').innerText=c?'วัดมุม CVA (ยืนตะแคง)':'Back to Balance - Day '+day;$('sym').innerText=c?'📐':'🎲';$('nm').innerText=c?'วัดมุม CVA':'สุ่มท่าจาก: '+sel.map(i=>EX[i].n).join(', ');$('bl').innerText='';
+ $('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText=c?'ยืนตะแคงข้างให้กล้องเห็นหูและไหล่ นิ่งไว้ 15 วินาที':'กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';show('train')}
+function startCva(){train('cva')}
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 async function camStart(){if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
  $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
   const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
   if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize()}
-  T.run=true;$('go').style.display='none';$('go').disabled=false;fb('เริ่มได้เลย!','#27ae60');
-  iv=setInterval(()=>{if(T.pause)return;T.left--;$('tm').innerText=fmt(Math.max(T.left,0));if(T.left<=0)finish(false)},1000);loop()}
+  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;if(!T.cva)setEx(pick());
+  iv=setInterval(tick,1000);loop()}
  catch(e){stopCam();$('go').disabled=false;fb(e.name=='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c')}}
+function tick(){if(T.pause)return;
+ if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return}
+ T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
+ if(!T.cva){if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else T.stats[T.cur].sec++;
+  T.blockLeft--;$('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';if(T.blockLeft<=0&&T.left>0)setEx(pick())}
+ if(T.left<=0)finish(false)}
 async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false}raf=requestAnimationFrame(loop)}
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').srcObject=null}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE'}
 // ---- จบ/บันทึก ----
-function finish(manual){if(!T.run){show(T.cva?'program':'detail');return}const used=(T.cva?15:SEC)-Math.max(T.left,0),was=T.left<=0;stopCam();$('pz').innerText='PAUSE';
+function finish(manual){if(!T.run){show(T.cva?'program':'detail');return}const was=T.left<=0;
+ if(manual&&!T.cva&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
+ const used=(T.cva?15:SEC)-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';
  if(T.cva){if(T.samples.length<10){alert('วัดไม่สำเร็จ ลองใหม่โดยยืนตะแคงให้เห็นหูและไหล่');return show('program')}
   const a=T.samples.reduce((x,y)=>x+y,0)/T.samples.length,wk=Math.ceil(Math.min(curDay(),DAYS)/PER);S.cva.push({week:wk,cva:+a.toFixed(1)});save();
   send('cva',{email:S.user.email,week:wk,cva:+a.toFixed(1)});alert('ค่า CVA โดยประมาณ: '+a.toFixed(1)+'° (ปกติประมาณ ≥ 50°)');return show('program')}
- const bt=md=='battle',score=Math.round(T.score*(bt?1.5:1)),acc=T.total?Math.round(T.good/T.total*100):0,kcal=Math.round((bt?3.8:3)*S.user.weight*used/3600);
- const e=EX[T.ex];if(was){S.done[day]=[...new Set([...(S.done[day]||[]),e.id])];save()}
- send('session',{email:S.user.email,day,exercise:e.id,mode:md,score,reps:T.reps,accuracy:acc,calories:kcal,seconds:used,completed:was});
- const left=EX.length-(S.done[day]||[]).length;$('rt').innerText='DAY '+day+(left?': '+e.n:': Completed!');$('r1').innerText=score;$('r2').innerText=kcal;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';
- $('r5').innerText=was?'วันนี้ทำแล้ว '+(EX.length-left)+'/'+EX.length+' ท่า':'จบก่อนเวลา (ยังไม่นับว่าท่านี้สำเร็จ)';show('result')}
-function nextEx(){const dn=S.done[day]||[],i=EX.findIndex(e=>!dn.includes(e.id));if(i<0)return show('program');ei=i;renderDetail();show('detail')}
+ const m=md=='battle'?1.5:1,sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0,kc=0,lines='';
+ Object.keys(T.stats).forEach(k=>{const s=T.stats[k],e=EX[k],sc=Math.round(s.score*m),c=Math.round(MET[md]*S.user.weight*s.sec/3600);tot+=sc;kc+=c;
+  lines+=SYM[e.id]+' '+e.n+': '+fmt(s.sec)+' | '+s.reps+' ครั้ง | '+sc+' คะแนน<br>';
+  send('session',{email:S.user.email,sid,day,exercise:e.id,mode:md,score:sc,reps:s.reps,accuracy:s.total?Math.round(s.good/s.total*100):0,calories:c,seconds:s.sec,total_seconds:used,completed:was})});
+ if(was){S.done[day]=true;save()}
+ $('rt').innerText=was?'DAY '+day+': Completed!':'DAY '+day+' (ไม่ครบเวลา)';$('r1').innerText=tot;$('r2').innerText=kc;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';
+ $('r5').innerHTML=(was?'ครบ 15 นาที บันทึกวันนี้แล้ว ✓':'จบก่อนเวลา ยังไม่นับว่าวันนี้เสร็จ')+'<br><small>'+lines+'</small>';show('result')}
+function nextEx(){if(dayDone(day))show('program');else{renderDetail();show('detail')}}
 </script></body></html>
