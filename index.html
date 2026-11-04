@@ -10,100 +10,97 @@
 body{margin:0;background:#e5e5e5;color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--lime);color:var(--ink)}
 .app{width:100%;max-width:420px;min-height:100dvh;background:var(--n100);box-shadow:0 0 40px #0002}
-.page{display:none;flex-direction:column;padding:22px;min-height:100dvh;gap:12px}.page.on{display:flex}
-h2,h3{font-family:'Antonio','Noto Sans Thai',sans-serif;text-transform:uppercase;letter-spacing:.05em;text-align:center;margin:8px 0;color:var(--ink);font-weight:700}
-h2{font-size:36px}h3{font-size:24px}
-p{color:var(--n500);font-size:14px;text-align:center;margin:0;line-height:1.5}
-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--n500);margin-top:6px}
-input{width:100%;padding:14px;border:2px solid var(--n200);border-radius:14px;font-size:16px;background:#fff;color:var(--ink)}
+.page{display:none;flex-direction:column;padding:16px;min-height:100dvh;gap:8px}.page.on{display:flex}
+h2,h3{font-family:'Antonio','Noto Sans Thai',sans-serif;text-transform:uppercase;letter-spacing:.05em;text-align:center;margin:4px 0;color:var(--ink);font-weight:700}
+h2{font-size:32px}h3{font-size:22px}
+p{color:var(--n500);font-size:13px;text-align:center;margin:0;line-height:1.4}
+label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--n500);margin-top:4px}
+input{width:100%;padding:12px;border:2px solid var(--n200);border-radius:12px;font-size:15px;background:#fff;color:var(--ink)}
 input:focus{outline:0;border-color:var(--ink)}
-.btn{width:100%;padding:15px;background:var(--lime);color:var(--ink);border:0;border-radius:16px;font-size:16px;font-weight:700;letter-spacing:.02em;transition:transform .1s}
+.btn{width:100%;padding:12px;background:var(--lime);color:var(--ink);border:0;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:transform .1s}
 .btn:active{transform:scale(.98)}.btn:disabled{opacity:.5}
 .ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}.red{background:#dc2626;color:#fff}
 .row{display:flex;gap:8px}.row>*{flex:1}.sp{margin-top:auto}
-.seg{padding:12px 10px;border:2px solid var(--n300);border-radius:14px;background:#fff;color:var(--ink);font-weight:600;font-size:14px}
+.seg{padding:10px 8px;border:2px solid var(--n300);border-radius:12px;background:#fff;color:var(--ink);font-weight:600;font-size:13px}
 .seg.on{background:var(--ink);border-color:var(--ink);color:var(--lime)}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tile{padding:16px 0;border-radius:16px;border:2px solid transparent;font-family:'Antonio',sans-serif;font-size:20px;letter-spacing:.06em;text-transform:uppercase;background:var(--n200);color:#a3a3a3}
+.tile{padding:14px 0;border-radius:14px;border:2px solid transparent;font-family:'Antonio',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase;background:var(--n200);color:#a3a3a3}
 .tile.active{background:var(--ink);color:var(--lime);box-shadow:0 0 0 3px var(--lime)}
-.tile.done{background:var(--lime);color:var(--ink)}.tile.done::after{content:'';display:inline-block;width:16px;height:16px;margin-left:6px;vertical-align:-2px;background:url(images/check.svg) center/contain no-repeat}
-.bar{height:10px;background:var(--n200);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--lime2);width:0;border-radius:99px;transition:width .3s}
-.box{background:#fff;border:1px solid var(--n200);border-radius:20px;padding:14px;font-size:14px;color:#404040;line-height:1.6}
-.dash{display:flex;justify-content:space-around;text-align:center}.dash small{font-size:10px;letter-spacing:.12em;color:var(--n500);font-weight:700}
-.dash b{display:block;font-family:'Antonio',sans-serif;font-size:34px;line-height:1.1;color:var(--ink)}
-#fb{text-align:center;font-weight:700;min-height:24px}
-.warn{display:none;background:#fef9c3;color:#854d0e;padding:10px;border-radius:14px;font-size:12px}
+.tile.done{background:var(--lime);color:var(--ink)}.tile.done::after{content:'';display:inline-block;width:14px;height:14px;margin-left:4px;vertical-align:-2px;background:url(images/check.svg) center/contain no-repeat}
+.bar{height:8px;background:var(--n200);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--lime2);width:0;border-radius:99px;transition:width .3s}
+.box{background:#fff;border:1px solid var(--n200);border-radius:16px;padding:10px 12px;font-size:13px;color:#404040;line-height:1.4}
+.dash{display:flex;justify-content:space-around;text-align:center}.dash small{font-size:9px;letter-spacing:.1em;color:var(--n500);font-weight:700}
+.dash b{display:block;font-family:'Antonio',sans-serif;font-size:28px;line-height:1;color:var(--ink)}
+#fb{text-align:center;font-weight:700;font-size:13px;min-height:20px}
+.warn{display:none;background:#fef9c3;color:#854d0e;padding:8px;border-radius:12px;font-size:12px}
 
 /* Home */
 #home{background:radial-gradient(circle at 90% 6%,#bef26466,transparent 45%),var(--ink);color:#fff}
 #home .hero{margin-top:auto}#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
-#home h2{font-size:84px;line-height:.92;text-align:left;color:var(--lime);margin:22px 0 16px}
-#home p{text-align:left;color:#a3a3a3;font-size:15px}
+#home h2{font-size:72px;line-height:.92;text-align:left;color:var(--lime);margin:16px 0 12px}
+#home p{text-align:left;color:#a3a3a3;font-size:14px}
 
-/* Train: ปรับแต่งให้แสดงรูปท่าขนาดใหญ่ชัดเจน */
-#train{background:var(--ink);gap:10px}
-#train h3{color:var(--lime);margin:4px 0}
+/* Train: ปรับให้ฟิตพอดีกับขนาดหน้าจอ */
+#train{background:var(--ink);gap:8px;justify-content:space-between}
+#train h3{color:var(--lime);margin:2px 0;font-size:20px}
 #train .box{background:#262626;border-color:#333;color:#e5e5e5}
 #train .dash b{color:var(--lime)}
-#train #nm{color:#fff;font-size:16px}
 #train .bar{background:#333}#train .bar i{background:var(--lime)}
 #train .ghost{background:transparent;color:#fff;border-color:#525252}
 
-/* กล่องตัวอย่างท่า (ขยายรูปภาพให้ใหญ่ ชัดเจนขึ้น) */
-.ban{padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:18px;gap:8px}
-.ban #sym{width:100%;max-width:160px;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin:0 auto}
-.ban .cap{padding:0;width:100%}
-.ban #bl{font-size:13px;color:var(--lime);margin-top:2px;font-weight:600}
-
-/* หน้าจอกล้อง */
-.vid{position:relative;width:100%;flex:1;min-height:200px;max-height:50dvh;background:#000;border-radius:20px;overflow:hidden;border:2px solid #333}
+/* กล้องขนาดสมดุลพอดีหน้าจอ */
+.vid{position:relative;width:100%;height:38dvh;max-height:300px;background:#000;border-radius:16px;overflow:hidden;border:2px solid #333;flex:none}
 #cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* กล่องตัวอย่างท่า: รูปภาพเต็มเฟรมบน + ชื่อท่าขนาดกำลังดีอ่านง่ายล่าง */
+.ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px}
+.ban #sym{display:block;width:100%;height:95px;object-fit:cover;border-radius:0;margin:0}
+.ban .cap{padding:8px 10px}
+.ban #nm{display:block;color:#fff;font-size:15px;line-height:1.2}
+.ban #bl{font-size:11px;color:var(--lime);margin-top:2px}
 
 /* Result */
 #result .box b{font-family:'Antonio',sans-serif;letter-spacing:.04em}
 
 /* ===== Responsive (มือถือ / ไอแพด / คอมพิวเตอร์) ===== */
 .app{max-width:560px}
-.page{padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
-h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
-.btn,.seg,.tile,input{min-height:48px}
-.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;flex:none}
-#home h2{font-size:clamp(46px,17vw,92px)}
+.page{padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
+.btn,.seg,.tile,input{min-height:44px}
+.brand{display:flex;align-items:center;gap:8px}.logo{width:36px;height:36px;flex:none}
+#home h2{font-size:clamp(40px,15vw,80px)}
 #home{position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
 #home>*{position:relative;z-index:1}
 #home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
 #home .hero,#home .btn,#home .warn{text-shadow:0 2px 14px #000a}
 #home .btn{text-shadow:none}
-.exImg{display:block;margin:0 auto;width:clamp(84px,30vw,120px);height:auto;border-radius:20px}
-#tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:8px}
+.exImg{display:block;margin:0 auto;width:clamp(80px,25vw,110px);height:auto;border-radius:16px}
+#tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:6px}
 
-.seg.ex{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;font-size:13px;line-height:1.25}
-.seg.ex img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px}
-.seg.on img{outline:3px solid var(--lime)}
+.seg.ex{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;font-size:12px;line-height:1.2}
+.seg.ex img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px}
+.seg.on img{outline:2px solid var(--lime)}
 
-.ei{display:flex;flex-direction:column;gap:8px}
-.ei img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:14px}
-.mini{width:40px;height:24px;object-fit:cover;border-radius:5px;vertical-align:middle}
+.ei{display:flex;flex-direction:column;gap:6px}
+.ei img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px}
+.mini{width:36px;height:22px;object-fit:cover;border-radius:4px;vertical-align:middle}
 
-/* สำหรับ iPad / Tablet / หน้าจอคอมพิวเตอร์ (หน้าจอใหญ่กว่า 700px) */
 @media(min-width:700px){
   body{padding:20px;align-items:center}
-  .app{max-width:980px;border-radius:28px;overflow:hidden;min-height:calc(100dvh - 40px)}
-  .page{min-height:calc(100dvh - 40px);padding:24px}
-  
+  .app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}
+  .page{min-height:calc(100dvh - 40px);padding:20px}
   #train.page{display:none}
-  #train.page.on{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto 1fr;gap:16px;align-content:start}
+  #train.page.on{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto 1fr;gap:12px;align-content:start}
   #train h3{grid-column:1/-1}
-  #train .vid{height:100%;max-height:calc(100dvh - 160px);min-height:400px}
-  .train-panel{display:flex;flex-direction:column;gap:12px;justify-content:center}
-  .ban #sym{max-width:200px} /* บนหน้าจอใหญ่ขยายรูปท่าได้เต็มที่ถึง 200px */
+  #train .vid{height:100%;max-height:calc(100dvh - 160px);min-height:300px}
+  .train-panel{display:flex;flex-direction:column;gap:8px;justify-content:center}
 }
 
-@media(max-width:360px){
-  .page{padding:12px}
-  .dash b{font-size:26px}
-  .ban #sym{max-width:130px}
+@media(max-height:670px){
+  .vid{height:30dvh;max-height:220px}
+  .ban #sym{height:75px}
+  .dash b{font-size:24px}
+  .page{padding:10px;gap:6px}
 }
 </style></head><body><div class="app">
 
@@ -130,21 +127,21 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 <div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
 <button class="btn sp" onclick="train('ex')">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
 
-<!-- หน้า Train รูปท่าขยายใหญ่ขึ้น -->
+<!-- หน้า Train จัดระเบียบใหม่ให้พอดีทุกหน้าจอ -->
 <div id="train" class="page">
   <h3 id="tt"></h3>
   <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
-  <div class="train-panel">
+  <div class="train-panel" style="display:flex;flex-direction:column;gap:8px">
     <div class="box ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm"></b><p id="bl"></p></div></div>
     <div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
-    <div class="bar"><i id="hb"></i></div><div id="tg" class="box"></div><div id="fb"></div>
+    <div class="bar"><i id="hb"></i></div><div id="tg" class="box" style="text-align:center"></div><div id="fb"></div>
     <div class="row sp"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
     <button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button>
   </div>
 </div>
 
-<div id="result" class="page"><div style="margin-top:16px"><img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(70px,22vw,100px)"><h2 id="rt"></h2></div>
-<div class="box" style="text-align:center;line-height:2">TOTAL POINTS <b id="r1" style="font-size:28px"></b><br>CALORIES BURNED <b id="r2" style="font-size:24px"></b> kcal<br>Exercise Time: <b id="r3"></b> | Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div>
+<div id="result" class="page"><div style="margin-top:16px"><img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(60px,20vw,90px)"><h2 id="rt"></h2></div>
+<div class="box" style="text-align:center;line-height:2">TOTAL POINTS <b id="r1" style="font-size:26px"></b><br>CALORIES BURNED <b id="r2" style="font-size:22px"></b> kcal<br>Exercise Time: <b id="r3"></b> | Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div>
 <button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
 </div>
 
