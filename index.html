@@ -70,6 +70,14 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 @media(min-width:700px){body{padding:24px 0;align-items:flex-start}.app{border-radius:32px;overflow:hidden;min-height:calc(100dvh - 48px)}.page{min-height:calc(100dvh - 48px);padding:28px}}
 @media(max-width:360px){.page{padding:16px}.dash b{font-size:28px}.seg.ex img{width:60px;height:72px}}
 @media(orientation:landscape) and (max-height:520px){.vid{max-height:68dvh;aspect-ratio:16/9}#home h2{font-size:clamp(34px,9vw,52px);margin:12px 0}#home{--hy:35%}}
+/* ===== รูปท่า PNG (สัดส่วนแนวนอน) ===== */
+.seg.ex{padding:8px;gap:6px}
+.seg.ex img{width:100%;height:auto;aspect-ratio:16/10;object-fit:contain;background:#101010;border-radius:10px}
+.ei{flex-direction:column;gap:8px}
+.ei img{width:100%;height:auto;aspect-ratio:16/10;object-fit:contain;background:#101010;border-radius:14px}
+#sym.exImg{width:100%;max-height:18dvh;object-fit:contain;background:#101010;border-radius:14px}
+.vid{max-height:44dvh}
+.mini{width:40px;height:24px;object-fit:cover;border-radius:5px}
 </style></head><body><div class="app">
 
 <div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back to<br>Balance</h2>
@@ -108,9 +116,9 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 </div>
 <script>
 const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=60, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
-const EXT={}; // ระบุเฉพาะรูปที่ไม่ใช่ svg เช่น {iyt_i:'png', w:'jpg'} (ถ้าไม่ระบุ ใช้ svg)
+const EXT={iyt:'png',w:'png',neck:'png',pec:'png'}; // รูปที่ไม่ใช่ svg (ถ้าไม่ระบุ ใช้ svg)
 const pic=n=>'images/'+n+'.'+(EXT[n]||'svg');
-const IMG=(id,st)=>pic(id=='iyt'&&st!=null?['iyt_i','iyt_y','iyt_t'][st]:id);
+const IMG=id=>pic(id);
 const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
 const EX=[
 {id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
