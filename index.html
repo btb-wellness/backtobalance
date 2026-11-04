@@ -67,7 +67,7 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .exImg{display:block;margin:0 auto;width:clamp(84px,30vw,120px);height:auto;border-radius:20px}
 #tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:8px}
 
-/* ===== ปรับแต่งรูปภาพให้เท่ากันอย่างสมบูรณ์แบบ ===== */
+/* ===== ปรับแต่งรูปภาพให้เท่ากัน ===== */
 .seg.ex{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;font-size:13px;line-height:1.25}
 .seg.ex img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px}
 .seg.on img{outline:3px solid var(--lime)}
@@ -120,13 +120,14 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 <button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
 </div>
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=60, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
+// แก้ไขเวลา BLOCK จาก 60 วินาที เป็น 15 วินาที
+const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=15, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
 const EXT={iyt:'png',w:'png',neck:'png',pec:'png'};
 const pic=n=>'images/'+n+'.'+(EXT[n]||'svg');
 const IMG=(id,st)=>id=='iyt' && st!==null && st!==undefined ? 'images/iyt_'+st+'.png' : pic(id);
 const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
 const EX=[
-{id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
+{id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที (รวม 15 วินาที/Cycle)',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
 {id:'w',n:'Modified Band W',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 5 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
 {id:'neck',n:'Neck Isometric Extension',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้าง 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอ',video:''},
 {id:'pec',n:'Pectoral Stretch',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดหน้าอก ค้าง 15 วินาที',ben:'ยืดกล้ามเนื้อหน้าอกและหัวไหล่',video:''}];
@@ -185,9 +186,39 @@ function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
  x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke()});
   const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
-  if(T.hold>=q.h){T.reps++;s.reps++;s.score+=100;T.hold=0;if(id=='iyt'){T.st=(T.st+1)%3;setImg()}fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
- $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps}
+ if(q.ok){
+  T.good++;s.good++;T.hold+=dt;
+  fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
+  
+  // ระบบนับเวลาและการเปลี่ยน Sub-stage ของ IYT (5วิ -> 5วิ -> 5วิ)
+  if(T.hold>=q.h){
+   T.hold=0;
+   if(id=='iyt'){
+    if(T.st<2){
+     T.st++;
+     setImg();
+     fb('เปลี่ยนเป็น '+STG[T.st].t.split(':')[0]+'!','#27ae60');
+    }else{
+     // ครบ 3 ท่าย่อย (I-Y-T รวม 15 วิ) ให้นับ 1 Reps
+     T.st=0;
+     setImg();
+     T.reps++;s.reps++;s.score+=100;
+     fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60');
+    }
+   }else{
+    T.reps++;s.reps++;s.score+=100;
+    fb('ครบ 1 ครั้ง! +100','#27ae60');
+   }
+  }
+ }else{
+  T.hold=0;
+  fb(q.m,'#e74c3c');
+ }
+ 
+ $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';
+ $('sc').innerText=Math.floor(sumScore());
+ $('rp').innerText=T.reps;
+}
 
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)]}
 function setImg(){const e=EX[T.cur];$('sym').style.display='';$('sym').src=IMG(e.id,e.id=='iyt'?T.st:null)}
