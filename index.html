@@ -55,7 +55,7 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .btn,.seg,.tile,input{min-height:48px}
 .brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;flex:none}
 #home h2{font-size:clamp(56px,22vw,104px)}
-#home .heroImg{flex:1 1 0;min-height:110px;max-height:42dvh;max-width:100%;align-self:center;object-fit:cover;border-radius:24px}
+#home .heroImg{flex:1 1 0;min-height:110px;max-height:42dvh;max-width:100%;align-self:center;object-fit:contain}
 .vid{height:auto;aspect-ratio:4/3;max-height:52dvh}
 .exImg{display:block;margin:0 auto;width:clamp(84px,30vw,120px);height:auto;border-radius:20px}
 #tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -70,7 +70,7 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 
 <div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back<br>to<br>Balance</h2>
 <p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p></div>
-<img class="heroImg" src="images/hero-motion-band.jpg" alt="Resistance Band Exercise Motion">
+<img class="heroImg" src="images/hero.svg" alt="">
 <div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome</div>
 <button class="btn" onclick="start()">Get Started →</button></div>
 
@@ -84,13 +84,13 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 <button class="btn sp" onclick="saveProfile()">Next</button></div>
 
 <div id="program" class="page"><div class="brand" style="justify-content:center"><img class="logo" src="images/logo.svg" alt=""><h3 style="margin:0">โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt"></p>
-<div id="weeks"></div><div id="cvaNote" class="box" style="display:none"></div>
-<div class="row sp"><button class="btn ghost" onclick="startCva()">วัดมุม CVA</button><button class="btn ghost" onclick="logout()">ออกจากระบบ</button></div></div>
+<div id="weeks"></div>
+<div class="row sp"><button class="btn ghost" onclick="logout()">ออกจากระบบ</button></div></div>
 
-<div id="detail" class="page"><h3 id="dt"></h3><p>เลือกท่าที่ต้องการ (1-4 ท่า) ระบบจะสุ่มสลับท่าให้ตลอด 15 นาที</p><div class="row" id="tabs" style="flex-wrap:wrap"></div>
+<div id="detail" class="page"><h3 id="dt"></h3><p>เลือกท่าที่ต้องการ (1-4 ท่า) ระบบจะสุ่มเปลี่ยนท่าทุก 15 วินาที</p><div class="row" id="tabs" style="flex-wrap:wrap"></div>
 <div class="box" id="dinfo"></div><label>Workout Mode</label>
 <div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
-<button class="btn sp" onclick="train('ex')">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
+<button class="btn sp" onclick="train()">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
 
 <div id="train" class="page"><h3 id="tt"></h3><div class="box" style="text-align:center"><img id="sym" class="exImg" alt=""><b id="nm" style="font-size:18px"></b><p id="bl"></p></div><div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
 <div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
@@ -103,18 +103,18 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 <button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
 </div>
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=60, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
+const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, HOLD=15, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
 const IMG_EXT='svg'; // เปลี่ยนเป็น 'jpg' หรือ 'png' ถ้าใช้รูปถ่ายจริงชื่อไฟล์เดิม
 const IMG=(id,st)=>'images/'+(id=='iyt'&&st!=null?['iyt_i','iyt_y','iyt_t'][st]:id)+'.'+IMG_EXT;
 const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
 const EX=[
-{id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
-{id:'w',n:'Modified Band W',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 5 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
-{id:'neck',n:'Neck Isometric Extension',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้าง 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอ',video:''},
-{id:'pec',n:'Pectoral Stretch',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดหน้าอก ค้าง 15 วินาที',ben:'ยืดกล้ามเนื้อหน้าอกและหัวไหล่',video:''}];
+{id:'iyt',n:'Modified Band IYT',h:15,points:30,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 15 วินาที รวม 45 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
+{id:'w',n:'Modified Band W',h:15,points:25,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 15 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
+{id:'neck',n:'Neck Isometric Extension',h:15,points:40,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้าง 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอ',video:''},
+{id:'pec',n:'Pectoral Stretch',h:15,points:20,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดหน้าอก ค้าง 15 วินาที',ben:'ยืดกล้ามเนื้อหน้าอกและหัวไหล่',video:''}];
 const STG=[{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',r:[70,100]},{t:'ท่า Y: กางแขนเฉียงประมาณ 45°',r:[25,65]},{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',r:[-20,20]}];
 const $=i=>document.getElementById(i);
-let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}S.done=S.done||{};S.cva=S.cva||[];
+let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}S.done=S.done||{};
 const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 function send(a,d){if(!API||API.indexOf('PASTE_')==0)return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:a,...d})}).catch(()=>{})}
 function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');if(id=='program')renderProgram()}
@@ -134,8 +134,7 @@ function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c}
 function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน (วันละ 15 นาที)';
 let h='';for(let w=1;w<=5;w++){h+='<label>สัปดาห์ที่ '+w+'</label><div class="grid">';
 for(let i=1;i<=PER;i++){const d=(w-1)*PER+i,s=dayDone(d)?'done':d==c?'active':'lock';h+=`<button class="tile ${s}" ${s=='lock'?'disabled':''} onclick="openDay(${d})">Day ${d}</button>`}h+='</div>'}
-$('weeks').innerHTML=h;const wk=Math.ceil(Math.min(c,DAYS)/PER),prev=wk-1,nt=$('cvaNote');
-nt.style.display=(prev>=1&&!S.cva.some(x=>x.week==prev))?'block':'none';nt.innerText='ครบสัปดาห์ที่ '+prev+' แล้ว กรุณากด "วัดมุม CVA" เพื่อบันทึกการเปลี่ยนแปลง'}
+$('weeks').innerHTML=h}
 let day=1,sel=[0,1,2,3],md='without';
 function openDay(d){day=d;mode('without');renderDetail();show('detail')}
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!=i)}else sel.push(i);renderDetail()}
@@ -148,15 +147,15 @@ const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b
 let T={};
 function evalPose(lm,id){
  if(id=='neck'){const L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[e,s]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];
-  if(Math.min(e.visibility,s.visibility)<.5)return null;const cva=Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI,ok=cva>=50;
-  return{ok,cva,h:5,t:'ยืนตะแคงให้เห็นหูและไหล่',m:ok?'ศีรษะตรงกับไหล่ ค้างไว้':'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'}}
+  if(Math.min(e.visibility,s.visibility)<.5)return null;const neckAngle=Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI,ok=neckAngle>=50;
+  return{ok,h:15,t:'ยืนตะแคงให้เห็นหูและไหล่',m:ok?'ศีรษะตรงกับไหล่ ค้างไว้':'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'}}
  for(const i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
  const A=[[11,13,15],[12,14,16]],el=A.map(a=>ang(lm[a[0]],lm[a[1]],lm[a[2]])),
  ev=A.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),
  sw=Math.abs(lm[11].x-lm[12].x),wd=Math.abs(lm[15].x-lm[16].x),str=el[0]>150&&el[1]>150;
- if(id=='iyt'){const s=STG[T.st],ok=str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);return{ok,h:5,t:s.t,m:ok?'Good! ค้างไว้':str?'ปรับแขนตามท่า':'เหยียดข้อศอกให้ตรง'}}
+ if(id=='iyt'){const s=STG[T.st],ok=str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);return{ok,h:15,t:s.t,m:ok?'Good! ค้างไว้':str?'ปรับแขนตามท่า':'เหยียดข้อศอกให้ตรง'}}
  if(id=='w'){const ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y&&[13,14].every((k,i)=>lm[k].y>lm[11+i].y-.05&&lm[k].y<lm[11+i].y+.25);
-  return{ok,h:5,t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',m:ok?'Good! ค้างไว้':'งอศอก ยกมือเหนือข้อศอก'}}
+  return{ok,h:15,t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',m:ok?'Good! ค้างไว้':'งอศอก ยกมือเหนือข้อศอก'}}
  const ok=str&&(ev[0]+ev[1])/2>=-45&&(ev[0]+ev[1])/2<=15&&wd>2*sw;
  return{ok,h:15,t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',m:ok?'Good! ค้างไว้':'เหยียดแขนตรงและกางออกให้กว้างขึ้น'}}
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22'}
@@ -164,52 +163,53 @@ const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
  if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
  const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0)return;
- if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
- const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
+ if(!r.poseLandmarks){T.hold=0;$('hb').style.width='0%';return fb('ไม่พบตัวคุณในภาพ · เริ่มนับใหม่เมื่อกลับเข้ากรอบ');}
+ const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q){T.hold=0;$('hb').style.width='0%';return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน · เริ่มนับใหม่');}$('tg').innerText=q.t;
  x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke()});
- if(T.cva){if(q.cva!==undefined){T.samples.push(q.cva);fb('กำลังวัด CVA: '+q.cva.toFixed(1)+'°','#27ae60')}return}
  const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){T.good++;s.good++;T.hold+=dt;s.score+=dt*10;fb(q.m,'#27ae60');
-  if(T.hold>=q.h){T.reps++;s.reps++;s.score+=100;T.hold=0;if(id=='iyt'){T.st=(T.st+1)%3;setImg()}fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
+ if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m,'#27ae60');
+  if(T.hold>=q.h){
+   const earned=EX[T.cur].points;T.reps++;s.reps++;s.score+=earned;T.hold=0;
+   if(id=='iyt'){
+    if(T.st<2){T.st++;setImg();$('bl').innerText='IYT: สำเร็จ '+['I','Y','T'][T.st-1]+' แล้ว ต่อไปท่า '+['I','Y','T'][T.st];fb('ค้างครบ 15 วินาที! +'+earned+' คะแนน · ต่อท่า '+['I','Y','T'][T.st],'#27ae60')}
+    else{fb('ครบชุด IYT 45 วินาที! +'+earned+' คะแนน','#27ae60');setEx(pick())}
+   }else{fb('ค้างครบ 15 วินาที! +'+earned+' คะแนน','#27ae60');setEx(pick())}
+  }
+ }else{T.hold=0;fb(q.m,'#e74c3c')}
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps}
 // ---- สุ่มท่า ----
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)]}
 function setImg(){const e=EX[T.cur];$('sym').style.display='';$('sym').src=IMG(e.id,e.id=='iyt'?T.st:null)}
-function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];
- setImg();$('nm').innerText=e.n;$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200)}
+function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=EX[i].id=='iyt'?45:15;const e=EX[i];
+ setImg();$('nm').innerText=e.n;$('tg').innerText=e.how;$('hb').style.width=0;$('bl').innerText=e.id=='iyt'?'IYT: ค้าง I, Y และ T ท่าละ 15 วินาที (รวม 45 วินาที)':'ค้างท่าให้ถูกต้องต่อเนื่อง 15 วินาที';if(navigator.vibrate)navigator.vibrate(200)}
 // ---- กล้อง/ตัวจับเวลา ----
 let pose,stream,raf,iv,busy=false;
-function train(k){const c=k=='cva';T={cva:c,run:false,pause:false,prep:0,cur:c?2:null,blockLeft:BLOCK,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,samples:[],left:c?15:SEC,stats:{}};
- if(!c)sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText=c?'วัดมุม CVA (ยืนตะแคง)':'Back to Balance - Day '+day;$('sym').style.display='';$('sym').src='images/'+(c?'cva':'random')+'.'+IMG_EXT;$('nm').innerText=c?'วัดมุม CVA':'สุ่มท่าจาก: '+sel.map(i=>EX[i].n).join(', ');$('bl').innerText='';
- $('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText=c?'ยืนตะแคงข้างให้กล้องเห็นหูและไหล่ นิ่งไว้ 15 วินาที':'กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';show('train')}
-function startCva(){train('cva')}
+function train(){T={run:false,pause:false,prep:0,cur:null,blockLeft:15,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
+$('tt').innerText='Back to Balance - Day '+day;$('sym').style.display='';$('sym').src='images/random.'+IMG_EXT;$('nm').innerText='สุ่มท่าจาก: '+sel.map(i=>EX[i].n).join(', ');$('bl').innerText='';
+$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าใหม่เมื่อค้างท่าปัจจุบันครบ 15 วินาที โดย IYT ต้องค้าง I, Y และ T ท่าละ 15 วินาที รวม 45 วินาที';fb('');$('go').style.display='block';show('train')}
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 async function camStart(){if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
  $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
   const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
   if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize()}
-  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;if(!T.cva)setEx(pick());
+  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setEx(pick());
   iv=setInterval(tick,1000);loop()}
  catch(e){stopCam();$('go').disabled=false;fb(e.name=='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c')}}
 function tick(){if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return}
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
- if(!T.cva){if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else T.stats[T.cur].sec++;
-  T.blockLeft--;$('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';if(T.blockLeft<=0&&T.left>0)setEx(pick())}
+ if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else if(T.cur!==null)T.stats[T.cur].sec++;
  if(T.left<=0)finish(false)}
 async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false}raf=requestAnimationFrame(loop)}
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').srcObject=null}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE'}
 // ---- จบ/บันทึก ----
-function finish(manual){if(!T.run){show(T.cva?'program':'detail');return}const was=T.left<=0;
- if(manual&&!T.cva&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
- const used=(T.cva?15:SEC)-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';
- if(T.cva){if(T.samples.length<10){alert('วัดไม่สำเร็จ ลองใหม่โดยยืนตะแคงให้เห็นหูและไหล่');return show('program')}
-  const a=T.samples.reduce((x,y)=>x+y,0)/T.samples.length,wk=Math.ceil(Math.min(curDay(),DAYS)/PER);S.cva.push({week:wk,cva:+a.toFixed(1)});save();
-  send('cva',{email:S.user.email,week:wk,cva:+a.toFixed(1)});alert('ค่า CVA โดยประมาณ: '+a.toFixed(1)+'° (ปกติประมาณ ≥ 50°)');return show('program')}
- const m=md=='battle'?1.5:1,sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0,kc=0,lines='';
+function finish(manual){if(!T.run){show('detail');return}const was=T.left<=0;
+ if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
+ const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';
+ const m=1,sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0,kc=0,lines='';
  Object.keys(T.stats).forEach(k=>{const s=T.stats[k],e=EX[k],sc=Math.round(s.score*m),c=Math.round(MET[md]*S.user.weight*s.sec/3600);tot+=sc;kc+=c;
   lines+=img(e.id,'mini')+' '+e.n+': '+fmt(s.sec)+' | '+s.reps+' ครั้ง | '+sc+' คะแนน<br>';
   send('session',{email:S.user.email,sid,day,exercise:e.id,mode:md,score:sc,reps:s.reps,accuracy:s.total?Math.round(s.good/s.total*100):0,calories:c,seconds:s.sec,total_seconds:used,completed:was})});
