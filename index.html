@@ -38,7 +38,7 @@ input:focus{outline:0;border-color:var(--ink)}
 .warn{display:none;background:#fef9c3;color:#854d0e;padding:10px;border-radius:14px;font-size:12px}
 /* Home: มืด + ไลม์ */
 #home{background:radial-gradient(circle at 90% 6%,#bef26466,transparent 45%),var(--ink);color:#fff}
-#home .hero{margin-top:56px}#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
+#home .hero{margin-top:auto}#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
 #home h2{font-size:84px;line-height:.92;text-align:left;color:var(--lime);margin:22px 0 16px}
 #home p{text-align:left;color:#a3a3a3;font-size:15px}
 /* Train: มืดให้ภาพกล้องเด่น */
@@ -54,12 +54,10 @@ input:focus{outline:0;border-color:var(--ink)}
 h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .btn,.seg,.tile,input{min-height:48px}
 .brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;flex:none}
-#home h2{font-size:clamp(56px,22vw,104px)}
-#home{position:relative;isolation:isolate;overflow:hidden;--hx:80%;--hs:88%}
+#home h2{font-size:clamp(46px,17vw,92px)}
+#home{position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
 #home>*{position:relative;z-index:1}
-#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;
- background:linear-gradient(to top,#171717 0,#171717cc 9%,#17171700 34%),linear-gradient(to right,#171717b3 0,#17171700 58%),url(images/hero-motion-band.jpg) var(--hx) 100%/auto var(--hs) no-repeat;
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 24%);mask-image:linear-gradient(to bottom,transparent 0,#000 24%)}
+#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
 #home .hero,#home .btn,#home .warn{text-shadow:0 2px 14px #000a}
 #home .btn{text-shadow:none}
 .vid{height:auto;aspect-ratio:4/3;max-height:52dvh}
@@ -71,10 +69,10 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .mini{width:22px;height:26px;vertical-align:middle;border-radius:5px}
 @media(min-width:700px){body{padding:24px 0;align-items:flex-start}.app{border-radius:32px;overflow:hidden;min-height:calc(100dvh - 48px)}.page{min-height:calc(100dvh - 48px);padding:28px}}
 @media(max-width:360px){.page{padding:16px}.dash b{font-size:28px}.seg.ex img{width:60px;height:72px}}
-@media(orientation:landscape) and (max-height:520px){.vid{max-height:68dvh;aspect-ratio:16/9}#home>.heroBg{background-size:100% 100%,100% 100%,cover;background-position:0 0,0 0,var(--hx) 30%}}
+@media(orientation:landscape) and (max-height:520px){.vid{max-height:68dvh;aspect-ratio:16/9}#home h2{font-size:clamp(34px,9vw,52px);margin:12px 0}#home{--hy:35%}}
 </style></head><body><div class="app">
 
-<div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back<br>to<br>Balance</h2>
+<div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back to<br>Balance</h2>
 <p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p></div>
 <div class="heroBg" aria-hidden="true"></div>
 <div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome</div>
