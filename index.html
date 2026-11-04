@@ -1,286 +1,2411 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Back to Balance</title>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Back to Balance</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <meta name="theme-color" content="#171717">
+
 <style>
-:root{--ink:#171717;--lime:#bef264;--lime2:#84cc16;--n100:#f5f5f5;--n200:#e5e5e5;--n300:#d4d4d4;--n500:#737373}
-*{box-sizing:border-box;font-family:'Noto Sans Thai','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif}
-body{margin:0;background:#e5e5e5;color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
-::selection{background:var(--lime);color:var(--ink)}
-.app{width:100%;max-width:420px;min-height:100dvh;background:var(--n100);box-shadow:0 0 40px #0002}
-.page{display:none;flex-direction:column;padding:16px;min-height:100dvh;gap:8px}.page.on{display:flex}
-h2,h3{font-family:'Antonio','Noto Sans Thai',sans-serif;text-transform:uppercase;letter-spacing:.05em;text-align:center;margin:4px 0;color:var(--ink);font-weight:700}
-h2{font-size:32px}h3{font-size:22px}
-p{color:var(--n500);font-size:13px;text-align:center;margin:0;line-height:1.4}
-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--n500);margin-top:4px}
-input{width:100%;padding:12px;border:2px solid var(--n200);border-radius:12px;font-size:15px;background:#fff;color:var(--ink)}
-input:focus{outline:0;border-color:var(--ink)}
-.btn{width:100%;padding:12px;background:var(--lime);color:var(--ink);border:0;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:transform .1s}
-.btn:active{transform:scale(.98)}.btn:disabled{opacity:.5}
-.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}.red{background:#dc2626;color:#fff}
-.row{display:flex;gap:8px}.row>*{flex:1}.sp{margin-top:auto}
-.seg{padding:10px 8px;border:2px solid var(--n300);border-radius:12px;background:#fff;color:var(--ink);font-weight:600;font-size:13px}
-.seg.on{background:var(--ink);border-color:var(--ink);color:var(--lime)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tile{padding:14px 0;border-radius:14px;border:2px solid transparent;font-family:'Antonio',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase;background:var(--n200);color:#a3a3a3}
-.tile.active{background:var(--ink);color:var(--lime);box-shadow:0 0 0 3px var(--lime)}
-.tile.done{background:var(--lime);color:var(--ink)}.tile.done::after{content:'';display:inline-block;width:14px;height:14px;margin-left:4px;vertical-align:-2px;background:url(images/check.svg) center/contain no-repeat}
-.bar{height:8px;background:var(--n200);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--lime2);width:0;border-radius:99px;transition:width .3s}
-.box{background:#fff;border:1px solid var(--n200);border-radius:16px;padding:10px 12px;font-size:13px;color:#404040;line-height:1.4}
-.dash{display:flex;justify-content:space-around;text-align:center}.dash small{font-size:9px;letter-spacing:.1em;color:var(--n500);font-weight:700}
-.dash b{display:block;font-family:'Antonio',sans-serif;font-size:28px;line-height:1;color:var(--ink)}
-#fb{text-align:center;font-weight:700;font-size:13px;min-height:20px}
-.warn{display:none;background:#fef9c3;color:#854d0e;padding:8px;border-radius:12px;font-size:12px}
+:root{
+--ink:#171717;
+--lime:#bef264;
+--lime2:#84cc16;
+--n100:#f5f5f5;
+--n200:#e5e5e5;
+--n300:#d4d4d4;
+--n500:#737373;
+}
 
-/* Home */
-#home{background:radial-gradient(circle at 90% 6%,#bef26466,transparent 45%),var(--ink);color:#fff}
-#home .hero{margin-top:auto}#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
-#home h2{font-size:72px;line-height:.92;text-align:left;color:var(--lime);margin:16px 0 12px}
-#home p{text-align:left;color:#a3a3a3;font-size:14px}
+*{
+box-sizing:border-box;
+font-family:'Noto Sans Thai','Plus Jakarta Sans',sans-serif;
+}
 
-/* Train: ปรับให้ฟิตพอดีกับขนาดหน้าจอ */
-#train{background:var(--ink);gap:8px;justify-content:space-between}
-#train h3{color:var(--lime);margin:2px 0;font-size:20px}
-#train .box{background:#262626;border-color:#333;color:#e5e5e5}
-#train .dash b{color:var(--lime)}
-#train .bar{background:#333}#train .bar i{background:var(--lime)}
-#train .ghost{background:transparent;color:#fff;border-color:#525252}
+body{
+margin:0;
+background:#e5e5e5;
+color:var(--ink);
+display:flex;
+justify-content:center;
+-webkit-font-smoothing:antialiased;
+}
 
-/* กล้องขนาดสมดุลพอดีหน้าจอ */
-.vid{position:relative;width:100%;height:38dvh;max-height:300px;background:#000;border-radius:16px;overflow:hidden;border:2px solid #333;flex:none}
-#cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-#cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+::selection{
+background:var(--lime);
+color:var(--ink);
+}
 
-/* กล่องตัวอย่างท่า: รูปภาพเต็มเฟรมบน + ชื่อท่าขนาดกำลังดีอ่านง่ายล่าง */
-.ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px}
-.ban #sym{display:block;width:100%;height:95px;object-fit:cover;border-radius:0;margin:0}
-.ban .cap{padding:8px 10px}
-.ban #nm{display:block;color:#fff;font-size:15px;line-height:1.2}
-.ban #bl{font-size:11px;color:var(--lime);margin-top:2px}
+.app{
+width:100%;
+max-width:560px;
+min-height:100dvh;
+background:var(--n100);
+box-shadow:0 0 40px #0002;
+}
 
-/* Result */
-#result .box b{font-family:'Antonio',sans-serif;letter-spacing:.04em}
+.page{
+display:none;
+flex-direction:column;
+padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));
+min-height:100dvh;
+gap:8px;
+}
 
-/* ===== Responsive (มือถือ / ไอแพด / คอมพิวเตอร์) ===== */
-.app{max-width:560px}
-.page{padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
-.btn,.seg,.tile,input{min-height:44px}
-.brand{display:flex;align-items:center;gap:8px}.logo{width:36px;height:36px;flex:none}
-#home h2{font-size:clamp(40px,15vw,80px)}
-#home{position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
-#home>*{position:relative;z-index:1}
-#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
-#home .hero,#home .btn,#home .warn{text-shadow:0 2px 14px #000a}
-#home .btn{text-shadow:none}
-.exImg{display:block;margin:0 auto;width:clamp(80px,25vw,110px);height:auto;border-radius:16px}
-#tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:6px}
+.page.on{
+display:flex;
+}
 
-.seg.ex{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;font-size:12px;line-height:1.2}
-.seg.ex img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px}
-.seg.on img{outline:2px solid var(--lime)}
+h2,h3{
+font-family:'Antonio','Noto Sans Thai',sans-serif;
+text-transform:uppercase;
+letter-spacing:.05em;
+text-align:center;
+margin:4px 0;
+color:var(--ink);
+font-weight:700;
+}
 
-.ei{display:flex;flex-direction:column;gap:6px}
-.ei img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px}
-.mini{width:36px;height:22px;object-fit:cover;border-radius:4px;vertical-align:middle}
+h2{font-size:32px}
+h3{font-size:22px}
+
+p{
+color:var(--n500);
+font-size:13px;
+text-align:center;
+margin:0;
+line-height:1.4;
+}
+
+label{
+font-size:11px;
+font-weight:700;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:var(--n500);
+margin-top:4px;
+}
+
+input{
+width:100%;
+padding:12px;
+border:2px solid var(--n200);
+border-radius:12px;
+font-size:15px;
+background:#fff;
+color:var(--ink);
+}
+
+input:focus{
+outline:0;
+border-color:var(--ink);
+}
+
+.btn{
+width:100%;
+padding:12px;
+background:var(--lime);
+color:var(--ink);
+border:0;
+border-radius:14px;
+font-size:15px;
+font-weight:700;
+letter-spacing:.02em;
+transition:transform .1s;
+}
+
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5}
+
+.ghost{
+background:#fff;
+color:var(--ink);
+border:2px solid var(--ink);
+}
+
+.red{
+background:#dc2626;
+color:#fff;
+}
+
+.row{
+display:flex;
+gap:8px;
+}
+
+.row>*{flex:1}
+
+.sp{margin-top:auto}
+
+.seg{
+padding:10px 8px;
+border:2px solid var(--n300);
+border-radius:12px;
+background:#fff;
+color:var(--ink);
+font-weight:600;
+font-size:13px;
+}
+
+.seg.on{
+background:var(--ink);
+border-color:var(--ink);
+color:var(--lime);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+}
+
+.tile{
+padding:14px 0;
+border-radius:14px;
+border:2px solid transparent;
+font-family:'Antonio',sans-serif;
+font-size:18px;
+letter-spacing:.06em;
+text-transform:uppercase;
+background:var(--n200);
+color:#a3a3a3;
+}
+
+.tile.active{
+background:var(--ink);
+color:var(--lime);
+box-shadow:0 0 0 3px var(--lime);
+}
+
+.tile.done{
+background:var(--lime);
+color:var(--ink);
+}
+
+.tile.done::after{
+content:'✓';
+margin-left:5px;
+}
+
+.bar{
+height:8px;
+background:var(--n200);
+border-radius:99px;
+overflow:hidden;
+}
+
+.bar i{
+display:block;
+height:100%;
+background:var(--lime2);
+width:0;
+border-radius:99px;
+transition:width .3s;
+}
+
+.box{
+background:#fff;
+border:1px solid var(--n200);
+border-radius:16px;
+padding:10px 12px;
+font-size:13px;
+color:#404040;
+line-height:1.4;
+}
+
+.dash{
+display:flex;
+justify-content:space-around;
+text-align:center;
+}
+
+.dash small{
+font-size:9px;
+letter-spacing:.1em;
+color:var(--n500);
+font-weight:700;
+}
+
+.dash b{
+display:block;
+font-family:'Antonio',sans-serif;
+font-size:28px;
+line-height:1;
+color:var(--ink);
+}
+
+#fb{
+text-align:center;
+font-weight:700;
+font-size:13px;
+min-height:20px;
+}
+
+.warn{
+display:none;
+background:#fef9c3;
+color:#854d0e;
+padding:8px;
+border-radius:12px;
+font-size:12px;
+}
+
+/* HOME */
+
+#home{
+background:radial-gradient(circle at 90% 6%,#bef26466,transparent 45%),var(--ink);
+color:#fff;
+position:relative;
+isolation:isolate;
+overflow:hidden;
+}
+
+#home .hero{
+margin-top:auto;
+}
+
+#home .tag{
+display:inline-block;
+background:var(--lime);
+color:var(--ink);
+font-size:11px;
+font-weight:800;
+letter-spacing:.12em;
+text-transform:uppercase;
+padding:6px 12px;
+border-radius:99px;
+}
+
+#home h2{
+font-size:clamp(40px,15vw,80px);
+line-height:.92;
+text-align:left;
+color:var(--lime);
+margin:16px 0 12px;
+}
+
+#home p{
+text-align:left;
+color:#a3a3a3;
+font-size:14px;
+}
+
+#home>*{
+position:relative;
+z-index:1;
+}
+
+#home>.heroBg{
+position:absolute;
+inset:0;
+z-index:0;
+pointer-events:none;
+background:
+linear-gradient(to bottom,#171717b3 0,#17171700 30%),
+linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),
+linear-gradient(to right,#17171799 0,#17171700 55%),
+url(images/hero-motion-band.jpg) 72% 50%/cover no-repeat,
+#171717;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.logo{
+width:36px;
+height:36px;
+flex:none;
+}
+
+/* TRAIN */
+
+#train{
+background:var(--ink);
+gap:8px;
+justify-content:space-between;
+}
+
+#train h3{
+color:var(--lime);
+margin:2px 0;
+font-size:20px;
+}
+
+#train .box{
+background:#262626;
+border-color:#333;
+color:#e5e5e5;
+}
+
+#train .dash b{
+color:var(--lime);
+}
+
+#train .bar{
+background:#333;
+}
+
+#train .bar i{
+background:var(--lime);
+}
+
+#train .ghost{
+background:transparent;
+color:#fff;
+border-color:#525252;
+}
+
+/* CAMERA */
+
+.vid{
+position:relative;
+width:100%;
+height:38dvh;
+max-height:300px;
+background:#000;
+border-radius:16px;
+overflow:hidden;
+border:2px solid #333;
+flex:none;
+}
+
+#cv{
+width:100%;
+height:100%;
+object-fit:cover;
+transform:scaleX(-1);
+}
+
+#cam{
+position:absolute;
+width:1px;
+height:1px;
+opacity:0;
+pointer-events:none;
+}
+
+/* TRAIN EXERCISE IMAGE */
+
+.ban{
+padding:0;
+overflow:hidden;
+text-align:center;
+display:flex;
+flex-direction:column;
+border-radius:16px;
+}
+
+.ban #sym{
+display:block;
+width:100%;
+height:95px;
+object-fit:cover;
+border-radius:0;
+margin:0;
+}
+
+.ban .cap{
+padding:8px 10px;
+}
+
+.ban #nm{
+display:block;
+color:#fff;
+font-size:15px;
+line-height:1.2;
+}
+
+.ban #bl{
+font-size:11px;
+color:var(--lime);
+margin-top:2px;
+}
+
+.exImg{
+display:block;
+margin:0 auto;
+width:clamp(80px,25vw,110px);
+height:auto;
+border-radius:16px;
+}
+
+#tabs{
+display:grid!important;
+grid-template-columns:repeat(2,1fr);
+gap:6px;
+}
+
+.seg.ex{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+padding:6px;
+font-size:12px;
+line-height:1.2;
+}
+
+.seg.ex img{
+width:100%;
+height:auto;
+aspect-ratio:16/9;
+object-fit:cover;
+border-radius:8px;
+}
+
+/* ========================================
+PREMIUM EXERCISE DETAIL PAGE
+======================================== */
+
+#detail{
+background:#111413;
+color:#fff;
+gap:16px;
+padding:20px 16px;
+overflow-y:auto;
+}
+
+#detail h3{
+color:#bef264;
+font-size:30px;
+text-align:left;
+margin:0;
+}
+
+#detail p{
+color:#a3a3a3;
+text-align:left;
+font-size:12px;
+line-height:1.7;
+}
+
+/* HEADER */
+
+.detail-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+}
+
+.detail-badge{
+background:#bef264;
+color:#171717;
+border-radius:30px;
+padding:7px 12px;
+font-size:10px;
+font-weight:800;
+letter-spacing:1px;
+}
+
+.detail-subtitle{
+color:#aaa;
+font-size:13px;
+line-height:1.8;
+margin-top:6px;
+}
+
+.detail-progress{
+display:flex;
+justify-content:space-between;
+align-items:center;
+color:#aaa;
+font-size:11px;
+font-weight:700;
+letter-spacing:.5px;
+}
+
+/* EXERCISE CARDS */
+
+#detail #tabs{
+display:grid!important;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+}
+
+#detail .seg.ex{
+position:relative;
+background:#202522;
+color:#fff;
+border:1px solid #343b35;
+border-radius:16px;
+padding:9px;
+display:flex;
+flex-direction:column;
+align-items:stretch;
+gap:8px;
+min-width:0;
+text-align:left;
+transition:all .2s ease;
+}
+
+#detail .seg.ex:active{
+transform:scale(.97);
+}
+
+#detail .seg.ex img{
+width:100%;
+aspect-ratio:16/10;
+height:auto;
+object-fit:cover;
+border-radius:10px;
+}
+
+#detail .seg.ex .ex-number{
+font-family:'Antonio',sans-serif;
+font-size:12px;
+color:#bef264;
+letter-spacing:1.5px;
+}
+
+#detail .seg.ex .ex-name{
+font-size:12px;
+font-weight:700;
+line-height:1.5;
+min-height:36px;
+color:#fff;
+}
+
+#detail .seg.ex .ex-time{
+font-size:10px;
+color:#a3a3a3;
+}
+
+#detail .seg.ex.on{
+background:#293321;
+border:2px solid #bef264;
+box-shadow:0 0 16px #bef26435;
+}
+
+#detail .seg.ex.on img{
+outline:none;
+}
+
+#detail .seg.ex .selected-check{
+position:absolute;
+top:14px;
+right:14px;
+width:25px;
+height:25px;
+border-radius:50%;
+background:#bef264;
+color:#171717;
+display:none;
+justify-content:center;
+align-items:center;
+font-size:14px;
+font-weight:900;
+}
+
+#detail .seg.ex.on .selected-check{
+display:flex;
+}
+
+/* EXERCISE DETAILS */
+
+#detail .detail-title{
+font-size:11px;
+color:#bef264;
+font-weight:800;
+letter-spacing:1.5px;
+margin-bottom:8px;
+}
+
+#detail #dinfo{
+background:#202522;
+border:1px solid #343b35;
+border-radius:18px;
+padding:14px;
+color:#fff;
+}
+
+#detail .ei{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+#detail .ei img{
+width:100%;
+aspect-ratio:16/9;
+object-fit:cover;
+border-radius:12px;
+background:#111;
+}
+
+#detail .ei .exercise-name{
+color:#bef264;
+font-size:19px;
+font-weight:800;
+line-height:1.5;
+}
+
+#detail .ei .duration{
+display:inline-block;
+background:#bef264;
+color:#171717;
+border-radius:30px;
+padding:6px 13px;
+font-size:11px;
+font-weight:800;
+margin-top:8px;
+}
+
+#detail .ei .exercise-desc{
+color:#e5e5e5;
+font-size:13px;
+line-height:1.9;
+margin-top:10px;
+}
+
+#detail .ei .exercise-benefit{
+background:#303a2a;
+border-left:3px solid #bef264;
+border-radius:8px;
+padding:12px;
+color:#d9f99d;
+font-size:12px;
+line-height:1.8;
+margin-top:12px;
+}
+
+/* WORKOUT MODE */
+
+#detail label{
+color:#bef264;
+font-size:11px;
+letter-spacing:1px;
+}
+
+#detail .seg:not(.ex){
+background:#202522;
+color:#ccc;
+border:1px solid #414941;
+border-radius:12px;
+padding:13px 6px;
+font-size:11px;
+}
+
+#detail .seg:not(.ex).on{
+background:#bef264;
+color:#171717;
+border-color:#bef264;
+}
+
+/* START BUTTON */
+
+#detail .btn:not(.ghost){
+background:linear-gradient(135deg,#bef264,#84cc16);
+color:#171717;
+font-size:16px;
+font-weight:900;
+padding:16px;
+border-radius:14px;
+box-shadow:0 5px 20px #84cc1630;
+}
+
+#detail .ghost{
+background:transparent;
+border:1px solid #555;
+color:#ddd;
+}
+
+/* RESULT */
+
+#result .box b{
+font-family:'Antonio',sans-serif;
+letter-spacing:.04em;
+}
+
+/* RESPONSIVE */
+
+.btn,.seg,.tile,input{
+min-height:44px;
+}
 
 @media(min-width:700px){
-  body{padding:20px;align-items:center}
-  .app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}
-  .page{min-height:calc(100dvh - 40px);padding:20px}
-  #train.page{display:none}
-  #train.page.on{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto 1fr;gap:12px;align-content:start}
-  #train h3{grid-column:1/-1}
-  #train .vid{height:100%;max-height:calc(100dvh - 160px);min-height:300px}
-  .train-panel{display:flex;flex-direction:column;gap:8px;justify-content:center}
+
+body{
+padding:20px;
+align-items:center;
+}
+
+.app{
+max-width:900px;
+border-radius:24px;
+overflow:hidden;
+min-height:calc(100dvh - 40px);
+}
+
+.page{
+min-height:calc(100dvh - 40px);
+padding:20px;
+}
+
+#train.page{
+display:none;
+}
+
+#train.page.on{
+display:grid;
+grid-template-columns:1.2fr 1fr;
+grid-template-rows:auto 1fr;
+gap:12px;
+align-content:start;
+}
+
+#train h3{
+grid-column:1/-1;
+}
+
+#train .vid{
+height:100%;
+max-height:calc(100dvh - 160px);
+min-height:300px;
+}
+
+.train-panel{
+display:flex;
+flex-direction:column;
+gap:8px;
+justify-content:center;
+}
+
+#detail{
+padding:28px;
+}
+
+#detail #tabs{
+grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+#detail .seg.ex .ex-name{
+font-size:14px;
+}
+
+#detail .ei .exercise-name{
+font-size:23px;
+}
+
+}
+
+@media(max-width:380px){
+
+#detail{
+padding:14px 10px;
+}
+
+#detail .seg.ex .ex-name{
+font-size:11px;
+}
+
+#detail .ei .exercise-name{
+font-size:16px;
+}
+
+.detail-badge{
+font-size:9px;
+padding:6px 9px;
+}
+
 }
 
 @media(max-height:670px){
-  .vid{height:30dvh;max-height:220px}
-  .ban #sym{height:75px}
-  .dash b{font-size:24px}
-  .page{padding:10px;gap:6px}
+
+.vid{
+height:30dvh;
+max-height:220px;
 }
-</style></head><body><div class="app">
 
-<div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back to<br>Balance</h2>
-<p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p></div>
-<div class="heroBg" aria-hidden="true"></div>
-<div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome</div>
-<button class="btn" onclick="start()">Get Started →</button></div>
+.ban #sym{
+height:75px;
+}
 
-<div id="login" class="page"><h2>Log In</h2>
-<label>ชื่อผู้ใช้</label><input id="un"><label>อีเมล</label><input id="em" type="email">
-<button class="btn sp" onclick="login()">เข้าสู่ระบบ</button></div>
+.dash b{
+font-size:24px;
+}
 
-<div id="profile" class="page"><h2>Personalize Your Plan</h2>
-<label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
-<label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" value="65"><label>ส่วนสูง (cm)</label><input id="ht" type="number" value="172">
-<button class="btn sp" onclick="saveProfile()">Next</button></div>
+.page{
+padding:10px;
+gap:6px;
+}
 
-<div id="program" class="page"><div class="brand" style="justify-content:center"><img class="logo" src="images/logo.svg" alt=""><h3 style="margin:0">โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt"></p>
-<div id="weeks"></div><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></div>
+}
 
-<div id="detail" class="page"><h3 id="dt"></h3><p>เลือกท่าที่ต้องการ (1-4 ท่า) ระบบจะสุ่มสลับท่าให้ตลอด 15 นาที</p><div class="row" id="tabs" style="flex-wrap:wrap"></div>
-<div class="box" id="dinfo"></div><label>Workout Mode</label>
-<div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
-<button class="btn sp" onclick="train('ex')">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
+</style>
+</head>
 
-<!-- หน้า Train จัดระเบียบใหม่ให้พอดีทุกหน้าจอ -->
-<div id="train" class="page">
-  <h3 id="tt"></h3>
-  <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
-  <div class="train-panel" style="display:flex;flex-direction:column;gap:8px">
-    <div class="box ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm"></b><p id="bl"></p></div></div>
-    <div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div>
-    <div class="bar"><i id="hb"></i></div><div id="tg" class="box" style="text-align:center"></div><div id="fb"></div>
-    <div class="row sp"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
-    <button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button>
-  </div>
+<body>
+<div class="app">
+
+<!-- HOME -->
+
+<div id="home" class="page on">
+
+<div class="hero">
+
+<div class="brand">
+<img class="logo" src="images/logo.svg" alt="">
+<span class="tag">Resistance Band · Posture Studio</span>
 </div>
 
-<div id="result" class="page"><div style="margin-top:16px"><img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(60px,20vw,90px)"><h2 id="rt"></h2></div>
-<div class="box" style="text-align:center;line-height:2">TOTAL POINTS <b id="r1" style="font-size:26px"></b><br>CALORIES BURNED <b id="r2" style="font-size:22px"></b> kcal<br>Exercise Time: <b id="r3"></b> | Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div>
-<button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></div>
+<h2>Back to<br>Balance</h2>
+
+<p>
+Revitalize your neck, shoulders &amp; upper back<br>
+ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที
+</p>
+
+</div>
+
+<div class="heroBg" aria-hidden="true"></div>
+
+<div id="inapp" class="warn">
+ตรวจพบว่าเปิดผ่านแอป LINE/Facebook ซึ่งมักใช้กล้องไม่ได้ กรุณาเปิดลิงก์นี้ใน Safari/Chrome
+</div>
+
+<button class="btn" onclick="start()">Get Started →</button>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="login" class="page">
+
+<h2>Log In</h2>
+
+<label>ชื่อผู้ใช้</label>
+<input id="un">
+
+<label>อีเมล</label>
+<input id="em" type="email">
+
+<button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
+
+</div>
+
+<!-- PROFILE -->
+
+<div id="profile" class="page">
+
+<h2>Personalize Your Plan</h2>
+
+<label>เพศ</label>
+
+<div class="row">
+<button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button>
+<button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button>
+</div>
+
+<label>วันเกิด</label>
+<input id="dob" type="date">
+
+<label>น้ำหนัก (kg)</label>
+<input id="wt" type="number" value="65">
+
+<label>ส่วนสูง (cm)</label>
+<input id="ht" type="number" value="172">
+
+<button class="btn sp" onclick="saveProfile()">Next</button>
+
+</div>
+
+<!-- PROGRAM -->
+
+<div id="program" class="page">
+
+<div class="brand" style="justify-content:center">
+<img class="logo" src="images/logo.svg" alt="">
+<h3 style="margin:0">โปรแกรม 5 สัปดาห์</h3>
+</div>
+
+<div class="bar">
+<i id="pbar"></i>
+</div>
+
+<p id="ptxt"></p>
+
+<div id="weeks"></div>
+
+<button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button>
+
+</div>
+
+<!-- PREMIUM DETAIL PAGE -->
+
+<div id="detail" class="page">
+
+<div class="detail-header">
+
+<div class="detail-badge" id="weekBadge">
+WEEK 01
+</div>
+
+<div class="detail-badge">
+RESISTANCE BAND
+</div>
+
+</div>
+
+<div>
+<h3>Daily Workout</h3>
+
+<div class="detail-subtitle">
+โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่
+เพื่อปรับปรุงบุคลิกภาพและลดความตึงตัวของกล้ามเนื้อ
+</div>
+</div>
+
+<div class="detail-progress">
+<span>EXERCISE SELECTION</span>
+<span id="selectCount">4 EXERCISES</span>
+</div>
+
+<div class="bar">
+<i id="selectBar" style="width:100%"></i>
+</div>
+
+<div id="tabs"></div>
+
+<div>
+<div class="detail-title">EXERCISE INSTRUCTIONS</div>
+<div class="box" id="dinfo"></div>
+</div>
+
+<div>
+<label>SELECT WORKOUT MODE</label>
+
+<div class="row">
+
+<button class="seg on" id="m1" onclick="mode('without')">
+WITHOUT BAND
+</button>
+
+<button class="seg" id="m2" onclick="mode('battle')">
+WITH BAND (BATTLE)
+</button>
+
+</div>
+</div>
+
+<div class="box" style="background:#202522;color:#bef264;border-color:#343b35;text-align:center">
+
+<b>15 MINUTES WORKOUT</b>
+
+<p style="color:#aaa;margin-top:4px">
+ระบบจะสุ่มสลับท่าออกกำลังกายตามเวลาที่กำหนด
+</p>
+
+</div>
+
+<button class="btn" onclick="train('ex')">
+START WORKOUT →
+</button>
+
+<button class="btn ghost" onclick="show('program')">
+← BACK TO PROGRAM
+</button>
+
+</div>
+
+<!-- TRAIN -->
+
+<div id="train" class="page">
+
+<h3 id="tt"></h3>
+
+<div class="vid">
+<video id="cam" playsinline muted autoplay></video>
+<canvas id="cv"></canvas>
+</div>
+
+<div class="train-panel" style="display:flex;flex-direction:column;gap:8px">
+
+<div class="box ban">
+<img id="sym" class="exImg" alt="">
+<div class="cap">
+<b id="nm"></b>
+<p id="bl"></p>
+</div>
+</div>
+
+<div class="box dash">
+
+<div>
+<small>TIME REMAINING</small>
+<b id="tm">15:00</b>
+</div>
+
+<div>
+<small>SCORE</small>
+<b id="sc">0</b>
+</div>
+
+<div>
+<small>REPS</small>
+<b id="rp">0</b>
+</div>
+
+</div>
+
+<div class="bar">
+<i id="hb"></i>
+</div>
+
+<div id="tg" class="box" style="text-align:center"></div>
+
+<div id="fb"></div>
+
+<div class="row sp">
+
+<button class="btn ghost" id="pz" onclick="pause()">PAUSE</button>
+
+<button class="btn red" onclick="finish(true)">จบการฝึก</button>
+
+</div>
+
+<button class="btn" id="go" onclick="camStart()">
+เปิดกล้องและเริ่ม
+</button>
+
+</div>
+</div>
+
+<!-- RESULT -->
+
+<div id="result" class="page">
+
+<div style="margin-top:16px">
+
+<img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(60px,20vw,90px)">
+
+<h2 id="rt"></h2>
+
+</div>
+
+<div class="box" style="text-align:center;line-height:2">
+
+TOTAL POINTS
+<b id="r1" style="font-size:26px"></b>
+<br>
+
+CALORIES BURNED
+<b id="r2" style="font-size:22px"></b> kcal
+<br>
+
+Exercise Time:
+<b id="r3"></b>
+|
+Avg Accuracy:
+<b id="r4"></b>
+<br>
+
+<span id="r5"></span>
+
+</div>
+
+<button class="btn sp" onclick="nextEx()">CONTINUE</button>
+
+<button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button>
+
+</div>
+
 </div>
 
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=15, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
-const EXT={iyt:'png',w:'png',neck:'png',pec:'png'};
+
+/* ========================================
+CONFIGURATION
+======================================== */
+
+const API='PASTE_YOUR_WEB_APP_URL_HERE';
+
+const SEC=900;
+const BLOCK=15;
+const PREP=3;
+const DAYS=15;
+const PER=3;
+
+const MET={
+without:3,
+battle:3.8
+};
+
+const EXT={
+iyt:'png',
+w:'png',
+neck:'png',
+pec:'png'
+};
+
 const pic=n=>'images/'+n+'.'+(EXT[n]||'svg');
-const IMG=(id,st)=>id=='iyt' && st!==null && st!==undefined ? 'images/iyt_'+st+'.png' : pic(id);
-const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
+
+const IMG=(id,st)=>
+id=='iyt' && st!==null && st!==undefined
+?'images/iyt_'+st+'.png'
+:pic(id);
+
+const img=(id,c,st)=>
+`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
+
+
+/* ========================================
+EXERCISE DATABASE
+======================================== */
+
 const EX=[
-{id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที (รวม 15 วินาที/Cycle)',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
-{id:'w',n:'Modified Band W',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้าง 5 วินาที',ben:'ช่วยจัดตำแหน่งสะบัก',video:''},
-{id:'neck',n:'Neck Isometric Extension',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้าง 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอ',video:''},
-{id:'pec',n:'Pectoral Stretch',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดหน้าอก ค้าง 15 วินาที',ben:'ยืดกล้ามเนื้อหน้าอกและหัวไหล่',video:''}];
-const STG=[{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',r:[70,100]},{t:'ท่า Y: กางแขนเฉียงประมาณ 45°',r:[25,65]},{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',r:[-20,20]}];
-const $=i=>document.getElementById(i);
-let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}S.done=S.done||{};
-const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
-function send(a,d){if(!API||API.indexOf('PASTE_')==0)return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:a,...d})}).catch(()=>{})}
-function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');if(id=='program')renderProgram()}
-if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
 
-function visit(ev){send('visit',{event:ev,username:S.user.username,email:S.user.email,ua:navigator.userAgent})}
-function start(){if(S.user){visit('open');show('program')}else show('login')}
-function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
-S.user={...(S.user||{}),username:u,email:e};save();visit('login');S.user.weight?show('program'):show('profile')}
-function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g=='ชาย');$('g2').classList.toggle('on',g=='หญิง')}
-function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
-Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();send('profile',S.user);show('program')}
-function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home')}}
+{
+id:'iyt',
+n:'Modified Band IYT',
+h:5,
+how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที รวม 15 วินาทีต่อ Cycle',
+ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่',
+video:''
+},
 
-const dayDone=d=>!!S.done[d];
-function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c}
-function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน (วันละ 15 นาที)';
-let h='';for(let w=1;w<=5;w++){h+='<label>สัปดาห์ที่ '+w+'</label><div class="grid">';
-for(let i=1;i<=PER;i++){const d=(w-1)*PER+i,s=dayDone(d)?'done':d==c?'active':'lock';h+=`<button class="tile ${s}" ${s=='lock'?'disabled':''} onclick="openDay(${d})">Day ${d}</button>`}h+='</div>'}
-$('weeks').innerHTML=h}
-let day=1,sel=[0,1,2,3],md='without';
-function openDay(d){day=d;mode('without');renderDetail();show('detail')}
-function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!=i)}else sel.push(i);renderDetail()}
-function renderDetail(){$('dt').innerText='Day '+day+' (สัปดาห์ที่ '+Math.ceil(day/PER)+')';
-$('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})">${img(e.id,'')}${e.n}</button>`).join('');
-$('dinfo').innerHTML=sel.map(i=>`<div class="ei">${img(EX[i].id,'')}<div><b>${EX[i].n}</b><br>${EX[i].how}<br><i>ประโยชน์: ${EX[i].ben}</i></div></div>`+(EX[i].video?`<br><iframe src="${EX[i].video}" style="width:100%;height:160px;border:0" allowfullscreen></iframe>`:'')).join('<hr>')}
-function mode(m){md=m;$('m1').classList.toggle('on',m=='without');$('m2').classList.toggle('on',m=='battle')}
+{
+id:'w',
+n:'Modified Band W',
+h:5,
+how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 5 วินาที',
+ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่',
+video:''
+},
 
-const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r};
-let T={};
-function evalPose(lm,id){
- if(id=='neck'){const L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[e,s]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];
-  if(Math.min(e.visibility,s.visibility)<.5)return null;const cva=Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI,ok=cva>=50;
-  return{ok,cva,h:5,t:'ยืนตะแคงให้เห็นหูและไหล่',m:ok?'ศีรษะตรงกับไหล่ ค้างไว้':'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'}}
- for(const i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
- const A=[[11,13,15],[12,14,16]],el=A.map(a=>ang(lm[a[0]],lm[a[1]],lm[a[2]])),
- ev=A.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),
- sw=Math.abs(lm[11].x-lm[12].x),wd=Math.abs(lm[15].x-lm[16].x),str=el[0]>150&&el[1]>150;
- if(id=='iyt'){const s=STG[T.st],ok=str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);return{ok,h:5,t:s.t,m:ok?'Good! ค้างไว้':str?'ปรับแขนตามท่า':'เหยียดข้อศอกให้ตรง'}}
- if(id=='w'){const ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y&&[13,14].every((k,i)=>lm[k].y>lm[11+i].y-.05&&lm[k].y<lm[11+i].y+.25);
-  return{ok,h:5,t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',m:ok?'Good! ค้างไว้':'งอศอก ยกมือเหนือข้อศอก'}}
- const ok=str&&(ev[0]+ev[1])/2>=-45&&(ev[0]+ev[1])/2<=15&&wd>2*sw;
- return{ok,h:15,t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',m:ok?'Good! ค้างไว้':'เหยียดแขนตรงและกางออกให้กว้างขึ้น'}}
-function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22'}
-const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
-function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
- if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
- const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0)return;
- if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
- const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');$('tg').innerText=q.t;
- x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke()});
-  const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){
-  T.good++;s.good++;T.hold+=dt;
-  fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
-  
-  if(T.hold>=q.h){
-   T.hold=0;
-   if(id=='iyt'){
-    if(T.st<2){
-     T.st++;
-     setImg();
-     fb('เปลี่ยนเป็น '+STG[T.st].t.split(':')[0]+'!','#27ae60');
-    }else{
-     T.st=0;
-     setImg();
-     T.reps++;s.reps++;s.score+=100;
-     fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60');
-    }
-   }else{
-    T.reps++;s.reps++;s.score+=100;
-    fb('ครบ 1 ครั้ง! +100','#27ae60');
-   }
-  }
- }else{
-  T.hold=0;
-  fb(q.m,'#e74c3c');
- }
- 
- $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';
- $('sc').innerText=Math.floor(sumScore());
- $('rp').innerText=T.reps;
+{
+id:'neck',
+n:'Neck Isometric Extension',
+h:5,
+how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 5 วินาที',
+ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ',
+video:''
+},
+
+{
+id:'pec',
+n:'Pectoral Stretch',
+h:15,
+how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',
+ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่',
+video:''
 }
 
-function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)]}
-function setImg(){const e=EX[T.cur];$('sym').style.display='';$('sym').src=IMG(e.id,e.id=='iyt'?T.st:null)}
-function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];
- setImg();$('nm').innerText=e.n;$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200)}
+];
+
+const STG=[
+
+{
+t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',
+r:[70,100]
+},
+
+{
+t:'ท่า Y: กางแขนเฉียงประมาณ 45°',
+r:[25,65]
+},
+
+{
+t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',
+r:[-20,20]
+}
+
+];
+
+
+/* ========================================
+LOCAL STORAGE
+======================================== */
+
+const $=i=>document.getElementById(i);
+
+let S={};
+
+try{
+S=JSON.parse(localStorage.getItem('nbr'))||{};
+}catch(e){}
+
+S.done=S.done||{};
+
+const save=()=>{
+try{
+localStorage.setItem('nbr',JSON.stringify(S));
+}catch(e){}
+};
+
+
+/* ========================================
+API CONNECTION
+======================================== */
+
+function send(a,d){
+
+if(!API||API.indexOf('PASTE_')==0)return;
+
+fetch(API,{
+method:'POST',
+mode:'no-cors',
+headers:{
+'Content-Type':'text/plain;charset=utf-8'
+},
+body:JSON.stringify({
+action:a,
+...d
+})
+}).catch(()=>{});
+
+}
+
+
+/* ========================================
+PAGE NAVIGATION
+======================================== */
+
+function show(id){
+
+document.querySelectorAll('.page').forEach(p=>{
+p.classList.remove('on');
+});
+
+$(id).classList.add('on');
+
+if(id=='program'){
+renderProgram();
+}
+
+}
+
+
+/* ========================================
+HOME / LOGIN
+======================================== */
+
+if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent)){
+$('inapp').style.display='block';
+}
+
+function visit(ev){
+
+send('visit',{
+event:ev,
+username:S.user.username,
+email:S.user.email,
+ua:navigator.userAgent
+});
+
+}
+
+function start(){
+
+if(S.user){
+visit('open');
+show('program');
+}else{
+show('login');
+}
+
+}
+
+function login(){
+
+const u=$('un').value.trim();
+const e=$('em').value.trim();
+
+if(!u||!/^\S+@\S+\.\S+$/.test(e)){
+return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
+}
+
+S.user={
+...(S.user||{}),
+username:u,
+email:e
+};
+
+save();
+
+visit('login');
+
+S.user.weight
+?show('program')
+:show('profile');
+
+}
+
+function gen(g){
+
+S.tmpG=g;
+
+$('g1').classList.toggle('on',g=='ชาย');
+$('g2').classList.toggle('on',g=='หญิง');
+
+}
+
+function saveProfile(){
+
+const w=+$('wt').value;
+const h=+$('ht').value;
+
+if(!S.tmpG||!$('dob').value||w<20||h<100){
+return alert('กรอกข้อมูลให้ครบ');
+}
+
+Object.assign(S.user,{
+gender:S.tmpG,
+dob:$('dob').value,
+weight:w,
+height:h
+});
+
+save();
+
+send('profile',S.user);
+
+show('program');
+
+}
+
+function logout(){
+
+if(confirm('ออกจากระบบ?')){
+S.user=null;
+save();
+show('home');
+}
+
+}
+
+
+/* ========================================
+PROGRAM 5 WEEKS
+======================================== */
+
+const dayDone=d=>!!S.done[d];
+
+function curDay(){
+
+let c=1;
+
+while(c<=DAYS&&dayDone(c)){
+c++;
+}
+
+return c;
+
+}
+
+function renderProgram(){
+
+const c=curDay();
+const n=Math.min(c-1,DAYS);
+
+$('pbar').style.width=n/DAYS*100+'%';
+
+$('ptxt').innerText=
+'เสร็จแล้ว '+n+'/'+DAYS+' วัน (วันละ 15 นาที)';
+
+let h='';
+
+for(let w=1;w<=5;w++){
+
+h+='<label>สัปดาห์ที่ '+w+'</label>';
+h+='<div class="grid">';
+
+for(let i=1;i<=PER;i++){
+
+const d=(w-1)*PER+i;
+
+const s=dayDone(d)
+?'done'
+:d==c
+?'active'
+:'lock';
+
+h+=`
+
+<button class="tile ${s}"
+${s=='lock'?'disabled':''}
+onclick="openDay(${d})">
+
+Day ${d}
+
+</button>
+
+`;
+
+}
+
+h+='</div>';
+
+}
+
+$('weeks').innerHTML=h;
+
+}
+
+
+/* ========================================
+EXERCISE SELECTION
+======================================== */
+
+let day=1;
+let sel=[0,1,2,3];
+let md='without';
+
+function openDay(d){
+
+day=d;
+
+mode('without');
+
+renderDetail();
+
+show('detail');
+
+}
+
+function tog(i){
+
+if(sel.includes(i)){
+
+if(sel.length>1){
+sel=sel.filter(x=>x!=i);
+}
+
+}else{
+
+sel.push(i);
+
+}
+
+renderDetail();
+
+}
+
+
+/* ========================================
+PREMIUM EXERCISE DETAIL RENDER
+======================================== */
+
+function renderDetail(){
+
+/* HEADER */
+
+$('weekBadge').innerText=
+'WEEK '+String(Math.ceil(day/PER)).padStart(2,'0');
+
+
+/* SELECTION COUNT */
+
+$('selectCount').innerText=
+sel.length+' EXERCISES SELECTED';
+
+$('selectBar').style.width=
+(sel.length/EX.length*100)+'%';
+
+
+/* EXERCISE CARDS */
+
+$('tabs').innerHTML=EX.map((e,i)=>`
+
+<button class="seg ex ${sel.includes(i)?'on':''}"
+onclick="tog(${i})">
+
+${img(e.id,'')}
+
+<span class="ex-number">
+EXERCISE 0${i+1}
+</span>
+
+<span class="ex-name">
+${e.n}
+</span>
+
+<span class="ex-time">
+${e.id=='iyt'
+?'15 SEC / CYCLE'
+:e.id=='pec'
+?'15 SEC'
+:'5 SEC / HOLD'}
+</span>
+
+<span class="selected-check">✓</span>
+
+</button>
+
+`).join('');
+
+
+/* EXERCISE DETAILS */
+
+$('dinfo').innerHTML=sel.map(i=>{
+
+const e=EX[i];
+
+return `
+
+<div class="ei">
+
+<img
+src="${IMG(e.id)}"
+alt="${e.n}"
+onerror="this.style.display='none'">
+
+<div>
+
+<div class="detail-title">
+EXERCISE 0${i+1}
+</div>
+
+<div class="exercise-name">
+${e.n}
+</div>
+
+<div class="duration">
+
+${e.id=='iyt'
+?'15 SECONDS / CYCLE'
+:e.id=='pec'
+?'15 SECONDS'
+:'5 SECONDS HOLD'}
+
+</div>
+
+<div class="exercise-desc">
+
+<b>วิธีปฏิบัติ</b><br>
+
+${e.how}
+
+</div>
+
+<div class="exercise-benefit">
+
+<b>BENEFITS</b><br>
+
+${e.ben}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}).join('<hr style="border:0;border-top:1px solid #414941;margin:18px 0">');
+
+}
+
+
+/* ========================================
+WORKOUT MODE
+======================================== */
+
+function mode(m){
+
+md=m;
+
+$('m1').classList.toggle('on',m=='without');
+$('m2').classList.toggle('on',m=='battle');
+
+}
+
+
+/* ========================================
+POSE DETECTION
+======================================== */
+
+const ang=(a,b,c)=>{
+
+let r=Math.abs(
+(Math.atan2(c.y-b.y,c.x-b.x)
+-
+Math.atan2(a.y-b.y,a.x-b.x))
+*180/Math.PI
+);
+
+return r>180?360-r:r;
+
+};
+
+let T={};
+
+function evalPose(lm,id){
+
+if(id=='neck'){
+
+const L=lm[7].visibility+lm[11].visibility;
+const R=lm[8].visibility+lm[12].visibility;
+
+const [e,s]=L>=R
+?[lm[7],lm[11]]
+:[lm[8],lm[12]];
+
+if(Math.min(e.visibility,s.visibility)<.5){
+return null;
+}
+
+const cva=
+Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI;
+
+const ok=cva>=50;
+
+return{
+ok,
+cva,
+h:5,
+t:'ยืนตะแคงให้เห็นหูและไหล่',
+m:ok
+?'ศีรษะตรงกับไหล่ ค้างไว้'
+:'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'
+};
+
+}
+
+for(const i of [11,12,13,14,15,16]){
+if(lm[i].visibility<.5)return null;
+}
+
+const A=[
+[11,13,15],
+[12,14,16]
+];
+
+const el=A.map(a=>ang(
+lm[a[0]],
+lm[a[1]],
+lm[a[2]]
+));
+
+const ev=A.map(a=>
+Math.atan2(
+lm[a[0]].y-lm[a[2]].y,
+Math.abs(lm[a[2]].x-lm[a[0]].x)
+)*180/Math.PI
+);
+
+const sw=Math.abs(lm[11].x-lm[12].x);
+const wd=Math.abs(lm[15].x-lm[16].x);
+
+const str=el[0]>150&&el[1]>150;
+
+if(id=='iyt'){
+
+const s=STG[T.st];
+
+const ok=
+str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);
+
+return{
+ok,
+h:5,
+t:s.t,
+m:ok
+?'Good! ค้างไว้'
+:str
+?'ปรับแขนตามท่า'
+:'เหยียดข้อศอกให้ตรง'
+};
+
+}
+
+if(id=='w'){
+
+const ok=
+el.every(v=>v>=50&&v<=115)
+&&lm[15].y<lm[13].y
+&&lm[16].y<lm[14].y
+&&[13,14].every((k,i)=>
+lm[k].y>lm[11+i].y-.05
+&&lm[k].y<lm[11+i].y+.25
+);
+
+return{
+ok,
+h:5,
+t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',
+m:ok
+?'Good! ค้างไว้'
+:'งอศอก ยกมือเหนือข้อศอก'
+};
+
+}
+
+const ok=
+str
+&&(ev[0]+ev[1])/2>=-45
+&&(ev[0]+ev[1])/2<=15
+&&wd>2*sw;
+
+return{
+ok,
+h:15,
+t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',
+m:ok
+?'Good! ค้างไว้'
+:'เหยียดแขนตรงและกางออกให้กว้างขึ้น'
+};
+
+}
+
+
+/* ========================================
+FEEDBACK AND SCORE
+======================================== */
+
+function fb(m,c){
+
+$('fb').innerText=m;
+$('fb').style.color=c||'#e67e22';
+
+}
+
+const sumScore=()=>
+Object.values(T.stats).reduce((a,s)=>a+s.score,0);
+
+
+/* ========================================
+MEDIAPIPE RESULTS
+======================================== */
+
+function onResults(r){
+
+const cv=$('cv');
+const x=cv.getContext('2d');
+
+const w=cv.width=r.image.width;
+const h=cv.height=r.image.height;
+
+x.drawImage(r.image,0,0,w,h);
+
+if(!T.run)return;
+
+T.lastFrame=performance.now();
+
+if(T.pause)return;
+
+const now=performance.now();
+
+const dt=T.last
+?Math.min((now-T.last)/1000,.5)
+:0;
+
+T.last=now;
+
+if(T.prep>0)return;
+
+if(!r.poseLandmarks){
+return fb('ไม่พบตัวคุณในภาพ');
+}
+
+const lm=r.poseLandmarks;
+const id=EX[T.cur].id;
+
+const q=evalPose(lm,id);
+
+if(!q){
+return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
+}
+
+$('tg').innerText=q.t;
+
+x.lineWidth=4;
+x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
+
+[
+[11,12],
+[11,13],
+[13,15],
+[12,14],
+[14,16]
+].forEach(p=>{
+
+x.beginPath();
+
+x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);
+
+x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);
+
+x.stroke();
+
+});
+
+const s=T.stats[T.cur];
+
+T.total++;
+s.total++;
+
+if(q.ok){
+
+T.good++;
+s.good++;
+T.hold+=dt;
+
+fb(
+q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)',
+'#27ae60'
+);
+
+if(T.hold>=q.h){
+
+T.hold=0;
+
+if(id=='iyt'){
+
+if(T.st<2){
+
+T.st++;
+
+setImg();
+
+fb(
+'เปลี่ยนเป็น '+STG[T.st].t.split(':')[0]+'!',
+'#27ae60'
+);
+
+}else{
+
+T.st=0;
+
+setImg();
+
+T.reps++;
+s.reps++;
+s.score+=100;
+
+fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60');
+
+}
+
+}else{
+
+T.reps++;
+s.reps++;
+s.score+=100;
+
+fb('ครบ 1 ครั้ง! +100','#27ae60');
+
+}
+
+}
+
+}else{
+
+T.hold=0;
+
+fb(q.m,'#e74c3c');
+
+}
+
+$('hb').style.width=
+Math.min(T.hold/q.h*100,100)+'%';
+
+$('sc').innerText=Math.floor(sumScore());
+
+$('rp').innerText=T.reps;
+
+}
+
+
+/* ========================================
+RANDOM EXERCISE
+======================================== */
+
+function pick(){
+
+const c=sel.length>1
+?sel.filter(i=>i!==T.cur)
+:sel;
+
+return c[Math.floor(Math.random()*c.length)];
+
+}
+
+function setImg(){
+
+const e=EX[T.cur];
+
+$('sym').style.display='';
+$('sym').src=IMG(e.id,e.id=='iyt'?T.st:null);
+
+}
+
+function setEx(i){
+
+T.cur=i;
+T.st=0;
+T.hold=0;
+T.prep=PREP;
+T.blockLeft=BLOCK;
+
+const e=EX[i];
+
+setImg();
+
+$('nm').innerText=e.n;
+$('tg').innerText=e.how;
+
+$('hb').style.width=0;
+
+if(navigator.vibrate){
+navigator.vibrate(200);
+}
+
+}
+
+
+/* ========================================
+START TRAINING
+======================================== */
 
 let pose,stream,raf,iv,busy=false;
-function train(){T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
- sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;$('sym').style.display='';$('sym').src=pic(EX[sel[0]].id);$('nm').innerText='สุ่มท่าจาก: '+sel.map(i=>EX[i].n).join(', ');$('bl').innerText='';
- $('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';show('train')}
-const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-async function camStart(){if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
- $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
- try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
-  const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
-  if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize()}
-  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setEx(pick());
-  iv=setInterval(tick,1000);loop()}
- catch(e){stopCam();$('go').disabled=false;fb(e.name=='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c')}}
-function tick(){if(T.pause)return;
- if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return}
- T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
- {if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else T.stats[T.cur].sec++;
-  T.blockLeft--;$('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';if(T.blockLeft<=0&&T.left>0)setEx(pick())}
- if(T.left<=0)finish(false)}
-async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false}raf=requestAnimationFrame(loop)}
-function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').srcObject=null}
-function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE'}
 
-function finish(manual){if(!T.run){show('detail');return}const was=T.left<=0;
- if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
- const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';
- const m=md=='battle'?1.5:1,sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0,kc=0,lines='';
- Object.keys(T.stats).forEach(k=>{const s=T.stats[k],e=EX[k],sc=Math.round(s.score*m),c=Math.round(MET[md]*S.user.weight*s.sec/3600);tot+=sc;kc+=c;
-  lines+=img(e.id,'mini')+' '+e.n+': '+fmt(s.sec)+' | '+s.reps+' ครั้ง | '+sc+' คะแนน<br>';
-  send('session',{email:S.user.email,sid,day,exercise:e.id,mode:md,score:sc,reps:s.reps,accuracy:s.total?Math.round(s.good/s.total*100):0,calories:c,seconds:s.sec,total_seconds:used,completed:was})});
- if(was){S.done[day]=true;save()}
- $('rt').innerText=was?'DAY '+day+': Completed!':'DAY '+day+' (ไม่ครบเวลา)';$('r1').innerText=tot;$('r2').innerText=kc;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';
- $('r5').innerHTML=(was?'ครบ 15 นาที บันทึกวันนี้แล้ว ✓':'จบก่อนเวลา ยังไม่นับว่าวันนี้เสร็จ')+'<br><small>'+lines+'</small>';show('result')}
-function nextEx(){if(dayDone(day))show('program');else{renderDetail();show('detail')}}
-</script></body></html>
+function train(){
+
+T={
+run:false,
+pause:false,
+prep:0,
+cur:null,
+blockLeft:BLOCK,
+st:0,
+hold:0,
+reps:0,
+good:0,
+total:0,
+last:0,
+lastFrame:0,
+left:SEC,
+stats:{}
+};
+
+sel.forEach(i=>{
+
+T.stats[i]={
+score:0,
+reps:0,
+good:0,
+total:0,
+sec:0
+};
+
+});
+
+$('tt').innerText='Back to Balance - Day '+day;
+
+$('sym').style.display='';
+$('sym').src=pic(EX[sel[0]].id);
+
+$('nm').innerText=
+'สุ่มท่าจาก: '+sel.map(i=>EX[i].n).join(', ');
+
+$('bl').innerText='';
+
+$('tm').innerText=fmt(T.left);
+$('sc').innerText=0;
+$('rp').innerText=0;
+
+$('hb').style.width=0;
+
+$('tg').innerText=
+'กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';
+
+fb('');
+
+$('go').style.display='block';
+
+$('go').disabled=false;
+
+show('train');
+
+}
+
+
+/* ========================================
+TIMER
+======================================== */
+
+const fmt=s=>
+String(Math.floor(s/60)).padStart(2,'0')
++':'+
+String(s%60).padStart(2,'0');
+
+
+/* ========================================
+CAMERA START
+======================================== */
+
+async function camStart(){
+
+if(T.run)return;
+
+if(!window.isSecureContext||!navigator.mediaDevices){
+
+return fb(
+'ต้องเปิดผ่าน HTTPS ใน Safari/Chrome',
+'#e74c3c'
+);
+
+}
+
+$('go').disabled=true;
+
+fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
+
+try{
+
+stream=await navigator.mediaDevices.getUserMedia({
+
+video:{
+facingMode:'user',
+width:{ideal:640},
+height:{ideal:480}
+},
+
+audio:false
+
+});
+
+const v=$('cam');
+
+v.srcObject=stream;
+
+await v.play();
+
+fb('กำลังโหลดโมเดล...','#7f8c8d');
+
+if(!pose){
+
+pose=new Pose({
+
+locateFile:f=>
+'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f
+
+});
+
+pose.setOptions({
+
+modelComplexity:1,
+smoothLandmarks:true,
+minDetectionConfidence:.5,
+minTrackingConfidence:.5
+
+});
+
+pose.onResults(onResults);
+
+await pose.initialize();
+
+}
+
+T.run=true;
+
+T.lastFrame=performance.now();
+
+$('go').style.display='none';
+$('go').disabled=false;
+
+setEx(pick());
+
+iv=setInterval(tick,1000);
+
+loop();
+
+}catch(e){
+
+stopCam();
+
+$('go').disabled=false;
+
+fb(
+e.name=='NotAllowedError'
+?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome'
+:'เปิดกล้องไม่ได้: '+e.name,
+'#e74c3c'
+);
+
+}
+
+}
+
+
+/* ========================================
+TRAINING LOOP
+======================================== */
+
+async function loop(){
+
+if(!T.run)return;
+
+const v=$('cam');
+
+if(!busy&&v.readyState>=2){
+
+busy=true;
+
+try{
+await pose.send({image:v});
+}catch(e){}
+
+busy=false;
+
+}
+
+raf=requestAnimationFrame(loop);
+
+}
+
+
+/* ========================================
+COUNTDOWN
+======================================== */
+
+function tick(){
+
+if(T.pause)return;
+
+if(performance.now()-T.lastFrame>3000){
+
+fb(
+'กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)',
+'#e74c3c'
+);
+
+return;
+
+}
+
+T.left--;
+
+$('tm').innerText=fmt(Math.max(T.left,0));
+
+if(T.prep>0){
+
+T.prep--;
+
+fb(
+T.prep
+?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')'
+:'เริ่ม!',
+'#7f8c8d'
+);
+
+}else{
+
+T.stats[T.cur].sec++;
+
+}
+
+T.blockLeft--;
+
+$('bl').innerText=
+'เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
+
+if(T.blockLeft<=0&&T.left>0){
+
+setEx(pick());
+
+}
+
+if(T.left<=0){
+
+finish(false);
+
+}
+
+}
+
+
+/* ========================================
+STOP CAMERA
+======================================== */
+
+function stopCam(){
+
+T.run=false;
+
+clearInterval(iv);
+
+cancelAnimationFrame(raf);
+
+if(stream){
+
+stream.getTracks().forEach(t=>t.stop());
+
+stream=null;
+
+}
+
+$('cam').srcObject=null;
+
+}
+
+
+/* ========================================
+PAUSE
+======================================== */
+
+function pause(){
+
+T.pause=!T.pause;
+
+T.last=0;
+
+$('pz').innerText=
+T.pause?'RESUME':'PAUSE';
+
+}
+
+
+/* ========================================
+FINISH TRAINING
+======================================== */
+
+function finish(manual){
+
+if(!T.run){
+
+show('detail');
+
+return;
+
+}
+
+const was=T.left<=0;
+
+if(
+manual
+&&!was
+&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?')
+){
+
+return;
+
+}
+
+const used=SEC-Math.max(T.left,0);
+
+stopCam();
+
+$('pz').innerText='PAUSE';
+
+const m=md=='battle'?1.5:1;
+
+const sid=Date.now();
+
+const acc=T.total
+?Math.round(T.good/T.total*100)
+:0;
+
+let tot=0;
+let kc=0;
+let lines='';
+
+Object.keys(T.stats).forEach(k=>{
+
+const s=T.stats[k];
+const e=EX[k];
+
+const sc=Math.round(s.score*m);
+
+const c=Math.round(
+MET[md]*S.user.weight*s.sec/3600
+);
+
+tot+=sc;
+kc+=c;
+
+lines+=
+img(e.id,'mini')
++' '+e.n+': '
++fmt(s.sec)
++' | '+s.reps
++' ครั้ง | '+sc
++' คะแนน<br>';
+
+send('session',{
+
+email:S.user.email,
+sid,
+day,
+exercise:e.id,
+mode:md,
+score:sc,
+reps:s.reps,
+
+accuracy:s.total
+?Math.round(s.good/s.total*100)
+:0,
+
+calories:c,
+seconds:s.sec,
+total_seconds:used,
+completed:was
+
+});
+
+});
+
+if(was){
+
+S.done[day]=true;
+
+save();
+
+}
+
+$('rt').innerText=
+was
+?'DAY '+day+': Completed!'
+:'DAY '+day+' (ไม่ครบเวลา)';
+
+$('r1').innerText=tot;
+$('r2').innerText=kc;
+$('r3').innerText=fmt(used);
+$('r4').innerText=acc+'%';
+
+$('r5').innerHTML=
+(was
+?'ครบ 15 นาที บันทึกวันนี้แล้ว ✓'
+:'จบก่อนเวลา ยังไม่นับว่าวันนี้เสร็จ')
++'<br><small>'+lines+'</small>';
+
+show('result');
+
+}
+
+
+/* ========================================
+CONTINUE
+======================================== */
+
+function nextEx(){
+
+if(dayDone(day)){
+
+show('program');
+
+}else{
+
+renderDetail();
+
+show('detail');
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
