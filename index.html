@@ -40,7 +40,7 @@ input:focus{outline:0;border-color:var(--ink)}
 #home h2{font-size:84px;line-height:.92;text-align:left;color:var(--lime);margin:22px 0 16px}
 #home p{text-align:left;color:#a3a3a3;font-size:15px}
 
-/* Train: ปรับแต่งเน้นกล้องขนาดใหญ่ และลดขนาดรูปท่า */
+/* Train: ปรับแต่งให้แสดงรูปท่าขนาดใหญ่ชัดเจน */
 #train{background:var(--ink);gap:10px}
 #train h3{color:var(--lime);margin:4px 0}
 #train .box{background:#262626;border-color:#333;color:#e5e5e5}
@@ -49,14 +49,14 @@ input:focus{outline:0;border-color:var(--ink)}
 #train .bar{background:#333}#train .bar i{background:var(--lime)}
 #train .ghost{background:transparent;color:#fff;border-color:#525252}
 
-/* กล่องตัวอย่างท่าขนาดกะทัดรัด (Mini Banner) */
-.ban{padding:8px 12px;display:flex;align-items:center;gap:12px;text-align:left;border-radius:16px}
-.ban #sym{width:90px;height:55px;object-fit:cover;border-radius:10px;flex:none;margin:0}
-.ban .cap{padding:0;flex:1;min-width:0}
-.ban #bl{font-size:12px;color:var(--lime);margin-top:2px}
+/* กล่องตัวอย่างท่า (ขยายรูปภาพให้ใหญ่ ชัดเจนขึ้น) */
+.ban{padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:18px;gap:8px}
+.ban #sym{width:100%;max-width:160px;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin:0 auto}
+.ban .cap{padding:0;width:100%}
+.ban #bl{font-size:13px;color:var(--lime);margin-top:2px;font-weight:600}
 
-/* กล้องความสูงยืดหยุ่นแสดงผลใหญ่ขึ้น */
-.vid{position:relative;width:100%;flex:1;min-height:220px;max-height:55dvh;background:#000;border-radius:20px;overflow:hidden;border:2px solid #333}
+/* หน้าจอกล้อง */
+.vid{position:relative;width:100%;flex:1;min-height:200px;max-height:50dvh;background:#000;border-radius:20px;overflow:hidden;border:2px solid #333}
 #cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 
@@ -86,24 +86,24 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .ei img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:14px}
 .mini{width:40px;height:24px;object-fit:cover;border-radius:5px;vertical-align:middle}
 
-/* ปรับแต่งสำหรับ iPad / Tablet / หน้าจอคอมพิวเตอร์ (หน้าจอใหญ่กว่า 700px) */
+/* สำหรับ iPad / Tablet / หน้าจอคอมพิวเตอร์ (หน้าจอใหญ่กว่า 700px) */
 @media(min-width:700px){
   body{padding:20px;align-items:center}
-  .app{max-width:960px;border-radius:28px;overflow:hidden;min-height:calc(100dvh - 40px)}
+  .app{max-width:980px;border-radius:28px;overflow:hidden;min-height:calc(100dvh - 40px)}
   .page{min-height:calc(100dvh - 40px);padding:24px}
   
-  /* ปรับหน้า Train แบบ 2 Columns เมื่อแสดงบน iPad / PC */
   #train.page{display:none}
-  #train.page.on{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto 1fr auto;gap:14px;align-content:start}
+  #train.page.on{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto 1fr;gap:16px;align-content:start}
   #train h3{grid-column:1/-1}
-  #train .vid{height:100%;max-height:calc(100dvh - 180px);min-height:360px}
-  .train-panel{display:flex;flex-direction:column;gap:10px;justify-content:center}
+  #train .vid{height:100%;max-height:calc(100dvh - 160px);min-height:400px}
+  .train-panel{display:flex;flex-direction:column;gap:12px;justify-content:center}
+  .ban #sym{max-width:200px} /* บนหน้าจอใหญ่ขยายรูปท่าได้เต็มที่ถึง 200px */
 }
 
 @media(max-width:360px){
   .page{padding:12px}
   .dash b{font-size:26px}
-  .ban #sym{width:75px;height:48px}
+  .ban #sym{max-width:130px}
 }
 </style></head><body><div class="app">
 
@@ -130,7 +130,7 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 <div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND (BATTLE)</button></div>
 <button class="btn sp" onclick="train('ex')">START (15 นาที)</button><button class="btn ghost" onclick="show('program')">กลับ</button></div>
 
-<!-- หน้า Train ปรับแต่งใหม่ -->
+<!-- หน้า Train รูปท่าขยายใหญ่ขึ้น -->
 <div id="train" class="page">
   <h3 id="tt"></h3>
   <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
