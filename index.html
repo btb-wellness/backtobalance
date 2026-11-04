@@ -254,7 +254,9 @@ const MET={without:3,battle:3.8};
 /* รองรับไฟล์รูปหลายชนิดและตัวพิมพ์ใหญ่/เล็กของนามสกุล */
 const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
 function imageCandidates(id,st){
- const base=(id==='iyt'&&st!==null&&st!==undefined)?'iyt_'+st:id;
+ // IYT ใช้ชื่อไฟล์แยกตามท่า: iyt_i, iyt_y และ iyt_t
+ const iytFiles=['iyt_i','iyt_y','iyt_t'];
+ const base=(id==='iyt')?iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0]:id;
  return IMAGE_EXTENSIONS.map(ext=>'images/'+base+'.'+ext);
 }
 function loadExerciseImage(element,id,st){
