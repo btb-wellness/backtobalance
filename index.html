@@ -36,19 +36,22 @@ input:focus{outline:0;border-color:var(--ink)}
 .dash b{display:block;font-family:'Antonio',sans-serif;font-size:34px;line-height:1.1;color:var(--ink)}
 #fb{text-align:center;font-weight:700;min-height:24px}
 .warn{display:none;background:#fef9c3;color:#854d0e;padding:10px;border-radius:14px;font-size:12px}
+
 /* Home: มืด + ไลม์ */
 #home{background:radial-gradient(circle at 90% 6%,#bef26466,transparent 45%),var(--ink);color:#fff}
 #home .hero{margin-top:auto}#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
 #home h2{font-size:84px;line-height:.92;text-align:left;color:var(--lime);margin:22px 0 16px}
 #home p{text-align:left;color:#a3a3a3;font-size:15px}
+
 /* Train: มืดให้ภาพกล้องเด่น */
 #train{background:var(--ink)}#train h3{color:var(--lime)}
 #train .box{background:#262626;border-color:#333;color:#e5e5e5}#train .dash b{color:var(--lime)}#train #nm{color:#fff;font-size:18px}
 #train .bar{background:#333}#train .bar i{background:var(--lime)}#train .ghost{background:transparent;color:#fff;border-color:#525252}
+
 /* Result */
 #result .box b{font-family:'Antonio',sans-serif;letter-spacing:.04em}
 
-/* ===== Responsive + รูปภาพ ===== */
+/* ===== Responsive ===== */
 .app{max-width:560px}
 .page{padding:max(22px,env(safe-area-inset-top)) 22px max(22px,env(safe-area-inset-bottom))}
 h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
@@ -63,21 +66,24 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 .vid{height:auto;aspect-ratio:4/3;max-height:52dvh}
 .exImg{display:block;margin:0 auto;width:clamp(84px,30vw,120px);height:auto;border-radius:20px}
 #tabs{display:grid!important;grid-template-columns:repeat(2,1fr);gap:8px}
-.seg.ex{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;font-size:13px;line-height:1.25}
-.seg.ex img{width:72px;height:86px;border-radius:12px}.seg.on img{outline:3px solid var(--lime)}
-.ei{display:flex;gap:12px;align-items:flex-start}.ei img{width:64px;height:77px;border-radius:12px;flex:none}
-.mini{width:22px;height:26px;vertical-align:middle;border-radius:5px}
-@media(min-width:700px){body{padding:24px 0;align-items:flex-start}.app{border-radius:32px;overflow:hidden;min-height:calc(100dvh - 48px)}.page{min-height:calc(100dvh - 48px);padding:28px}}
-@media(max-width:360px){.page{padding:16px}.dash b{font-size:28px}.seg.ex img{width:60px;height:72px}}
-@media(orientation:landscape) and (max-height:520px){.vid{max-height:68dvh;aspect-ratio:16/9}#home h2{font-size:clamp(34px,9vw,52px);margin:12px 0}#home{--hy:35%}}
-/* ===== รูปท่า PNG (สัดส่วนแนวนอน) ===== */
-.seg.ex{padding:8px;gap:6px}
+
+/* ===== ปรับแต่งรูปภาพให้เท่ากันอย่างสมบูรณ์แบบ ===== */
+.seg.ex{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;font-size:13px;line-height:1.25}
 .seg.ex img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px}
-.ei{flex-direction:column;gap:8px}
-.ei img{display:block;width:100%;height:auto;border-radius:14px}
-.ban{padding:0;overflow:hidden;text-align:center}.ban .cap{padding:10px 12px 12px}.ban #sym{display:block;width:100%;height:auto;border-radius:0;margin:0}
-.vid{max-height:44dvh}
-.mini{width:40px;height:24px;object-fit:cover;border-radius:5px}
+.seg.on img{outline:3px solid var(--lime)}
+
+.ei{display:flex;flex-direction:column;gap:8px}
+.ei img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:14px}
+
+.ban{padding:0;overflow:hidden;text-align:center}
+.ban .cap{padding:10px 12px 12px}
+.ban #sym{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:0;margin:0}
+
+.mini{width:40px;height:24px;object-fit:cover;border-radius:5px;vertical-align:middle}
+
+@media(min-width:700px){body{padding:24px 0;align-items:flex-start}.app{border-radius:32px;overflow:hidden;min-height:calc(100dvh - 48px)}.page{min-height:calc(100dvh - 48px);padding:28px}}
+@media(max-width:360px){.page{padding:16px}.dash b{font-size:28px}}
+@media(orientation:landscape) and (max-height:520px){.vid{max-height:68dvh;aspect-ratio:16/9}#home h2{font-size:clamp(34px,9vw,52px);margin:12px 0}#home{--hy:35%}}
 </style></head><body><div class="app">
 
 <div id="home" class="page on"><div class="hero"><div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">Resistance Band · Posture Studio</span></div><h2>Back to<br>Balance</h2>
@@ -115,9 +121,9 @@ h2{font-size:clamp(28px,9vw,40px)}h3{font-size:clamp(20px,6vw,26px)}
 </div>
 <script>
 const API='PASTE_YOUR_WEB_APP_URL_HERE', SEC=900, BLOCK=60, PREP=3, DAYS=15, PER=3, MET={without:3,battle:3.8};
-const EXT={iyt:'png',w:'png',neck:'png',pec:'png'}; // รูปที่ไม่ใช่ svg (ถ้าไม่ระบุ ใช้ svg)
+const EXT={iyt:'png',w:'png',neck:'png',pec:'png'};
 const pic=n=>'images/'+n+'.'+(EXT[n]||'svg');
-const IMG=id=>pic(id);
+const IMG=(id,st)=>id=='iyt' && st!==null && st!==undefined ? 'images/iyt_'+st+'.png' : pic(id);
 const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="this.style.display='none'">`;
 const EX=[
 {id:'iyt',n:'Modified Band IYT',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I (ยกขึ้นเหนือศีรษะ) → Y (เฉียง 45°) → T (กางระดับไหล่) ค้างท่าละ 5 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังและไหล่',video:''},
@@ -131,7 +137,7 @@ const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 function send(a,d){if(!API||API.indexOf('PASTE_')==0)return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:a,...d})}).catch(()=>{})}
 function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');if(id=='program')renderProgram()}
 if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
-// ---- ผู้ใช้ + บันทึกการเข้าใช้งานทุกครั้ง ----
+
 function visit(ev){send('visit',{event:ev,username:S.user.username,email:S.user.email,ua:navigator.userAgent})}
 function start(){if(S.user){visit('open');show('program')}else show('login')}
 function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
@@ -140,7 +146,7 @@ function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g=='ชาย');$('g2').c
 function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
 Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();send('profile',S.user);show('program')}
 function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home')}}
-// ---- โปรแกรม ----
+
 const dayDone=d=>!!S.done[d];
 function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c}
 function renderProgram(){const c=curDay(),n=Math.min(c-1,DAYS);$('pbar').style.width=n/DAYS*100+'%';$('ptxt').innerText='เสร็จแล้ว '+n+'/'+DAYS+' วัน (วันละ 15 นาที)';
@@ -154,7 +160,7 @@ function renderDetail(){$('dt').innerText='Day '+day+' (สัปดาห์ท
 $('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})">${img(e.id,'')}${e.n}</button>`).join('');
 $('dinfo').innerHTML=sel.map(i=>`<div class="ei">${img(EX[i].id,'')}<div><b>${EX[i].n}</b><br>${EX[i].how}<br><i>ประโยชน์: ${EX[i].ben}</i></div></div>`+(EX[i].video?`<br><iframe src="${EX[i].video}" style="width:100%;height:160px;border:0" allowfullscreen></iframe>`:'')).join('<hr>')}
 function mode(m){md=m;$('m1').classList.toggle('on',m=='without');$('m2').classList.toggle('on',m=='battle')}
-// ---- ตรวจท่า ----
+
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r};
 let T={};
 function evalPose(lm,id){
@@ -182,12 +188,12 @@ function onResults(r){const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.
  if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
   if(T.hold>=q.h){T.reps++;s.reps++;s.score+=100;T.hold=0;if(id=='iyt'){T.st=(T.st+1)%3;setImg()}fb('ครบ 1 ครั้ง! +100','#27ae60')}}else{T.hold=0;fb(q.m,'#e74c3c')}
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps}
-// ---- สุ่มท่า ----
+
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)]}
 function setImg(){const e=EX[T.cur];$('sym').style.display='';$('sym').src=IMG(e.id,e.id=='iyt'?T.st:null)}
 function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];
  setImg();$('nm').innerText=e.n;$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200)}
-// ---- กล้อง/ตัวจับเวลา ----
+
 let pose,stream,raf,iv,busy=false;
 function train(){T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
@@ -211,7 +217,7 @@ function tick(){if(T.pause)return;
 async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false}raf=requestAnimationFrame(loop)}
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').srcObject=null}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE'}
-// ---- จบ/บันทึก ----
+
 function finish(manual){if(!T.run){show('detail');return}const was=T.left<=0;
  if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
  const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';
