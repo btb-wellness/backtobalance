@@ -18,7 +18,21 @@ body{background:#e7e9e3}button,input{font:inherit}button{cursor:pointer}
 .app{width:100%;max-width:560px;margin:0 auto;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0001;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{display:none;min-height:100dvh;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));gap:13px;flex-direction:column}.page.on{display:flex}
 h2,h3{margin:0;font-family:'Bebas Neue',system-ui,-apple-system,sans-serif;font-weight:400;letter-spacing:.04em}
-h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--muted);line-height:1.6}label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#66705f}input{width:100%;height:58px;padding:0 16px;border:2px solid var(--line);border-radius:17px;background:white;font-size:16px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 4px #c5f36b35}.btn{min-height:54px;width:100%;border:0;border-radius:17px;padding:13px 16px;background:var(--lime);color:var(--ink);font-weight:800;font-size:16px;box-shadow:0 7px 18px #9dcf4530}.btn:active{transform:scale(.985)}.btn:disabled{opacity:.55}.btn.ghost{background:transparent;border:2px solid #687064;color:inherit;box-shadow:none}.btn.red{background:#df4145;color:white;box-shadow:none}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.sp{margin-top:auto}.box{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;font-size:14px;line-height:1.6}.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}.bar i{display:block;width:0;height:100%;border-radius:99px;background:var(--green);transition:width .25s}.seg{min-height:46px;border:1.5px solid #d7ddd2;border-radius:13px;background:white;color:#4f584b;font-size:13px;font-weight:800;padding:9px}.seg.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.brand-mark{width:54px;height:54px;border-radius:17px;background:var(--lime);display:grid;place-items:center;margin:auto;font-size:30px}.brand-title{text-align:center;font:51px 'Bebas Neue',sans-serif;letter-spacing:.04em;line-height:1}.brand-sub{text-align:center;color:#7a982f;font-size:12px;font-weight:800;letter-spacing:.13em}.login-top{padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center}.login-welcome{margin-top:28px}.login-welcome h2{text-align:left;font-size:50px;margin-bottom:8px}.login-welcome p{font-size:15px}.login-fields{display:flex;flex-direction:column;gap:10px;margin-top:16px}.input-wrap{position:relative}.input-wrap span{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:#8ebd25}.input-wrap input{padding-left:52px}.login-note,.login-footer{font-size:11px;font-weight:800;letter-spacing:.1em;color:#87917e}.login-footer{text-align:center;margin:5px 0}#login{background:radial-gradient(ellipse at 100% 32%,#e8f0dc 0,transparent 34%),var(--paper)}#login .btn{min-height:64px;font-size:19px}#home{background:radial-gradient(circle at 88% 12%,#c5f36b55,transparent 38%),var(--ink);color:white;justify-content:space-between}#home .hero{margin:auto 0}#home h2{font-size:clamp(66px,20vw,108px);line-height:.9;text-align:left;color:var(--lime);margin:20px 0}#home p{color:#c0c7ba;font-size:14px}.tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}.warn{display:none;padding:10px;border-radius:12px;background:#fff4c8;color:#815b00;font-size:12px}#program .program-head{display:flex;align-items:center;justify-content:center;gap:10px}#program .program-head .brand-mark{margin:0;width:42px;height:42px;font-size:24px}#program .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}#program .tile{height:78px;border:2px solid transparent;border-radius:18px;background:#e7e9e5;color:#9ca39a;font:26px 'Bebas Neue',sans-serif}#program .tile.active{background:var(--ink);color:var(--lime);border-color:var(--lime)}#program .tile.done{background:var(--lime);color:var(--ink)}#program .tile.done:after{content:' ✓'}#detail,#train{background:#151a16;color:white}#detail h3,#train h3{color:var(--lime)}#detail p{color:#b8c0b2}#detail label{color:var(--lime)}#detail .box{background:#222a23;border-color:#384238;color:#e9eee5}.detail-header{display:flex;justify-content:space-between;gap:8px}.badge{background:var(--lime);color:#172017;border-radius:99px;padding:7px 12px;font-size:10px;font-weight:900}#tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#detail .seg.ex{position:relative;text-align:left;display:flex;flex-direction:column;gap:6px;padding:8px;background:#222a23;color:white;border:1px solid #3c463b;border-radius:15px;min-width:0}#detail .seg.ex.on{border:2px solid var(--lime);background:#293522}#detail .seg.ex img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:#111}.ex-number{font:15px 'Bebas Neue',sans-serif;color:var(--lime)}.ex-name{font-size:12px;line-height:1.4;min-height:34px}.ex-time{font-size:10px;color:#aeb8a7}.selected-check{display:none;position:absolute;right:13px;top:13px;background:var(--lime);color:#111;border-radius:50%;width:23px;height:23px;text-align:center;line-height:23px}#detail .seg.ex.on .selected-check{display:block}#dinfo .ei{display:flex;flex-direction:column;gap:10px}#dinfo .ei img{width:100%;height:180px;object-fit:cover;border-radius:12px}#dinfo .exercise-name{color:var(--lime);font-size:18px;font-weight:800}#dinfo .exercise-desc{font-size:13px;line-height:1.8;color:#e5e9e1}#dinfo .exercise-benefit{background:#303b2b;border-left:3px solid var(--lime);padding:10px;border-radius:8px;color:#d8f4a4;font-size:12px}#detail .seg:not(.ex){background:#222a23;color:#ddd;border-color:#485147}#detail .seg:not(.ex).on{background:var(--lime);color:#172017;border-color:var(--lime)}#detail .btn:not(.ghost){background:linear-gradient(135deg,#d0f77b,#91c928)}#train{gap:12px;justify-content:flex-start}#train h3{text-align:center;font-size:31px;margin:2px 0}
+h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--muted);line-height:1.6}label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#66705f}input{width:100%;height:58px;padding:0 16px;border:2px solid var(--line);border-radius:17px;background:white;font-size:16px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 4px #c5f36b35}.btn{min-height:54px;width:100%;border:0;border-radius:17px;padding:13px 16px;background:var(--lime);color:var(--ink);font-weight:800;font-size:16px;box-shadow:0 7px 18px #9dcf4530}.btn:active{transform:scale(.985)}.btn:disabled{opacity:.55}.btn.ghost{background:transparent;border:2px solid #687064;color:inherit;box-shadow:none}.btn.red{background:#df4145;color:white;box-shadow:none}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.sp{margin-top:auto}.box{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;font-size:14px;line-height:1.6}.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}.bar i{display:block;width:0;height:100%;border-radius:99px;background:var(--green);transition:width .25s}.seg{min-height:46px;border:1.5px solid #d7ddd2;border-radius:13px;background:white;color:#4f584b;font-size:13px;font-weight:800;padding:9px}.seg.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.brand-mark{width:54px;height:54px;border-radius:17px;background:var(--lime);display:grid;place-items:center;margin:auto;font-size:30px}.brand-title{text-align:center;font:51px 'Bebas Neue',sans-serif;letter-spacing:.04em;line-height:1}.brand-sub{text-align:center;color:#7a982f;font-size:12px;font-weight:800;letter-spacing:.13em}.login-top{padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center}.login-welcome{margin-top:28px}.login-welcome h2{text-align:left;font-size:50px;margin-bottom:8px}.login-welcome p{font-size:15px}.login-fields{display:flex;flex-direction:column;gap:10px;margin-top:16px}.input-wrap{position:relative}.input-wrap span{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:#8ebd25}.input-wrap input{padding-left:52px}.login-note,.login-footer{font-size:11px;font-weight:800;letter-spacing:.1em;color:#87917e}.login-footer{text-align:center;margin:5px 0}#login{background:radial-gradient(ellipse at 100% 32%,#e8f0dc 0,transparent 34%),var(--paper)}#login .btn{min-height:64px;font-size:19px}
+
+/* ===== ปรับแต่งหน้าปก (Home Page Header & Branding) ===== */
+#home{background:radial-gradient(circle at 88% 12%,#c5f36b55,transparent 38%),var(--ink);color:white;justify-content:space-between;position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
+#home>*{position:relative;z-index:1}
+#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
+.home-brand-top{display:flex;align-items:center;gap:12px;margin-top:4px}
+.home-logo{width:54px;height:54px;object-fit:contain}
+.tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}
+#home .hero{margin:auto 0 0}
+#home h2{font-size:clamp(66px,20vw,108px);line-height:.9;text-align:left;color:var(--lime);margin:16px 0 20px}
+#home p{color:#c0c7ba;font-size:14px}
+#home .hero,#home .warn{text-shadow:0 2px 14px #000a}
+
+.warn{display:none;padding:10px;border-radius:12px;background:#fff4c8;color:#815b00;font-size:12px}#program .program-head{display:flex;align-items:center;justify-content:center;gap:10px}#program .program-head .brand-mark{margin:0;width:42px;height:42px;font-size:24px}#program .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}#program .tile{height:78px;border:2px solid transparent;border-radius:18px;background:#e7e9e5;color:#9ca39a;font:26px 'Bebas Neue',sans-serif}#program .tile.active{background:var(--ink);color:var(--lime);border-color:var(--lime)}#program .tile.done{background:var(--lime);color:var(--ink)}#program .tile.done:after{content:' ✓'}#detail,#train{background:#151a16;color:white}#detail h3,#train h3{color:var(--lime)}#detail p{color:#b8c0b2}#detail label{color:var(--lime)}#detail .box{background:#222a23;border-color:#384238;color:#e9eee5}.detail-header{display:flex;justify-content:space-between;gap:8px}.badge{background:var(--lime);color:#172017;border-radius:99px;padding:7px 12px;font-size:10px;font-weight:900}#tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#detail .seg.ex{position:relative;text-align:left;display:flex;flex-direction:column;gap:6px;padding:8px;background:#222a23;color:white;border:1px solid #3c463b;border-radius:15px;min-width:0}#detail .seg.ex.on{border:2px solid var(--lime);background:#293522}#detail .seg.ex img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:#111}.ex-number{font:15px 'Bebas Neue',sans-serif;color:var(--lime)}.ex-name{font-size:12px;line-height:1.4;min-height:34px}.ex-time{font-size:10px;color:#aeb8a7}.selected-check{display:none;position:absolute;right:13px;top:13px;background:var(--lime);color:#111;border-radius:50%;width:23px;height:23px;text-align:center;line-height:23px}#detail .seg.ex.on .selected-check{display:block}#dinfo .ei{display:flex;flex-direction:column;gap:10px}#dinfo .ei img{width:100%;height:180px;object-fit:cover;border-radius:12px}#dinfo .exercise-name{color:var(--lime);font-size:18px;font-weight:800}#dinfo .exercise-desc{font-size:13px;line-height:1.8;color:#e5e9e1}#dinfo .exercise-benefit{background:#303b2b;border-left:3px solid var(--lime);padding:10px;border-radius:8px;color:#d8f4a4;font-size:12px}#detail .seg:not(.ex){background:#222a23;color:#ddd;border-color:#485147}#detail .seg:not(.ex).on{background:var(--lime);color:#172017;border-color:var(--lime)}#detail .btn:not(.ghost){background:linear-gradient(135deg,#d0f77b,#91c928)}#train{gap:12px;justify-content:flex-start}#train h3{text-align:center;font-size:31px;margin:2px 0}
 
 /* ===== ปรับปรุงขนาดกล้อง (Responsive Full-frame) ===== */
 .vid{--ar:1.3333;--vh:52dvh;position:relative;width:100%;max-width:100%;height:var(--vh);max-height:58vh;margin:0 auto;flex:none;background:#050505;border:2px solid #3b413b;border-radius:19px;overflow:hidden}
@@ -49,7 +63,7 @@ h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--mut
 @media(max-height:700px) and (max-width:699px){
  .page{padding-top:10px;padding-bottom:12px;gap:8px}
  .ban #sym{height:95px}
- .dash{padding:99px 8px;padding:9px}
+ .dash{padding:9px}
  .dash b{font-size:25px}
  .vid{--vh:40dvh}
 }
@@ -71,7 +85,6 @@ body.nav #nav{display:flex}
 body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 .brand-mark{background:var(--ink);padding:7px}.brand-mark img{width:100%;height:100%;object-fit:contain}
 .brand-mark.t{background:none;padding:0;width:84px;height:84px}
-.home-logo{width:76px;height:76px;object-fit:contain;margin-bottom:6px}
 
 #stg{display:none;justify-content:center;gap:8px;margin-bottom:6px}
 #stg span{width:36px;height:27px;border-radius:8px;background:#3a443a;color:#9aa595;font:18px 'Bebas Neue',sans-serif;display:grid;place-items:center}
@@ -89,13 +102,6 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 #meInfo{display:grid;gap:10px}#meInfo div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px}#meInfo small{color:var(--muted)}
 @media(min-width:700px){#nav{max-width:900px}}
 
-#home{position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
-#home>*{position:relative;z-index:1}
-#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
-#home .hero{margin:auto 0 0}
-#home .hero,#home .warn{text-shadow:0 2px 14px #000a}
-
-/* ===== ปรับแต่งกล้องสำหรับจอมอนิเตอร์ แนวนอน ไอแพด และคอมพิวเตอร์ ===== */
 @media (max-height:700px) and (orientation:portrait){.vid{--vh:42dvh}}
 @media (orientation:landscape) and (min-width:600px){
  #train.page.on{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start;column-gap:16px;row-gap:10px}
@@ -112,11 +118,25 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 <body><main class="app">
 <header id="top"><button class="tb-back" id="backBtn" onclick="goBack()" aria-label="ย้อนกลับ">←</button><div class="tb-brand"><img src="images/logo.png" alt=""><b>BACK TO BALANCE</b></div><button class="tb-me" id="meBtn" onclick="show('me')" aria-label="โปรไฟล์">?</button></header>
 
-<section id="home" class="page on"><div class="heroBg" aria-hidden="true"></div><div class="hero"><img class="home-logo" src="images/logo.png" alt="Back to Balance"><span class="tag">RESISTANCE BAND · POSTURE STUDIO</span><h2>Back to<br>Balance</h2><p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p></div><div id="inapp" class="warn">กรุณาเปิดเว็บไซต์ผ่าน Safari หรือ Chrome เพื่อใช้งานกล้อง</div><button class="btn" onclick="start()">Get Started →</button></section>
+<section id="home" class="page on">
+  <div class="heroBg" aria-hidden="true"></div>
+  <!-- ย้ายโลโก้และแท็กไว้ด้านบนมุมซ้าย -->
+  <div class="home-brand-top">
+    <img class="home-logo" src="images/logo.png" alt="Back to Balance">
+    <span class="tag">RESISTANCE BAND · POSTURE STUDIO</span>
+  </div>
+  <div class="hero">
+    <h2>Back to<br>Balance</h2>
+    <p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p>
+  </div>
+  <div id="inapp" class="warn">กรุณาเปิดเว็บไซต์ผ่าน Safari หรือ Chrome เพื่อใช้งานกล้อง</div>
+  <button class="btn" onclick="start()">Get Started →</button>
+</section>
 
 <section id="login" class="page"><div class="login-top"><div class="brand-mark"><img src="images/logo.png" alt=""></div><div class="brand-title">BACK TO BALANCE</div><div class="brand-sub">YOUR PERSONAL WELLNESS</div></div><div class="login-welcome"><h2>Welcome Back</h2><p>เริ่มต้นดูแลสุขภาพคอ บ่า และไหล่<br>ไปกับโปรแกรมออกกำลังกายของคุณ</p></div><div class="login-fields"><label>USERNAME</label><div class="input-wrap"><span>●</span><input id="un" autocomplete="username" placeholder="กรอกชื่อผู้ใช้"></div><label>EMAIL ADDRESS</label><div class="input-wrap"><span>✉</span><input id="em" type="email" autocomplete="email" placeholder="กรอกอีเมลของคุณ"></div><div class="login-note">● &nbsp; YOUR JOURNEY STARTS HERE</div></div><button class="btn sp" onclick="login()">เข้าสู่ระบบ →</button><div class="login-footer">BACK TO BALANCE · POSTURE STUDIO</div></section>
 
-<section id="profile" class="page"><h2>Personalize<br>Your Plan</h2><label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div><label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" min="20" value="65"><label>ส่วนสูง (cm)</label><input id="ht" type="number" min="100" value="172"><button class="btn sp" onclick="saveProfile()">บันทึกข้อมูลและไปต่อ →</button></section>
+<!-- หน้าโปรไฟล์: ปรับค่าน้ำหนักและส่วนสูงเป็นค่าว่าง -->
+<section id="profile" class="page"><h2>Personalize<br>Your Plan</h2><label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div><label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" min="20" placeholder="ระบุน้ำหนัก"><label>ส่วนสูง (cm)</label><input id="ht" type="number" min="100" placeholder="ระบุส่วนสูง"><button class="btn sp" onclick="saveProfile()">บันทึกข้อมูลและไปต่อ →</button></section>
 
 <section id="program" class="page"><div class="program-head"><h3>โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt" style="text-align:center"></p><div id="weeks"></div><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
 
@@ -185,7 +205,7 @@ function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').
 
 function saveProfile(){
   const w=+$('wt').value,h=+$('ht').value;
-  if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
+  if(!S.tmpG||!$('dob').value||!w||w<20||!h||h<100)return alert('กรอกข้อมูลให้ครบถ้วน');
   Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
   save();
   send('profile',S.user);
@@ -496,8 +516,8 @@ function editProfile(){
   if(S.user){
     if(S.user.gender) gen(S.user.gender);
     if(S.user.dob) $('dob').value = S.user.dob;
-    if(S.user.weight) $('wt').value = S.user.weight;
-    if(S.user.height) $('ht').value = S.user.height;
+    $('wt').value = S.user.weight || '';
+    $('ht').value = S.user.height || '';
   }
   show('profile');
 }
