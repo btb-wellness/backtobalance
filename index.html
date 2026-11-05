@@ -13,19 +13,19 @@
 *{box-sizing:border-box}
 
 html,body{margin:0;min-height:100%;font-family:'Montserrat',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-html{overflow-x:hidden;overscroll-behavior-y:auto}
-body{background:#e7e9e3;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}button,input{font:inherit}button{cursor:pointer}
+html{width:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto}
+body{width:100%;min-height:100vh;min-height:100dvh;background:#e7e9e3;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}button,input{font:inherit}button{cursor:pointer}
 
-.app{width:100%;max-width:560px;margin:0 auto;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0001;position:relative;overflow:visible}
-.page{display:none;min-height:100dvh;height:auto;overflow:visible;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));gap:13px;flex-direction:column;touch-action:pan-y}.page.on{display:flex}
+.app{display:block;width:100%;max-width:560px;min-height:100vh;min-height:100dvh;margin:0 auto;background:var(--paper);box-shadow:0 0 40px #0001;position:relative;overflow:visible}
+.page{display:none;position:relative;width:100%;min-height:100vh;min-height:100dvh;height:auto;overflow:visible;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));gap:13px;flex-direction:column;touch-action:pan-y}.page.on{display:flex!important;visibility:visible}
 
-/* มือถือ: ให้เลื่อนทั้งหน้าเว็บ ไม่ล็อกการเลื่อนไว้ใน .app */
+/* iPhone / Android: หน้าเว็บใช้การเลื่อนของ document โดยตรง */
 @media(max-width:699px){
-  html,body{height:auto;min-height:100%;overflow-y:auto}
-  body{position:relative;overscroll-behavior-y:contain}
-  .app{height:auto;min-height:100svh;overflow:visible;overflow-y:visible;-webkit-overflow-scrolling:auto}
-  .page{min-height:100svh;height:auto;overflow:visible;overscroll-behavior: auto}
-  body.nav .page{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+  html{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  body{height:auto;min-height:100%;position:relative;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto}
+  .app{display:block;height:auto;min-height:100vh;min-height:100svh;overflow:visible}
+  .page,.page.on{position:relative;height:auto;min-height:100vh;min-height:100svh;overflow:visible;flex:0 0 auto}
+  body.nav .page{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
 }
 h2,h3{margin:0;font-family:'Bebas Neue',system-ui,-apple-system,sans-serif;font-weight:400;letter-spacing:.04em}
 h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--muted);line-height:1.6}label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#66705f}input{width:100%;height:58px;padding:0 16px;border:2px solid var(--line);border-radius:17px;background:white;font-size:16px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 4px #c5f36b35}.btn{min-height:54px;width:100%;border:0;border-radius:17px;padding:13px 16px;background:var(--lime);color:var(--ink);font-weight:800;font-size:16px;box-shadow:0 7px 18px #9dcf4530}.btn:active{transform:scale(.985)}.btn:disabled{opacity:.55}.btn.ghost{background:transparent;border:2px solid #687064;color:inherit;box-shadow:none}.btn.red{background:#df4145;color:white;box-shadow:none}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.sp{margin-top:auto}.box{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;font-size:14px;line-height:1.6}.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}.bar i{display:block;width:0;height:100%;border-radius:99px;background:var(--green);transition:width .25s}.seg{min-height:46px;border:1.5px solid #d7ddd2;border-radius:13px;background:white;color:#4f584b;font-size:13px;font-weight:800;padding:9px}.seg.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.brand-mark{width:54px;height:54px;border-radius:17px;background:var(--lime);display:grid;place-items:center;margin:auto;font-size:30px}.brand-title{text-align:center;font:51px 'Bebas Neue',sans-serif;letter-spacing:.04em;line-height:1}.brand-sub{text-align:center;color:#7a982f;font-size:12px;font-weight:800;letter-spacing:.13em}.login-top{padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center}.login-welcome{margin-top:28px}.login-welcome h2{text-align:left;font-size:50px;margin-bottom:8px}.login-welcome p{font-size:15px}.login-fields{display:flex;flex-direction:column;gap:10px;margin-top:16px}.input-wrap{position:relative}.input-wrap span{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:#8ebd25}.input-wrap input{padding-left:52px}.login-note,.login-footer{font-size:11px;font-weight:800;letter-spacing:.1em;color:#87917e}.login-footer{text-align:center;margin:5px 0}#login{background:radial-gradient(ellipse at 100% 32%,#e8f0dc 0,transparent 34%),var(--paper)}#login .btn{min-height:64px;font-size:19px}
@@ -572,9 +572,19 @@ function show(pageId){
   const target = $(pageId);
   if(target) target.classList.add('on');
 
-  window.scrollTo({top:0,left:0,behavior:'auto'});
   const appEl = document.querySelector('.app');
-  if(appEl && window.matchMedia('(min-width:700px)').matches) appEl.scrollTop = 0;
+  if(window.matchMedia('(min-width:700px)').matches){
+    if(appEl) appEl.scrollTop = 0;
+  }else{
+    // Safari iOS sometimes applies scroll before the newly selected page is laid out.
+    requestAnimationFrame(()=>{
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      if(target) target.scrollIntoView({block:'start',behavior:'auto'});
+      requestAnimationFrame(()=>window.scrollTo(0,0));
+    });
+  }
 
   const showBar = ['program', 'detail', 'library', 'history', 'me'].includes(pageId);
   const showNav = ['program', 'library', 'history', 'me'].includes(pageId);
