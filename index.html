@@ -7,17 +7,14 @@
 <title>Back to Balance</title>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- ดึงเฉพาะ Montserrat และ Bebas Neue (ตัด Noto Sans Thai ออก เพื่อใช้ฟอนต์ระบบเครื่องแทน) -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#171c18;--lime:#c5f36b;--green:#91c928;--paper:#f5f7f1;--muted:#7c8579;--line:#e2e7dd}
 *{box-sizing:border-box}
 
-/* ปรับปรุง font-family ให้ใช้ System UI Fonts สำหรับภาษาไทยของแต่ละเครื่อง */
 html,body{margin:0;min-height:100%;font-family:'Montserrat',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
 body{background:#e7e9e3}button,input{font:inherit}button{cursor:pointer}
 
-/* ปรับปรุงโครงสร้าง .app เพื่อรองรับ Scroll บนมือถือและคอมพิวเตอร์ */
 .app{width:100%;max-width:560px;margin:0 auto;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0001;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{display:none;min-height:100dvh;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));gap:13px;flex-direction:column}.page.on{display:flex}
 h2,h3{margin:0;font-family:'Bebas Neue',system-ui,-apple-system,sans-serif;font-weight:400;letter-spacing:.04em}
@@ -37,18 +34,15 @@ body.nav #nav{display:flex}
 #nav button.on{color:var(--lime)}
 .ni{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* เพิ่ม Padding ด้านล่างไม่ให้ Bottom Nav บังเนื้อหาล่างสุด */
 body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 .brand-mark{background:var(--ink);padding:7px}.brand-mark img{width:100%;height:100%;object-fit:contain}
 .brand-mark.t{background:none;padding:0;width:84px;height:84px}
 .home-logo{width:76px;height:76px;object-fit:contain;margin-bottom:6px}
 
-/* IYT: ตัวบอกขั้น I / Y / T */
 #stg{display:none;justify-content:center;gap:8px;margin-bottom:6px}
 #stg span{width:36px;height:27px;border-radius:8px;background:#3a443a;color:#9aa595;font:18px 'Bebas Neue',sans-serif;display:grid;place-items:center}
 #stg span.on{background:var(--lime);color:#172017}
 
-/* หน้า ท่า / ประวัติ / โปรไฟล์ */
 .lib{display:flex;flex-direction:column;gap:8px}.lib img{display:block;width:100%;border-radius:12px;background:#101510}
 .lib .exercise-name{font-weight:800;font-size:17px}.lib .exercise-desc{font-size:13px;line-height:1.7}
 .lib .exercise-benefit{background:#eef6dc;border-left:3px solid var(--green);padding:9px;border-radius:8px;font-size:12px;color:#4d6a12}
@@ -61,14 +55,12 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 #meInfo{display:grid;gap:10px}#meInfo div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px}#meInfo small{color:var(--muted)}
 @media(min-width:700px){#nav{max-width:900px}}
 
-/* ===== หน้าปก: ภาพเต็มจอ เอียงขวา ===== */
 #home{position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
 #home>*{position:relative;z-index:1}
 #home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
 #home .hero{margin:auto 0 0}
 #home .hero,#home .warn{text-shadow:0 2px 14px #000a}
 
-/* ===== กล้อง: รองรับแนวตั้ง / แนวนอน ทุกขนาดจอ ===== */
 @media (max-height:700px) and (orientation:portrait){.vid{--vh:38dvh}}
 @media (orientation:landscape) and (min-width:600px){
  #train.page.on{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start;column-gap:16px;row-gap:10px}
@@ -109,11 +101,9 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 <nav id="nav"><button data-p="program" onclick="show('program')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>โปรแกรม</button><button data-p="library" onclick="show('library')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M6 10h12M9 21l3-6 3 6"/></svg>ท่าออกกำลังกาย</button><button data-p="history" onclick="show('history')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</button><button data-p="me" onclick="show('me')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>โปรไฟล์</button></nav>
 
 <script>
-/* ตั้งค่า URL ของ Apps Script เดิมตรงนี้ */
 const API='PASTE_YOUR_WEB_APP_URL_HERE';
 const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3,MET={battle:3.8};
 
-/* ระบบลองนามสกุลภาพ JPG/JPEG/PNG/WEBP/SVG ให้อัตโนมัติ */
 const EXTENSIONS=['jpg','jpeg','png','webp','svg','JPG','JPEG','PNG','WEBP'];
 const FILES={iyt_i:['iyt_i','iyt-i','IYT_I','IYT-I'],iyt_y:['iyt_y','iyt-y','IYT_Y','IYT-Y'],iyt_t:['iyt_t','iyt-t','IYT_T','IYT-T'],w:['w','W'],neck:['neck','Neck'],pec:['pec','Pec','pectoral','Pectoral']};
 function candidates(key){return (FILES[key]||[key]).flatMap(name=>EXTENSIONS.map(ext=>'images/'+name+'.'+ext));}
@@ -128,79 +118,192 @@ const STAGES=[{file:'iyt_i',title:'ท่า I — ยกแขนขึ้น�
 
 const $=id=>document.getElementById(id);let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{};}catch(e){}S.done=S.done||{};const save=()=>localStorage.setItem('nbr',JSON.stringify(S));
 
+let profFrom = 'program';
+
 function send(action,data){if(!API||API.startsWith('PASTE_'))return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...data})}).catch(()=>{});}
 if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
-function start(){if(S.user){send('visit',{event:'open',username:S.user.username,email:S.user.email,ua:navigator.userAgent});show('program');}else show('login');}
-function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');S.user={...(S.user||{}),username:u,email:e};save();send('visit',{event:'login',username:u,email:e,ua:navigator.userAgent});S.user.weight?show('program'):show('profile');}
+
+function start(){
+  if(S.user && S.user.username){
+    send('visit',{event:'open',username:S.user.username,email:S.user.email,ua:navigator.userAgent});
+    show('program');
+  } else {
+    show('login');
+  }
+}
+
+function login(){
+  const u=$('un').value.trim(),e=$('em').value.trim();
+  if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
+  S.user={...(S.user||{}),username:u,email:e};
+  save();
+  send('visit',{event:'login',username:u,email:e,ua:navigator.userAgent});
+  if(S.user.weight){
+    show('program');
+  } else {
+    profFrom = 'program';
+    show('profile');
+  }
+}
+
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
-function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();send('profile',S.user);show(profFrom);profFrom='program';}
+
+function saveProfile(){
+  const w=+$('wt').value,h=+$('ht').value;
+  if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');
+  Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
+  save();
+  send('profile',S.user);
+  show(profFrom);
+  profFrom='program';
+}
+
 function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home');}}
 function curDay(){let d=1;while(d<=DAYS&&S.done[d])d++;return d;}
-function renderProgram(){const current=curDay(),done=Math.min(current-1,DAYS);$('pbar').style.width=done/DAYS*100+'%';$('ptxt').innerText=`เสร็จแล้ว ${done}/${DAYS} วัน (วันละ 15 นาที)`;let out='';for(let w=1;w<=5;w++){out+=`<label>สัปดาห์ที่ ${w}</label><div class="grid">`;for(let i=1;i<=3;i++){let d=(w-1)*3+i,cls=S.done[d]?'done':d===current?'active':'lock';out+=`<button class="tile ${cls}" ${cls==='lock'?'disabled':''} onclick="openDay(${d})">DAY ${d}</button>`;}out+='</div>';} $('weeks').innerHTML=out;}
+
+function renderProgram(){
+  const current=curDay(),done=Math.min(current-1,DAYS);
+  $('pbar').style.width=done/DAYS*100+'%';
+  $('ptxt').innerText=`เสร็จแล้ว ${done}/${DAYS} วัน (วันละ 15 นาที)`;
+  let out='';
+  for(let w=1;w<=5;w++){
+    out+=`<label>สัปดาห์ที่ ${w}</label><div class="grid">`;
+    for(let i=1;i<=3;i++){
+      let d=(w-1)*3+i,cls=S.done[d]?'done':d===current?'active':'lock';
+      out+=`<button class="tile ${cls}" ${cls==='lock'?'disabled':''} onclick="openDay(${d})">DAY ${d}</button>`;
+    }
+    out+='</div>';
+  } 
+  $('weeks').innerHTML=out;
+}
 
 let day=1,sel=[0,1,2,3],md='battle';
 function openDay(d){day=d;sel=[0,1,2,3];md='battle';renderDetail();show('detail');}
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i);}else sel.push(i);renderDetail();}
+
 function renderDetail(){
-$('weekBadge').innerText='WEEK '+String(Math.ceil(day/3)).padStart(2,'0');$('selectCount').innerText=sel.length+' EXERCISES SELECTED';$('selectBar').style.width=sel.length/EX.length*100+'%';
-$('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})"><img data-img="${e.id}" alt="${e.n}"><span class="ex-number">EXERCISE 0${i+1}</span><span class="ex-name">${e.n}</span><span class="ex-time">${e.id==='iyt'?'I / Y / T · 5 SEC EACH':e.id==='pec'?'15 SEC HOLD':'5 SEC HOLD'}</span><span class="selected-check">✓</span></button>`).join('');
-document.querySelectorAll('#tabs img').forEach(el=>setImage(el,el.dataset.img));
-$('dinfo').innerHTML=sel.map(i=>{const e=EX[i];return `<div class="ei"><img data-img="${e.id}" alt="${e.n}"><div class="exercise-name">${e.n}</div><div class="exercise-desc"><b>วิธีปฏิบัติ</b><br>${e.how}</div><div class="exercise-benefit"><b>ประโยชน์</b><br>${e.ben}</div></div>`;}).join('<hr style="border:0;border-top:1px solid #485147;margin:16px 0">');
-document.querySelectorAll('#dinfo img').forEach(el=>setImage(el,el.dataset.img));
+  $('weekBadge').innerText='WEEK '+String(Math.ceil(day/3)).padStart(2,'0');
+  $('selectCount').innerText=sel.length+' EXERCISES SELECTED';
+  $('selectBar').style.width=sel.length/EX.length*100+'%';
+  $('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})"><img data-img="${e.id}" alt="${e.n}"><span class="ex-number">EXERCISE 0${i+1}</span><span class="ex-name">${e.n}</span><span class="ex-time">${e.id==='iyt'?'I / Y / T · 5 SEC EACH':e.id==='pec'?'15 SEC HOLD':'5 SEC HOLD'}</span><span class="selected-check">✓</span></button>`).join('');
+  document.querySelectorAll('#tabs img').forEach(el=>setImage(el,el.dataset.img));
+  $('dinfo').innerHTML=sel.map(i=>{const e=EX[i];return `<div class="ei"><img data-img="${e.id}" alt="${e.n}"><div class="exercise-name">${e.n}</div><div class="exercise-desc"><b>วิธีปฏิบัติ</b><br>${e.how}</div><div class="exercise-benefit"><b>ประโยชน์</b><br>${e.ben}</div></div>`;}).join('<hr style="border:0;border-top:1px solid #485147;margin:16px 0">');
+  document.querySelectorAll('#dinfo img').forEach(el=>setImage(el,el.dataset.img));
 }
 
-/* ตรวจจับท่าทางและจับเวลาค้าง */
 const angle=(a,b,c)=>{let v=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return v>180?360-v:v;};
 let T={},pose=null,stream=null,raf=null,iv=null,busy=false;
+
 function evaluate(lm,id){
-if(id==='neck'){let L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[ear,shoulder]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];if(Math.min(ear.visibility,shoulder.visibility)<.5)return null;let cva=Math.atan2(shoulder.y-ear.y,Math.abs(ear.x-shoulder.x))*180/Math.PI,ok=cva>=50;return{ok,h:5,t:'จัดศีรษะให้อยู่แนวเดียวกับไหล่',m:ok?'ค้างท่าไว้':'เก็บคางและจัดศีรษะให้ตรง'};}
-for(let i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
-let sides=[[11,13,15],[12,14,16]],el=sides.map(a=>angle(lm[a[0]],lm[a[1]],lm[a[2]])),ev=sides.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),shoulderWidth=Math.abs(lm[11].x-lm[12].x),handWidth=Math.abs(lm[15].x-lm[16].x),straight=el[0]>150&&el[1]>150;
-if(id==='iyt'){let st=STAGES[T.stage],ok=straight&&ev.every(v=>v>=st.range[0]&&v<=st.range[1]);return{ok,h:5,t:st.title,m:ok?'ท่าถูกต้อง ค้างไว้ 5 วินาที':straight?'ปรับระดับแขนตามตัวอย่าง':'เหยียดข้อศอกให้ตรง'};}
-if(id==='w'){let ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y;return{ok,h:5,t:'งอข้อศอกเป็นตัว W และเก็บสะบัก',m:ok?'ท่าถูกต้อง ค้างไว้':'งอข้อศอกและยกมือขึ้นเล็กน้อย'};}
-let avg=(ev[0]+ev[1])/2,ok=straight&&avg>=-45&&avg<=15&&handWidth>2*shoulderWidth;return{ok,h:15,t:'กางแขนออกด้านข้างเพื่อยืดหน้าอก',m:ok?'ค้างท่ายืดไว้':'เหยียดแขนและกางออกด้านข้าง'};
+  if(id==='neck'){
+    let L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[ear,shoulder]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];
+    if(Math.min(ear.visibility,shoulder.visibility)<.5)return null;
+    let cva=Math.atan2(shoulder.y-ear.y,Math.abs(ear.x-shoulder.x))*180/Math.PI,ok=cva>=50;
+    return{ok,h:5,t:'จัดศีรษะให้อยู่แนวเดียวกับไหล่',m:ok?'ค้างท่าไว้':'เก็บคางและจัดศีรษะให้ตรง'};
+  }
+  for(let i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
+  let sides=[[11,13,15],[12,14,16]],el=sides.map(a=>angle(lm[a[0]],lm[a[1]],lm[a[2]])),ev=sides.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),shoulderWidth=Math.abs(lm[11].x-lm[12].x),handWidth=Math.abs(lm[15].x-lm[16].x),straight=el[0]>150&&el[1]>150;
+  if(id==='iyt'){
+    let st=STAGES[T.stage],ok=straight&&ev.every(v=>v>=st.range[0]&&v<=st.range[1]);
+    return{ok,h:5,t:st.title,m:ok?'ท่าถูกต้อง ค้างไว้ 5 วินาที':straight?'ปรับระดับแขนตามตัวอย่าง':'เหยียดข้อศอกให้ตรง'};
+  }
+  if(id==='w'){
+    let ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y;
+    return{ok,h:5,t:'งอข้อศอกเป็นตัว W และเก็บสะบัก',m:ok?'ท่าถูกต้อง ค้างไว้':'งอข้อศอกและยกมือขึ้นเล็กน้อย'};
+  }
+  let avg=(ev[0]+ev[1])/2,ok=straight&&avg>=-45&&avg<=15&&handWidth>2*shoulderWidth;
+  return{ok,h:15,t:'กางแขนออกด้านข้างเพื่อยืดหน้าอก',m:ok?'ค้างท่ายืดไว้':'เหยียดแขนและกางออกด้านข้าง'};
 }
+
 function feedback(t,c){$('fb').innerText=t;$('fb').style.color=c||'#e6b84c';}
 function score(){return Object.values(T.stats||{}).reduce((n,s)=>n+s.score,0);}
 function showCurrentExerciseImage(){const iyt=T.cur===0;setImage($('sym'),iyt?STAGES[T.stage].file:EX[T.cur].id);$('stg').style.display=iyt?'flex':'none';document.querySelectorAll('#stg span').forEach((el,i)=>el.classList.toggle('on',iyt&&i===T.stage));}
+
 function onResults(r){
-let c=$('cv'),ctx=c.getContext('2d'),w=r.image.width,h=r.image.height;if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;if(w&&h&&Math.abs(vidAR-w/h)>.01)setAR(w,h);ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(w,0);ctx.scale(-1,1);ctx.drawImage(r.image,0,0,w,h);ctx.restore();
-if(!T.run||T.pause)return;T.lastFrame=performance.now();let now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0)return;
-if(!r.poseLandmarks)return feedback('ไม่พบร่างกาย กรุณาจัดตำแหน่งให้อยู่ในกรอบ');let lm=r.poseLandmarks,id=EX[T.cur].id,q=evaluate(lm,id);if(!q)return feedback('ถอยให้เห็นลำตัว แขน และศีรษะชัดเจน');
-$('tg').innerText=q.t;ctx.lineWidth=4;ctx.strokeStyle=q.ok?'#bdf264':'#f5c451';[[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{ctx.beginPath();ctx.moveTo((1-lm[p[0]].x)*w,lm[p[0]].y*h);ctx.lineTo((1-lm[p[1]].x)*w,lm[p[1]].y*h);ctx.stroke();});
-let s=T.stats[T.cur];T.total++;s.total++;
-if(id==='iyt'){if(q.ok){T.good++;s.good++;T.okAcc+=dt;feedback(q.m+' · อีก '+T.stageLeft+' วินาที','#bdf264');}else feedback(q.m,'#ff7777');$('hb').style.width=Math.min(T.okAcc/5*100,100)+'%';}
-else{if(q.ok){T.good++;s.good++;T.hold+=dt;feedback(q.m+' · อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที','#bdf264');if(T.hold>=q.h){T.hold=0;T.reps++;s.reps++;s.score+=100;feedback('ครบ 1 ครั้ง +100 คะแนน','#bdf264');}}else{T.hold=0;feedback(q.m,'#ff7777');}$('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';}$('sc').innerText=Math.floor(score());$('rp').innerText=T.reps;
+  let c=$('cv'),ctx=c.getContext('2d'),w=r.image.width,h=r.image.height;
+  if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;
+  if(w&&h&&Math.abs(vidAR-w/h)>.01)setAR(w,h);
+  ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(w,0);ctx.scale(-1,1);ctx.drawImage(r.image,0,0,w,h);ctx.restore();
+  if(!T.run||T.pause)return;
+  T.lastFrame=performance.now();let now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
+  if(T.prep>0)return;
+  if(!r.poseLandmarks)return feedback('ไม่พบร่างกาย กรุณาจัดตำแหน่งให้อยู่ในกรอบ');
+  let lm=r.poseLandmarks,id=EX[T.cur].id,q=evaluate(lm,id);
+  if(!q)return feedback('ถอยให้เห็นลำตัว แขน และศีรษะชัดเจน');
+  
+  $('tg').innerText=q.t;ctx.lineWidth=4;ctx.strokeStyle=q.ok?'#bdf264':'#f5c451';
+  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{ctx.beginPath();ctx.moveTo((1-lm[p[0]].x)*w,lm[p[0]].y*h);ctx.lineTo((1-lm[p[1]].x)*w,lm[p[1]].y*h);ctx.stroke();});
+  
+  let s=T.stats[T.cur];T.total++;s.total++;
+  if(id==='iyt'){
+    if(q.ok){T.good++;s.good++;T.okAcc+=dt;feedback(q.m+' · อีก '+T.stageLeft+' วินาที','#bdf264');}
+    else feedback(q.m,'#ff7777');
+    $('hb').style.width=Math.min(T.okAcc/5*100,100)+'%';
+  }else{
+    if(q.ok){
+      T.good++;s.good++;T.hold+=dt;feedback(q.m+' · อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที','#bdf264');
+      if(T.hold>=q.h){T.hold=0;T.reps++;s.reps++;s.score+=100;feedback('ครบ 1 ครั้ง +100 คะแนน','#bdf264');}
+    }else{T.hold=0;feedback(q.m,'#ff7777');}
+    $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';
+  }
+  $('sc').innerText=Math.floor(score());$('rp').innerText=T.reps;
 }
+
 function pick(){let pool=sel.length>1?sel.filter(i=>i!==T.cur):sel;return pool[Math.floor(Math.random()*pool.length)];}
 function setExercise(i){T.cur=i;T.stage=0;T.stageLeft=5;T.okAcc=0;T.cycleOk=true;T.hold=0;T.prep=PREP;T.blockLeft=EX[i].block;showCurrentExerciseImage();$('nm').innerText=EX[i].n;$('bl').innerText=i===0?'ท่า I → Y → T ท่าละ 5 วินาที':'เปลี่ยนท่าอีก '+EX[i].block+' วินาที';$('tg').innerText=i===0?STAGES[0].title:EX[i].how;$('hb').style.width='0%';if(navigator.vibrate)navigator.vibrate(100);}
-function train(){T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,stage:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});$('tt').innerText='Back to Balance - Day '+day;$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่าจากรายการที่เลือก';$('stg').style.display='none';setImage($('sym'),EX[sel[0]].id);$('tm').innerText='15:00';$('sc').innerText='0';$('rp').innerText='0';$('hb').style.width='0%';$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';feedback('');$('go').style.display='block';$('go').disabled=false;$('pz').innerText='PAUSE';show('train');}
-let vidAR=1.3333;function setAR(w,h){if(!w||!h)return;vidAR=w/h;$('vidbox').style.setProperty('--ar',vidAR.toFixed(4));}
+
+function train(){
+  T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,stage:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
+  $('tt').innerText='Back to Balance - Day '+day;$('nm').innerText='พร้อมเริ่มออกกำลังกาย';
+  $('bl').innerText='สุ่มท่าจากรายการที่เลือก';$('stg').style.display='none';
+  setImage($('sym'),EX[sel[0]].id);$('tm').innerText='15:00';$('sc').innerText='0';
+  $('rp').innerText='0';$('hb').style.width='0%';
+  $('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';
+  feedback('');$('go').style.display='block';$('go').disabled=false;$('pz').innerText='PAUSE';
+  show('train');
+}
+
+let vidAR=1.3333;
+function setAR(w,h){if(!w||!h)return;vidAR=w/h;$('vidbox').style.setProperty('--ar',vidAR.toFixed(4));}
 const formatTime=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-async function camStart(){if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)return feedback('ต้องเปิดเว็บไซต์ผ่าน HTTPS ใน Safari/Chrome','#ff7777');$('go').disabled=true;feedback('กำลังขอสิทธิ์กล้อง...','#aaa');try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});let v=$('cam');v.srcObject=stream;await v.play();setAR(v.videoWidth,v.videoHeight);feedback('กำลังโหลดระบบตรวจจับท่าทาง...','#aaa');if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize();}T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setExercise(pick());iv=setInterval(tick,1000);loop();}catch(e){stopCamera();$('go').disabled=false;feedback(e.name==='NotAllowedError'?'กรุณาอนุญาตการใช้กล้องใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#ff7777');}}
+
+async function camStart(){
+  if(T.run)return;
+  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)return feedback('ต้องเปิดเว็บไซต์ผ่าน HTTPS ใน Safari/Chrome','#ff7777');
+  $('go').disabled=true;feedback('กำลังขอสิทธิ์กล้อง...','#aaa');
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+    let v=$('cam');v.srcObject=stream;await v.play();setAR(v.videoWidth,v.videoHeight);
+    feedback('กำลังโหลดระบบตรวจจับท่าทาง...','#aaa');
+    if(!pose){
+      pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});
+      pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});
+      pose.onResults(onResults);await pose.initialize();
+    }
+    T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;
+    setExercise(pick());iv=setInterval(tick,1000);loop();
+  }catch(e){
+    stopCamera();$('go').disabled=false;
+    feedback(e.name==='NotAllowedError'?'กรุณาอนุญาตการใช้กล้องใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#ff7777');
+  }
+}
+
 async function loop(){if(!T.run)return;let v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v});}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
 
 function tick(){
   if(!T.run||T.pause) return;
-
-  // ตรวจจับกรณีเฟรมจากกล้องค้างเกิน 3 วินาที
   if(performance.now() - T.lastFrame > 3000){
     feedback('กล้องค้างหรือเกิดปัญหาในการประมวลผล', '#ff7777');
   }
-
-  // นับเวลาถอยหลังเตรียมตัว
   if(T.prep > 0){
     T.prep--;
     feedback('เตรียมพร้อมใน ' + (T.prep + 1) + ' วินาที...', '#c5f36b');
     return;
   }
-
-  // สะสมเวลาของท่าปัจจุบัน
   if(T.stats[T.cur]){
     T.stats[T.cur].sec++;
   }
-
-  // การนับเวลาสำหรับท่า IYT
   if(EX[T.cur].id === 'iyt'){
     if(T.okAcc >= 5){
       T.okAcc = 0;
@@ -209,7 +312,6 @@ function tick(){
         showCurrentExerciseImage();
         if(navigator.vibrate) navigator.vibrate(50);
       } else {
-        // ครบทั้ง I, Y, T (1 รอบ)
         T.stage = 0;
         T.reps++;
         T.stats[T.cur].reps++;
@@ -220,19 +322,14 @@ function tick(){
       }
     }
   }
-
-  // สลับท่าเมื่อหมดเวลาของบล็อก (Block Time)
   T.blockLeft--;
   if(T.blockLeft <= 0){
     setExercise(pick());
   } else {
     $('bl').innerText = T.cur === 0 ? 'ท่า I → Y → T ท่าละ 5 วินาที' : 'เปลี่ยนท่าอีก ' + T.blockLeft + ' วินาที';
   }
-
-  // นับเวลาถอยหลังรวมของการออกกำลังกาย (15 นาที)
   T.left--;
   $('tm').innerText = formatTime(Math.max(0, T.left));
-
   if(T.left <= 0){
     finish(false);
   }
@@ -266,7 +363,6 @@ function finish(early){
   const totalSec = SEC - T.left;
   const totPoints = Math.floor(score());
   
-  // คำนวณแคลอรี: (MET * 3.5 * weight / 200) * minutes (ใช้ MET 3.8 ของยางยืดเป็นหลัก)
   const weight = (S.user && S.user.weight) || 65;
   const metVal = MET['battle'] || 3.8;
   const cal = Math.round((metVal * 3.5 * weight / 200) * (totalSec / 60));
@@ -280,7 +376,6 @@ function finish(early){
   $('r4').innerText = accuracy + '%';
   $('r5').innerText = early ? 'ออกกำลังกายก่อนครบเวลา' : 'เก่งมาก! บริหารครบ 15 นาทีสำเร็จ';
 
-  // บันทึกประวัติการออกกำลังกาย
   if(!S.history) S.history = [];
   const record = {
     day,
@@ -293,7 +388,7 @@ function finish(early){
   };
   S.history.unshift(record);
 
-  if(!early || totalSec >= 600){ // บันทึกว่าทำวันนั้นเสร็จสิ้นถ้าฝึกอย่างน้อย 10 นาทีหรือจบตามเวลา
+  if(!early || totalSec >= 600){
     S.done[day] = true;
   }
   save();
@@ -320,7 +415,6 @@ function nextEx(){
   }
 }
 
-/* ===== หน้าประวัติ / ท่า / โปรไฟล์ ===== */
 function renderLibrary(){
   $('libList').innerHTML = EX.map((e, i) => `
     <div class="box lib">
@@ -362,7 +456,6 @@ function renderHistory(){
   `).join('');
 }
 
-let profFrom = 'program';
 function editProfile(){
   profFrom = 'me';
   if(S.user){
@@ -386,7 +479,6 @@ function renderProfile(){
   `;
 }
 
-/* ===== ระบบ Router & Navigation ===== */
 let historyStack = ['home'];
 
 function show(pageId){
@@ -394,24 +486,20 @@ function show(pageId){
   const target = $(pageId);
   if(target) target.classList.add('on');
 
-  // สั่งให้เลื่อนกลับขึ้นบนสุดเมื่อเปลี่ยนหน้า
   window.scrollTo(0, 0);
   const appEl = document.querySelector('.app');
   if(appEl) appEl.scrollTop = 0;
 
-  // จัดการ UI แถบ Header / Bottom Nav
   const showBar = ['program', 'detail', 'library', 'history', 'me'].includes(pageId);
   const showNav = ['program', 'library', 'history', 'me'].includes(pageId);
   
   document.body.classList.toggle('bar', showBar);
   document.body.classList.toggle('nav', showNav);
 
-  // อัปเดตสถานะปุ่มใน Bottom Nav
   document.querySelectorAll('#nav button').forEach(b => {
     b.classList.toggle('on', b.dataset.p === pageId);
   });
 
-  // Render ข้อมูลเฉพาะหน้า
   if(pageId === 'program') renderProgram();
   if(pageId === 'library') renderLibrary();
   if(pageId === 'history') renderHistory();
@@ -439,7 +527,6 @@ function goBack(){
   }
 }
 
-// ตรวจสอบการล็อกอินเมื่อโหลดหน้าแรก
 window.addEventListener('DOMContentLoaded', () => {
   if(S.user && S.user.username){
     show('program');
