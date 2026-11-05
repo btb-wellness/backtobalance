@@ -93,7 +93,7 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 
 <section id="program" class="page"><div class="program-head"><h3>โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt" style="text-align:center"></p><div id="weeks"></div><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
 
-<section id="detail" class="page"><div class="detail-header"><span class="badge" id="weekBadge">WEEK 01</span><span class="badge">RESISTANCE BAND</span></div><div><h3>Daily Workout</h3><p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่</p></div><div class="detail-header"><span class="badge">EXERCISE SELECTION</span><span id="selectCount" style="font-size:11px;color:#c5f36b">4 EXERCISES</span></div><div class="bar"><i id="selectBar" style="width:100%"></i></div><div id="tabs"></div><div><label>EXERCISE INSTRUCTIONS</label><div class="box" id="dinfo"></div></div><div><label>SELECT WORKOUT MODE</label><div class="row"><button class="seg on" id="m1" onclick="mode('without')">WITHOUT BAND</button><button class="seg" id="m2" onclick="mode('battle')">WITH BAND</button></div></div><div class="box" style="text-align:center;color:#c5f36b"><b>15 MINUTES WORKOUT</b><p>ระบบจะสุ่มสลับท่าจากรายการที่เลือก</p></div><button class="btn" onclick="train()">START WORKOUT →</button><button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button></section>
+<section id="detail" class="page"><div class="detail-header"><span class="badge" id="weekBadge">WEEK 01</span><span class="badge">RESISTANCE BAND</span></div><div><h3>Daily Workout</h3><p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ด้วยยางยืด</p></div><div class="detail-header"><span class="badge">EXERCISE SELECTION</span><span id="selectCount" style="font-size:11px;color:#c5f36b">4 EXERCISES</span></div><div class="bar"><i id="selectBar" style="width:100%"></i></div><div id="tabs"></div><div><label>EXERCISE INSTRUCTIONS</label><div class="box" id="dinfo"></div></div><div class="box" style="text-align:center;color:#c5f36b"><b>15 MINUTES WORKOUT</b><p>ระบบจะสุ่มสลับท่าจากรายการที่เลือก</p></div><button class="btn" onclick="train()">START WORKOUT →</button><button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button></section>
 
 <section id="train" class="page"><h3 id="tt">Back to Balance - Day 1</h3><div class="vid" id="vidbox"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div><div class="train-panel"><div class="box ban"><img id="sym" alt="ท่าออกกำลังกาย"><div class="cap"><div id="stg"><span>I</span><span>Y</span><span>T</span></div><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่าจากรายการที่เลือก</p></div></div><div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div><div class="bar"><i id="hb"></i></div><div id="tg" class="box">กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที</div><div id="fb"></div><div class="train-actions"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div><button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button></div></section>
 
@@ -111,7 +111,7 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 <script>
 /* ตั้งค่า URL ของ Apps Script เดิมตรงนี้ */
 const API='PASTE_YOUR_WEB_APP_URL_HERE';
-const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3,MET={without:3,battle:3.8};
+const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3,MET={battle:3.8};
 
 /* ระบบลองนามสกุลภาพ JPG/JPEG/PNG/WEBP/SVG ให้อัตโนมัติ */
 const EXTENSIONS=['jpg','jpeg','png','webp','svg','JPG','JPEG','PNG','WEBP'];
@@ -138,10 +138,9 @@ function logout(){if(confirm('ออกจากระบบ?')){S.user=null;sav
 function curDay(){let d=1;while(d<=DAYS&&S.done[d])d++;return d;}
 function renderProgram(){const current=curDay(),done=Math.min(current-1,DAYS);$('pbar').style.width=done/DAYS*100+'%';$('ptxt').innerText=`เสร็จแล้ว ${done}/${DAYS} วัน (วันละ 15 นาที)`;let out='';for(let w=1;w<=5;w++){out+=`<label>สัปดาห์ที่ ${w}</label><div class="grid">`;for(let i=1;i<=3;i++){let d=(w-1)*3+i,cls=S.done[d]?'done':d===current?'active':'lock';out+=`<button class="tile ${cls}" ${cls==='lock'?'disabled':''} onclick="openDay(${d})">DAY ${d}</button>`;}out+='</div>';} $('weeks').innerHTML=out;}
 
-let day=1,sel=[0,1,2,3],md='without';
-function openDay(d){day=d;sel=[0,1,2,3];mode('without');renderDetail();show('detail');}
+let day=1,sel=[0,1,2,3],md='battle';
+function openDay(d){day=d;sel=[0,1,2,3];md='battle';renderDetail();show('detail');}
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i);}else sel.push(i);renderDetail();}
-function mode(m){md=m;$('m1').classList.toggle('on',m==='without');$('m2').classList.toggle('on',m==='battle');}
 function renderDetail(){
 $('weekBadge').innerText='WEEK '+String(Math.ceil(day/3)).padStart(2,'0');$('selectCount').innerText=sel.length+' EXERCISES SELECTED';$('selectBar').style.width=sel.length/EX.length*100+'%';
 $('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})"><img data-img="${e.id}" alt="${e.n}"><span class="ex-number">EXERCISE 0${i+1}</span><span class="ex-name">${e.n}</span><span class="ex-time">${e.id==='iyt'?'I / Y / T · 5 SEC EACH':e.id==='pec'?'15 SEC HOLD':'5 SEC HOLD'}</span><span class="selected-check">✓</span></button>`).join('');
@@ -233,3 +232,221 @@ function tick(){
   // นับเวลาถอยหลังรวมของการออกกำลังกาย (15 นาที)
   T.left--;
   $('tm').innerText = formatTime(Math.max(0, T.left));
+
+  if(T.left <= 0){
+    finish(false);
+  }
+}
+
+function pause(){
+  if(!T.run) return;
+  T.pause = !T.pause;
+  $('pz').innerText = T.pause ? 'RESUME' : 'PAUSE';
+  if(T.pause){
+    feedback('พักชั่วคราว', '#fff4c8');
+  } else {
+    T.lastFrame = performance.now();
+  }
+}
+
+function stopCamera(){
+  if(iv) clearInterval(iv);
+  if(raf) cancelAnimationFrame(raf);
+  if(stream){
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  busy = false;
+  T.run = false;
+  T.pause = false;
+}
+
+function finish(early){
+  stopCamera();
+  const totalSec = SEC - T.left;
+  const totPoints = Math.floor(score());
+  
+  // คำนวณแคลอรี: (MET * 3.5 * weight / 200) * minutes (ใช้ MET 3.8 ของยางยืดเป็นหลัก)
+  const weight = (S.user && S.user.weight) || 65;
+  const metVal = MET['battle'] || 3.8;
+  const cal = Math.round((metVal * 3.5 * weight / 200) * (totalSec / 60));
+  
+  const accuracy = T.total > 0 ? Math.round((T.good / T.total) * 100) : 0;
+
+  $('rt').innerText = early ? 'Workout Ended' : 'Completed!';
+  $('r1').innerText = totPoints;
+  $('r2').innerText = cal;
+  $('r3').innerText = formatTime(totalSec);
+  $('r4').innerText = accuracy + '%';
+  $('r5').innerText = early ? 'ออกกำลังกายก่อนครบเวลา' : 'เก่งมาก! บริหารครบ 15 นาทีสำเร็จ';
+
+  // บันทึกประวัติการออกกำลังกาย
+  if(!S.history) S.history = [];
+  const record = {
+    day,
+    date: new Date().toLocaleDateString('th-TH'),
+    time: formatTime(totalSec),
+    score: totPoints,
+    cal,
+    acc: accuracy,
+    mode: 'battle'
+  };
+  S.history.unshift(record);
+
+  if(!early || totalSec >= 600){ // บันทึกว่าทำวันนั้นเสร็จสิ้นถ้าฝึกอย่างน้อย 10 นาทีหรือจบตามเวลา
+    S.done[day] = true;
+  }
+  save();
+
+  send('workout', {
+    username: S.user?.username,
+    email: S.user?.email,
+    day,
+    score: totPoints,
+    cal,
+    durationSec: totalSec,
+    accuracy,
+    mode: 'battle'
+  });
+
+  show('result');
+}
+
+function nextEx(){
+  if(day < DAYS){
+    openDay(day + 1);
+  } else {
+    show('program');
+  }
+}
+
+/* ===== หน้าประวัติ / ท่า / โปรไฟล์ ===== */
+function renderLibrary(){
+  $('libList').innerHTML = EX.map((e, i) => `
+    <div class="box lib">
+      <img data-img="${e.id}" alt="${e.n}">
+      <div class="exercise-name">0${i + 1}. ${e.n}</div>
+      <div class="exercise-desc"><b>วิธีปฏิบัติ:</b> ${e.how}</div>
+      <div class="exercise-benefit"><b>ประโยชน์:</b> ${e.ben}</div>
+    </div>
+  `).join('');
+  document.querySelectorAll('#libList img').forEach(el => setImage(el, el.dataset.img));
+}
+
+function renderHistory(){
+  const hist = S.history || [];
+  const totalCal = hist.reduce((a, b) => a + (b.cal || 0), 0);
+  
+  $('histSum').innerHTML = `
+    <div><b>${hist.length}</b><small>ครั้งที่ฝึก</small></div>
+    <div><b>${totalCal}</b><small>แคลอรีรวม</small></div>
+    <div><b>${Object.keys(S.done).length}/${DAYS}</b><small>วันสำเร็จ</small></div>
+  `;
+
+  if(hist.length === 0){
+    $('histList').innerHTML = '<div class="box" style="text-align:center">ยังไม่มีประวัติการออกกำลังกาย</div>';
+    return;
+  }
+
+  $('histList').innerHTML = hist.map(h => `
+    <div class="box hist">
+      <div>
+        <b>Day ${h.day}</b> <small>(ยางยืด)</small>
+        <br><small>${h.date} · เวลา ${h.time}</small>
+      </div>
+      <div class="hr">
+        <b>${h.score}</b>
+        <small>${h.cal} kcal · แม่นยำ ${h.acc}%</small>
+      </div>
+    </div>
+  `).join('');
+}
+
+let profFrom = 'program';
+function editProfile(){
+  profFrom = 'me';
+  if(S.user){
+    if(S.user.gender) gen(S.user.gender);
+    if(S.user.dob) $('dob').value = S.user.dob;
+    if(S.user.weight) $('wt').value = S.user.weight;
+    if(S.user.height) $('ht').value = S.user.height;
+  }
+  show('profile');
+}
+
+function renderProfile(){
+  const u = S.user || {};
+  $('meInfo').innerHTML = `
+    <div><small>ชื่อผู้ใช้</small><b>${u.username || '-'}</b></div>
+    <div><small>อีเมล</small><b>${u.email || '-'}</b></div>
+    <div><small>เพศ</small><b>${u.gender || '-'}</b></div>
+    <div><small>วันเกิด</small><b>${u.dob || '-'}</b></div>
+    <div><small>น้ำหนัก</small><b>${u.weight ? u.weight + ' kg' : '-'}</b></div>
+    <div><small>ส่วนสูง</small><b>${u.height ? u.height + ' cm' : '-'}</b></div>
+  `;
+}
+
+/* ===== ระบบ Router & Navigation ===== */
+let historyStack = ['home'];
+
+function show(pageId){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  const target = $(pageId);
+  if(target) target.classList.add('on');
+
+  // สั่งให้เลื่อนกลับขึ้นบนสุดเมื่อเปลี่ยนหน้า
+  window.scrollTo(0, 0);
+  const appEl = document.querySelector('.app');
+  if(appEl) appEl.scrollTop = 0;
+
+  // จัดการ UI แถบ Header / Bottom Nav
+  const showBar = ['program', 'detail', 'library', 'history', 'me'].includes(pageId);
+  const showNav = ['program', 'library', 'history', 'me'].includes(pageId);
+  
+  document.body.classList.toggle('bar', showBar);
+  document.body.classList.toggle('nav', showNav);
+
+  // อัปเดตสถานะปุ่มใน Bottom Nav
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.classList.toggle('on', b.dataset.p === pageId);
+  });
+
+  // Render ข้อมูลเฉพาะหน้า
+  if(pageId === 'program') renderProgram();
+  if(pageId === 'library') renderLibrary();
+  if(pageId === 'history') renderHistory();
+  if(pageId === 'me') renderProfile();
+
+  if(historyStack[historyStack.length - 1] !== pageId){
+    historyStack.push(pageId);
+  }
+}
+
+function goBack(){
+  if(T.run){
+    if(confirm('กำลังออกกำลังกายอยู่ ต้องการยกเลิกและย้อนกลับใช่หรือไม่?')){
+      finish(true);
+      show('program');
+    }
+    return;
+  }
+  if(historyStack.length > 1){
+    historyStack.pop();
+    const prev = historyStack[historyStack.length - 1];
+    show(prev);
+  } else {
+    show('program');
+  }
+}
+
+// ตรวจสอบการล็อกอินเมื่อโหลดหน้าแรก
+window.addEventListener('DOMContentLoaded', () => {
+  if(S.user && S.user.username){
+    show('program');
+  } else {
+    show('home');
+  }
+});
+</script>
+</body>
+</html>
