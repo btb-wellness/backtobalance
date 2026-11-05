@@ -20,7 +20,6 @@ body{background:#e7e9e3}button,input{font:inherit}button{cursor:pointer}
 h2,h3{margin:0;font-family:'Bebas Neue',system-ui,-apple-system,sans-serif;font-weight:400;letter-spacing:.04em}
 h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--muted);line-height:1.6}label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#66705f}input{width:100%;height:58px;padding:0 16px;border:2px solid var(--line);border-radius:17px;background:white;font-size:16px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 4px #c5f36b35}.btn{min-height:54px;width:100%;border:0;border-radius:17px;padding:13px 16px;background:var(--lime);color:var(--ink);font-weight:800;font-size:16px;box-shadow:0 7px 18px #9dcf4530}.btn:active{transform:scale(.985)}.btn:disabled{opacity:.55}.btn.ghost{background:transparent;border:2px solid #687064;color:inherit;box-shadow:none}.btn.red{background:#df4145;color:white;box-shadow:none}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.sp{margin-top:auto}.box{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;font-size:14px;line-height:1.6}.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}.bar i{display:block;width:0;height:100%;border-radius:99px;background:var(--green);transition:width .25s}.seg{min-height:46px;border:1.5px solid #d7ddd2;border-radius:13px;background:white;color:#4f584b;font-size:13px;font-weight:800;padding:9px}.seg.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.brand-mark{width:54px;height:54px;border-radius:17px;background:var(--lime);display:grid;place-items:center;margin:auto;font-size:30px}.brand-title{text-align:center;font:51px 'Bebas Neue',sans-serif;letter-spacing:.04em;line-height:1}.brand-sub{text-align:center;color:#7a982f;font-size:12px;font-weight:800;letter-spacing:.13em}.login-top{padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center}.login-welcome{margin-top:28px}.login-welcome h2{text-align:left;font-size:50px;margin-bottom:8px}.login-welcome p{font-size:15px}.login-fields{display:flex;flex-direction:column;gap:10px;margin-top:16px}.input-wrap{position:relative}.input-wrap span{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:#8ebd25}.input-wrap input{padding-left:52px}.login-note,.login-footer{font-size:11px;font-weight:800;letter-spacing:.1em;color:#87917e}.login-footer{text-align:center;margin:5px 0}#login{background:radial-gradient(ellipse at 100% 32%,#e8f0dc 0,transparent 34%),var(--paper)}#login .btn{min-height:64px;font-size:19px}
 
-/* ===== ปรับแต่งหน้าปก (Home Page Header & Branding) ===== */
 #home{background:radial-gradient(circle at 88% 12%,#c5f36b55,transparent 38%),var(--ink);color:white;justify-content:space-between;position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
 #home>*{position:relative;z-index:1}
 #home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
@@ -34,7 +33,6 @@ h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--mut
 
 .warn{display:none;padding:10px;border-radius:12px;background:#fff4c8;color:#815b00;font-size:12px}#program .program-head{display:flex;align-items:center;justify-content:center;gap:10px}#program .program-head .brand-mark{margin:0;width:42px;height:42px;font-size:24px}#program .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}#program .tile{height:78px;border:2px solid transparent;border-radius:18px;background:#e7e9e5;color:#9ca39a;font:26px 'Bebas Neue',sans-serif}#program .tile.active{background:var(--ink);color:var(--lime);border-color:var(--lime)}#program .tile.done{background:var(--lime);color:var(--ink)}#program .tile.done:after{content:' ✓'}#detail,#train{background:#151a16;color:white}#detail h3,#train h3{color:var(--lime)}#detail p{color:#b8c0b2}#detail label{color:var(--lime)}#detail .box{background:#222a23;border-color:#384238;color:#e9eee5}.detail-header{display:flex;justify-content:space-between;gap:8px}.badge{background:var(--lime);color:#172017;border-radius:99px;padding:7px 12px;font-size:10px;font-weight:900}#tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#detail .seg.ex{position:relative;text-align:left;display:flex;flex-direction:column;gap:6px;padding:8px;background:#222a23;color:white;border:1px solid #3c463b;border-radius:15px;min-width:0}#detail .seg.ex.on{border:2px solid var(--lime);background:#293522}#detail .seg.ex img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:#111}.ex-number{font:15px 'Bebas Neue',sans-serif;color:var(--lime)}.ex-name{font-size:12px;line-height:1.4;min-height:34px}.ex-time{font-size:10px;color:#aeb8a7}.selected-check{display:none;position:absolute;right:13px;top:13px;background:var(--lime);color:#111;border-radius:50%;width:23px;height:23px;text-align:center;line-height:23px}#detail .seg.ex.on .selected-check{display:block}#dinfo .ei{display:flex;flex-direction:column;gap:10px}#dinfo .ei img{width:100%;height:180px;object-fit:cover;border-radius:12px}#dinfo .exercise-name{color:var(--lime);font-size:18px;font-weight:800}#dinfo .exercise-desc{font-size:13px;line-height:1.8;color:#e5e9e1}#dinfo .exercise-benefit{background:#303b2b;border-left:3px solid var(--lime);padding:10px;border-radius:8px;color:#d8f4a4;font-size:12px}#detail .seg:not(.ex){background:#222a23;color:#ddd;border-color:#485147}#detail .seg:not(.ex).on{background:var(--lime);color:#172017;border-color:var(--lime)}#detail .btn:not(.ghost){background:linear-gradient(135deg,#d0f77b,#91c928)}#train{gap:12px;justify-content:flex-start}#train h3{text-align:center;font-size:31px;margin:2px 0}
 
-/* ===== ปรับปรุงขนาดกล้อง (Responsive Full-frame) ===== */
 .vid{--ar:1.3333;--vh:52dvh;position:relative;width:100%;max-width:100%;height:var(--vh);max-height:58vh;margin:0 auto;flex:none;background:#050505;border:2px solid #3b413b;border-radius:19px;overflow:hidden}
 #cv,#cam{display:block;width:100%;height:100%;object-fit:cover}
 #cam{position:absolute;top:0;left:0;opacity:0;pointer-events:none}
@@ -68,7 +66,6 @@ h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--mut
  .vid{--vh:40dvh}
 }
 
-/* ===== แถบบน / เมนูล่าง / โลโก้ ===== */
 #top{display:none;position:sticky;top:0;z-index:30;height:calc(58px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;align-items:center;justify-content:space-between;background:#171c18;color:#fff;box-shadow:0 2px 14px #0003}
 body.bar #top{display:flex}
 .tb-back,.tb-me{width:42px;height:42px;border-radius:50%;border:0;background:#ffffff1a;color:#fff;font-size:22px;font-weight:700;display:grid;place-items:center}
@@ -120,7 +117,6 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 
 <section id="home" class="page on">
   <div class="heroBg" aria-hidden="true"></div>
-  <!-- ย้ายโลโก้และแท็กไว้ด้านบนมุมซ้าย -->
   <div class="home-brand-top">
     <img class="home-logo" src="images/logo.png" alt="Back to Balance">
     <span class="tag">RESISTANCE BAND · POSTURE STUDIO</span>
@@ -135,7 +131,6 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 
 <section id="login" class="page"><div class="login-top"><div class="brand-mark"><img src="images/logo.png" alt=""></div><div class="brand-title">BACK TO BALANCE</div><div class="brand-sub">YOUR PERSONAL WELLNESS</div></div><div class="login-welcome"><h2>Welcome Back</h2><p>เริ่มต้นดูแลสุขภาพคอ บ่า และไหล่<br>ไปกับโปรแกรมออกกำลังกายของคุณ</p></div><div class="login-fields"><label>USERNAME</label><div class="input-wrap"><span>●</span><input id="un" autocomplete="username" placeholder="กรอกชื่อผู้ใช้"></div><label>EMAIL ADDRESS</label><div class="input-wrap"><span>✉</span><input id="em" type="email" autocomplete="email" placeholder="กรอกอีเมลของคุณ"></div><div class="login-note">● &nbsp; YOUR JOURNEY STARTS HERE</div></div><button class="btn sp" onclick="login()">เข้าสู่ระบบ →</button><div class="login-footer">BACK TO BALANCE · POSTURE STUDIO</div></section>
 
-<!-- หน้าโปรไฟล์: ปรับค่าน้ำหนักและส่วนสูงเป็นค่าว่าง -->
 <section id="profile" class="page"><h2>Personalize<br>Your Plan</h2><label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div><label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" min="20" placeholder="ระบุน้ำหนัก"><label>ส่วนสูง (cm)</label><input id="ht" type="number" min="100" placeholder="ระบุส่วนสูง"><button class="btn sp" onclick="saveProfile()">บันทึกข้อมูลและไปต่อ →</button></section>
 
 <section id="program" class="page"><div class="program-head"><h3>โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt" style="text-align:center"></p><div id="weeks"></div><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
@@ -156,7 +151,9 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 <nav id="nav"><button data-p="program" onclick="show('program')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>โปรแกรม</button><button data-p="library" onclick="show('library')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M6 10h12M9 21l3-6 3 6"/></svg>ท่าออกกำลังกาย</button><button data-p="history" onclick="show('history')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</button><button data-p="me" onclick="show('me')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>โปรไฟล์</button></nav>
 
 <script>
-const API='1NM9Fj8zYwWQUXW_8AJ3r5K1l3n_aK-Nk5iLz51X269g';
+// ใส่ URL ของ Google Apps Script ที่ Deploy เรียบร้อยแล้วตรงนี้
+const API='PASTE_YOUR_WEB_APP_URL_HERE';
+
 const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3,MET={battle:3.8};
 
 const EXTENSIONS=['jpg','jpeg','png','webp','svg','JPG','JPEG','PNG','WEBP'];
@@ -175,7 +172,17 @@ const $=id=>document.getElementById(id);let S={};try{S=JSON.parse(localStorage.g
 
 let profFrom = 'program';
 
-function send(action,data){if(!API||API.startsWith('PASTE_'))return;fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...data})}).catch(()=>{});}
+// ฟังก์ชันส่งข้อมูลไปยัง Google Apps Script (บันทึกแยก sheet)
+function send(action,data){
+  if(!API||API.startsWith('PASTE_'))return;
+  fetch(API,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action,...data})
+  }).catch(()=>{});
+}
+
 if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
 
 function start(){
@@ -448,6 +455,7 @@ function finish(early){
   }
   save();
 
+  // ส่งข้อมูลเข้า Sheet "Workouts"
   send('workout', {
     username: S.user?.username,
     email: S.user?.email,
