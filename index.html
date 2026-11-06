@@ -18,7 +18,7 @@ button{cursor:pointer}
 .app{width:100%;max-width:560px;min-height:100dvh;background:var(--ink);box-shadow:0 0 40px #0008;display:flex;flex-direction:column;position:relative}
 .app.has-nav{padding-bottom:80px}
 
-/* Bottom Navigation Bar - ปรับไอคอนให้สวยและทันสมัยขึ้น */
+/* Bottom Navigation Bar */
 .bottom-nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:64px;background:rgba(18, 23, 20, 0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,0.6);z-index:999;padding:0 8px;border:1px solid rgba(255,255,255,0.08)}
 .app.has-nav .bottom-nav{display:flex}
 .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#6b7567;background:none;border:none;padding:6px;width:25%;font-size:10px;font-weight:700;transition:.2s;border-radius:16px}
@@ -47,7 +47,7 @@ input:focus{outline:0;border-color:var(--lime)}
 .bar i{display:block;height:100%;width:0;background:var(--lime);border-radius:99px;transition:width .3s}
 .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;color:#e5e5e5;font-size:13px;line-height:1.6}
 
-/* Top Header Component */
+/* Header */
 .top-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .brand{display:flex;align-items:center;gap:8px}.logo{width:30px;height:30px;object-fit:contain}
 .brand-text{display:flex;flex-direction:column}
@@ -87,11 +87,7 @@ input:focus{outline:0;border-color:var(--lime)}
 .tile-day .d-status{font-size:8px;font-weight:700;letter-spacing:0.5px}
 .tile-day.active .d-status{color:var(--lime)}
 
-/* PAGE 3: EXERCISE GUIDE - ปรับรูปภาพและข้อความให้ใหญ่ขึ้นมาก */
-.guide-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
-.guide-tab{padding:8px 14px;border-radius:20px;background:#141a16;border:1px solid #222b24;color:#a0a89c;font-size:11px;font-weight:800;white-space:nowrap}
-.guide-tab.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
-
+/* PAGE 3: EXERCISE GUIDE */
 .guide-item{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
 .guide-item-top{display:flex;gap:16px;align-items:flex-start}
 .guide-item img{width:140px;height:120px;object-fit:contain;background:#000;border-radius:14px;border:1px solid #222b24;flex:none}
@@ -101,7 +97,11 @@ input:focus{outline:0;border-color:var(--lime)}
 .guide-body{font-size:13px;color:#c2c9be;line-height:1.6;background:#121714;padding:12px;border-radius:12px;border:1px solid #1e261f}
 .guide-benefit{font-size:12px;color:var(--lime);display:flex;align-items:center;gap:6px;font-weight:700}
 
-/* PAGE 4: WORKOUT HISTORY */
+/* PAGE 4: DAILY WORKOUT DETAIL - ปรับให้รูปภาพมีขนาดเล็กลงเหมาะสม */
+.detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
+.detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
+
+/* PAGE 5: WORKOUT HISTORY */
 .history-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
 .history-left{display:flex;align-items:center;gap:10px}
 .history-check{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--lime);background:rgba(196,243,107,0.1);color:var(--lime);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
@@ -109,7 +109,7 @@ input:focus{outline:0;border-color:var(--lime)}
 .history-info small{color:#808a7c;font-size:10px}
 .history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;text-align:right}
 
-/* PAGE 5: TRAIN / CAMERA */
+/* PAGE 6: TRAIN / CAMERA */
 #train{background:var(--ink);justify-content:flex-start}
 .vid{position:relative;width:100%;height:48dvh;min-height:300px;background:#000;border-radius:20px;overflow:hidden;border:1px solid #222b24;flex:none}
 #cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
@@ -128,7 +128,7 @@ input:focus{outline:0;border-color:var(--lime)}
 
 #fb{text-align:center;font-weight:800;font-size:12px;min-height:18px}
 
-/* MEDIA QUERIES FOR IPAD / PC */
+/* RESPONSIVE IPAD/PC */
 @media(min-width:700px){
   body{padding:16px;align-items:center}
   .app{max-width:880px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 32px)}
@@ -156,7 +156,7 @@ input:focus{outline:0;border-color:var(--lime)}
   }
   .dash-big b{font-size: 38px}
 
-  .guide-item img{width:180px;height:140px}
+  .guide-item img{width:160px;height:120px}
 }
 </style>
 </head>
@@ -272,7 +272,7 @@ input:focus{outline:0;border-color:var(--lime)}
   </div>
 </div>
 
-<!-- PAGE 3: EXERCISE GUIDE (ปรับขนาดรูปภาพและตัวหนังสือให้ใหญ่ขึ้น) -->
+<!-- PAGE 3: EXERCISE GUIDE (ลบแถบหมวดหมู่ออกเรียบร้อย) -->
 <div id="exerciseGuide" class="page">
   <div class="top-header">
     <div class="brand">
@@ -285,14 +285,7 @@ input:focus{outline:0;border-color:var(--lime)}
   </div>
 
   <h2>EXERCISE <span style="color:var(--lime)">GUIDE</span></h2>
-  <p style="font-size:14px">แนะนำและสาธิตท่าฝึกทั้งหมดในโปรแกรม</p>
-
-  <div class="guide-tabs">
-    <button class="guide-tab on">UPPER BODY</button>
-    <button class="guide-tab">BACK</button>
-    <button class="guide-tab">CORE</button>
-    <button class="guide-tab">LOWER BODY</button>
-  </div>
+  <p style="font-size:14px;margin-bottom:8px">แนะนำและสาธิตท่าฝึกทั้งหมดในโปรแกรม</p>
 
   <div id="guideList" style="display:flex;flex-direction:column;gap:14px"></div>
 </div>
@@ -315,7 +308,7 @@ input:focus{outline:0;border-color:var(--lime)}
   <div id="historyList" style="display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
-<!-- PAGE 5: USER PROFILE (นำอิโมจิออกตามคำขอ) -->
+<!-- PAGE 5: USER PROFILE -->
 <div id="userProfile" class="page">
   <div class="top-header">
     <div class="brand">
@@ -362,13 +355,13 @@ input:focus{outline:0;border-color:var(--lime)}
   <button class="btn ghost" style="margin-top:auto" onclick="logout()">ออกจากระบบ</button>
 </div>
 
-<!-- PAGE 6: DAILY WORKOUT DETAIL (ใส่รูปภาพประจำแต่ละท่า) -->
+<!-- PAGE 6: DAILY WORKOUT DETAIL (ปรับรูปภาพให้เล็กลงเรียบร้อย) -->
 <div id="detail" class="page">
   <h2>DAILY <span style="color:var(--lime)">WORKOUT</span></h2>
   <p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ เพื่อปรับปรุงบุคลิกภาพ</p>
   
   <div id="tabs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
-  <div class="box" id="dinfo" style="padding:16px"></div>
+  <div class="box" id="dinfo" style="padding:14px"></div>
   
   <button class="btn" onclick="train()">START WORKOUT →</button>
   <button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button>
@@ -414,7 +407,7 @@ input:focus{outline:0;border-color:var(--lime)}
   <button class="btn sp" onclick="nextEx()">CONTINUE</button>
 </div>
 
-<!-- Bottom Navigation Bar (ปรับเปลี่ยนไอคอนใหม่ให้สวยและทันสมัยขึ้น) -->
+<!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
   <button class="nav-item active" id="nav-program" onclick="show('program')">
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -442,11 +435,17 @@ const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3;
 const MET=3.8;
 
 const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
+
+/* ปรับการดึงรูปภาพ: ใช้ไฟล์ชื่อ iyt โดยตรง ไม่เติม _i */
 function imageCandidates(id,st){
+ if(id==='iyt' && (st===null || st===undefined)){
+   return IMAGE_EXTENSIONS.map(ext=>'images/iyt.'+ext);
+ }
  const iytFiles=['iyt_i','iyt_y','iyt_t'];
  const base=(id==='iyt')?iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0]:id;
  return IMAGE_EXTENSIONS.map(ext=>'images/'+base+'.'+ext);
 }
+
 function loadExerciseImage(element,id,st){
  const candidates=imageCandidates(id,st);
  let index=0;
@@ -512,7 +511,6 @@ function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').
 function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();show('program');}
 function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home');}}
 
-/* ปรับเรนเดอร์หน้า Guide ให้มีรูปใหญ่ขึ้นและข้อความอ่านง่ายขึ้น */
 function renderExerciseGuide(){
  $('guideList').innerHTML = EX.map((e,i)=>`
   <div class="guide-item">
@@ -601,11 +599,11 @@ function renderProgram(){
 let day=1,sel=[0,1,2,3];
 function openDay(d){day=d;renderDetail();show('detail');}
 
-/* เรนเดอร์หน้า Daily Workout ให้แสดงรูปภาพประจำท่าฝึก */
+/* เรนเดอร์หน้า Daily Workout โดยปรับรูปให้มีขนาดสมส่วน ไม่ใหญ่เกินไป */
 function renderDetail(){
  $('tabs').innerHTML=EX.map((e,i)=>`
-  <button class="seg ${sel.includes(i)?'on':''}" onclick="tog(${i})" style="flex-direction:column;padding:10px;gap:8px">
-   ${img(e.id,'',null)}
+  <button class="seg ${sel.includes(i)?'on':''}" onclick="tog(${i})" style="flex-direction:column;padding:8px;gap:6px">
+   ${img(e.id,'detail-tab-img',null)}
    <span style="font-size:11px;text-align:center">${e.n}</span>
   </button>
  `).join('');
@@ -614,14 +612,14 @@ function renderDetail(){
   const e=EX[i];
   return `
    <div style="display:flex;gap:12px;align-items:center">
-    ${img(e.id,'',null)}
+    ${img(e.id,'detail-info-img',null)}
     <div>
-     <b style="color:var(--lime);font-size:14px">${e.n}</b>
-     <p style="margin-top:4px;font-size:12px;color:#c2c9be">${e.how}</p>
+     <b style="color:var(--lime);font-size:13px">${e.n}</b>
+     <p style="margin-top:4px;font-size:11px;color:#c2c9be">${e.how}</p>
     </div>
    </div>
   `;
- }).join('<hr style="border:0;border-top:1px solid #222b24;margin:12px 0">');
+ }).join('<hr style="border:0;border-top:1px solid #222b24;margin:10px 0">');
 }
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}else sel.push(i);renderDetail();}
 
