@@ -58,7 +58,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 .tile.done:after{content:' ✓';font-family:Arial,sans-serif;font-size:14px}
 .tile:disabled{cursor:not-allowed;opacity:.62}
 
-/* หน้า Home แบบเต็มจอ ไร้แถบขาวด้านล่าง */
+/* หน้า Home */
 #home{background:radial-gradient(circle at 85% 12%,#c4f36b55,transparent 42%),var(--ink);color:#fff;position:relative;overflow:hidden;justify-content:flex-end;padding:max(20px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));height:100dvh;box-sizing:border-box}
 #home .hero{position:relative;z-index:1;margin-bottom:10px}
 #home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}
@@ -98,13 +98,13 @@ input:focus{outline:0;border-color:var(--lime2)}
 .program-note .note-icon{width:31px;height:31px;display:grid;place-items:center;background:var(--lime);border-radius:10px;font-size:16px;flex:none}
 .program-note p{font-size:10px;color:#56634a}
 
-/* แสดงรูปภาพหน้า Guide แบบพอดีเป๊ะ ไม่ล้นจอ */
+/* แสดงรูปภาพหน้า Guide แบบสีพื้นหลังเนียนสีเดียวกับรูปภาพ */
 .guide-card-img {
   width: 100%;
   max-width: 100%;
-  height: clamp(140px, 28vh, 220px);
+  height: clamp(160px, 32vh, 240px);
   object-fit: contain;
-  background: #171a17;
+  background: #000;
   border-radius: 12px;
   display: block;
   margin: 0 auto;
@@ -121,7 +121,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 #detail .bar i{background:var(--lime)}
 #detail #tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 #detail .seg.ex{position:relative;background:#202722;color:#fff;border:1px solid #343d35;border-radius:16px;padding:9px;display:flex;flex-direction:column;align-items:stretch;gap:7px;min-width:0;text-align:left}
-#detail .seg.ex img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px}
+#detail .seg.ex img{width:100%;aspect-ratio:16/10;object-fit:contain;background:#000;border-radius:10px}
 .ex-number{font-family:'Antonio',sans-serif;font-size:12px;color:var(--lime);letter-spacing:1.5px}
 .ex-name{font-size:12px;font-weight:800;line-height:1.5;min-height:36px}
 .ex-time{font-size:10px;color:#a3a3a3}
@@ -131,7 +131,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 .detail-title{font-size:11px;color:var(--lime);font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
 #detail #dinfo{background:#202722;border:1px solid #343d35;border-radius:18px;padding:14px;color:#fff}
 .ei{display:flex;flex-direction:column;gap:12px}
-.ei img{width:100%;max-height:200px;object-fit:contain;border-radius:12px;background:#111}
+.ei img{width:100%;max-height:220px;object-fit:contain;border-radius:12px;background:#000}
 .exercise-name{color:var(--lime);font-size:18px;font-weight:800}
 .duration{display:inline-block;background:var(--lime);color:var(--ink);border-radius:30px;padding:6px 13px;font-size:10px;font-weight:900;margin-top:8px}
 .exercise-desc{color:#e5e5e5;font-size:12px;line-height:1.9;margin-top:10px}
@@ -140,6 +140,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 #detail .btn:not(.ghost){background:linear-gradient(135deg,#c4f36b,#91c83d);font-size:16px;font-weight:900;padding:16px}
 #detail .ghost{background:transparent;border:1px solid #555;color:#ddd}
 
+/* ปรับขนาดกล้องให้ใหญ่ขึ้นและรองรับทุกอุปกรณ์ */
 #train{background:var(--ink);color:#fff;justify-content:space-between;overflow-y:auto;justify-content:flex-start}
 #train h3{color:var(--lime);text-align:center}
 #train .box{background:#262d27;border-color:#384138;color:#e5e5e5}
@@ -147,12 +148,12 @@ input:focus{outline:0;border-color:var(--lime2)}
 #train .bar{background:#333}
 #train .bar i{background:var(--lime)}
 #train .ghost{background:transparent;color:#fff;border-color:#525252}
-.vid{position:relative;width:100%;height:38dvh;max-height:300px;background:#000;border-radius:16px;overflow:hidden;border:2px solid #333;flex:none}
+.vid{position:relative;width:100%;height:clamp(260px, 45dvh, 380px);max-height:420px;background:#000;border-radius:18px;overflow:hidden;border:2px solid #384138;flex:none}
 #cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px;min-width:0}
-.ban #sym{display:block;width:100%;height:clamp(112px,24vw,155px);max-height:155px;object-fit:contain;object-position:center;margin:0;border-radius:0;background:#111}
-.ban .cap{padding:6px 10px 8px;min-width:0}
+.ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px;min-width:0;background:#000}
+.ban #sym{display:block;width:100%;height:clamp(120px,25vw,165px);max-height:165px;object-fit:contain;object-position:center;margin:0;border-radius:0;background:#000}
+.ban .cap{padding:6px 10px 8px;min-width:0;background:#262d27}
 .ban #nm{display:block;color:#fff;font-size:clamp(11px,2.8vw,13px);font-weight:800;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ban #bl{font-size:10px;color:var(--lime);margin-top:2px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .exImg{display:block;margin:0 auto;width:clamp(80px,25vw,110px);height:auto;border-radius:16px}
@@ -165,10 +166,25 @@ input:focus{outline:0;border-color:var(--lime2)}
 .history-item small{color:var(--muted);display:block;font-size:11px}
 .history-tag{background:#e7f6d0;color:#36521a;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:800}
 
-@media(min-width:700px){body{padding:20px;align-items:center}.app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}.app.has-nav .page{min-height:calc(100dvh - 105px);padding:24px 28px}#program{max-width:900px}#program .grid{gap:14px}#program .tile{min-height:92px}#program .program-summary{padding:22px 24px}#program .week-block{margin-bottom:9px}#train.page.on{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr;gap:14px;align-content:start}#train h3{grid-column:1/-1}#detail{padding:28px}#detail #tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Media Queries สำหรับปรับขนาดกล้องและเลย์เอาต์ตามอุปกรณ์ */
+@media(min-width:700px){
+  body{padding:20px;align-items:center}
+  .app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}
+  .app.has-nav .page{min-height:calc(100dvh - 105px);padding:24px 28px}
+  #program{max-width:900px}
+  #program .grid{gap:14px}
+  #program .tile{min-height:92px}
+  #program .program-summary{padding:22px 24px}
+  #program .week-block{margin-bottom:9px}
+  #train.page.on{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto 1fr;gap:16px;align-content:start}
+  #train h3{grid-column:1/-1}
+  .vid{height:50dvh;max-height:480px}
+  #detail{padding:28px}
+  #detail #tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:380px){.page{padding-left:13px;padding-right:13px}#program .tile{min-height:68px}.program-head h3{font-size:18px}#detail{padding:14px 10px}.ban #sym{height:112px}.ban #nm{font-size:11px}.ban #bl{font-size:9px}}
 @media(min-width:600px){.ban #sym{height:clamp(140px,20vw,190px);max-height:190px}.ban #nm{font-size:13px}.ban #bl{font-size:10px}}
-@media(max-height:670px){.vid{height:30dvh;max-height:220px}.page{padding-top:10px;padding-bottom:10px;gap:7px}}
+@media(max-height:670px){.vid{height:35dvh;max-height:260px}.page{padding-top:10px;padding-bottom:10px;gap:7px}}
 </style>
 </head>
 <body>
