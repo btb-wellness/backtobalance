@@ -54,7 +54,7 @@ input:focus{outline:0;border-color:var(--lime)}
 .brand-text span{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#808a7c}
 .brand-text strong{font-size:10px;font-weight:900;letter-spacing:1px;color:#fff}
 
-/* PAGE 1: HOME (ปรับตำแหน่งย้ายข้อความและกล่องฟีเจอร์ลงมา) */
+/* PAGE 1: HOME */
 #home{background:#0d110e;position:relative;overflow:hidden;justify-content:flex-end;padding:max(16px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));height:100dvh}
 #home .heroBg{position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(196,243,107,0.15) 0%,transparent 60%),linear-gradient(to top,#0d110e 10%,rgba(13,17,14,0.6) 50%,transparent 85%),url('images/hero-motion-band.jpg') center 35%/cover no-repeat;opacity:.85;z-index:0}
 #home .title-main{font-family:'Antonio',sans-serif;font-size:clamp(44px,14vw,76px);font-weight:800;line-height:0.9;background:linear-gradient(180deg,#fff 0%,#d8e2d4 60%,var(--lime) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-transform:uppercase;margin:8px 0 12px;position:relative;z-index:2}
@@ -165,7 +165,7 @@ input:focus{outline:0;border-color:var(--lime)}
 <body>
 <div class="app" id="appFrame">
 
-<!-- PAGE 1: HOME (ลบข้อความเเจ้งเตือนออกเเละย้ายตำแหน่งองค์ประกอบลงล่าง) -->
+<!-- PAGE 1: HOME -->
 <div id="home" class="page on">
   <div class="heroBg" aria-hidden="true"></div>
   <div class="top-header" style="position:absolute;top:max(16px,env(safe-area-inset-top));left:18px;right:18px;z-index:2">
@@ -431,13 +431,12 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbyxEmNLkH0vMTkrWOhdUI1G_MKa4Fa0EG9hsqZO6BkHuMrfXWXvBDSgMg1SqJPnWfpF4Q/exec';
+const API='PASTE_YOUR_WEB_APP_URL_HERE';
 const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3;
 const MET=3.8;
 
 const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
 
-/* ฟังก์ชันดึงรูปภาพ: ใช้ iyt_i, iyt_y, iyt_t เฉพาะตอนเล่นในกล้อง และใช้ iyt เฉพาะหน้าอื่นๆ */
 function imageCandidates(id,st){
  if(id==='iyt'){
   if(st===null || st===undefined){
@@ -650,14 +649,14 @@ function onResults(r){
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();});
  const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');if(T.hold>=q.h){T.hold=0;if(id==='iyt'){if(T.st<2){T.st++;setImg();fb('เปลี่ยนเป็นท่าถัดไป!','#27ae60')}else{T.st=0;setImg();T.reps++;s.reps++;s.score+=100;fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60')}}else{T.reps++;s.reps++;s.score+=100;fb('ครบ 1 ครั้ง! +100','#27ae60')}}}else{T.hold=0;fb(q.m,'#e74c3c');}
+ if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');if(T.hold>=q.h){T.hold=0;if(id==='iyt'){if(T.st<2){T.st++;T.stageTimer=0;setImg();fb('เปลี่ยนเป็นท่าถัดไป!','#27ae60')}else{T.st=0;T.stageTimer=0;setImg();T.reps++;s.reps++;s.score+=100;fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60')}}else{T.reps++;s.reps++;s.score+=100;fb('ครบ 1 ครั้ง! +100','#27ae60')}}}else{T.hold=0;fb(q.m,'#e74c3c');}
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
-function setEx(i){T.cur=i;T.st=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที':e.id==='pec'?'ค้างท่า 15 วินาที':'ค้างท่า 5 วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
+function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที':e.id==='pec'?'ค้างท่า 15 วินาที':'ค้างท่า 5 วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
- T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
  $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่าทุก 15 วินาที';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
@@ -677,7 +676,18 @@ async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=
 function tick(){
  if(T.pause)return;if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
- if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else T.stats[T.cur].sec++;
+ if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else{
+  T.stats[T.cur].sec++;
+  /* เพิ่มการเปลี่ยนรูปท่า IYT สลับตามเวลาทุกๆ 5 วินาที */
+  if(EX[T.cur].id==='iyt'){
+    T.stageTimer=(T.stageTimer||0)+1;
+    if(T.stageTimer>=5){
+      T.stageTimer=0;
+      T.st=(T.st+1)%3;
+      setImg();
+    }
+  }
+ }
  T.blockLeft--;$('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
  if(T.blockLeft<=0&&T.left>0)setEx(pick());if(T.left<=0)finish(false);
 }
