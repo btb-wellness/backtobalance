@@ -12,19 +12,21 @@
 <style>
 :root{--ink:#171a17;--panel:#222922;--lime:#c4f36b;--lime2:#91c83d;--paper:#f5f6f2;--muted:#858b82;--line:#e4e7df;--white:#fff}
 *{box-sizing:border-box;font-family:'Noto Sans Thai','Plus Jakarta Sans',sans-serif}
-body{margin:0;background:#e7e9e3;color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+body{margin:0;background:#171a17;color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
 button,input{font:inherit}
 button{cursor:pointer}
-.app{width:100%;max-width:560px;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0002;display:flex;flex-direction:column;position:relative;padding-bottom:85px}
+.app{width:100%;max-width:560px;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0002;display:flex;flex-direction:column;position:relative}
+.app.has-nav{padding-bottom:85px}
 
 /* Bottom Navigation Bar - มุมมน & ภาษาอังกฤษ */
-.bottom-nav{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:62px;background:var(--ink);display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 25px rgba(0,0,0,0.3);z-index:999;padding:0 8px;border:1px solid #2a322a}
+.bottom-nav{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:62px;background:var(--ink);display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 25px rgba(0,0,0,0.4);z-index:999;padding:0 8px;border:1px solid #2a322a}
 .app.has-nav .bottom-nav{display:flex}
 .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#858b82;background:none;border:none;padding:6px;width:25%;font-size:10px;font-weight:700;transition:.2s;border-radius:16px}
 .nav-item svg{width:20px;height:20px;fill:currentColor}
 .nav-item.active{color:var(--lime)}
 
-.page{display:none;flex-direction:column;gap:12px;padding:max(16px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));min-height:calc(100dvh - 85px);flex:1;overflow-y:auto}
+.page{display:none;flex-direction:column;gap:12px;padding:max(16px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));min-height:100dvh;flex:1;overflow-y:auto}
+.app.has-nav .page{min-height:calc(100dvh - 85px)}
 .page.on{display:flex}
 h2,h3{margin:0;font-family:'Antonio','Noto Sans Thai',sans-serif;letter-spacing:.04em}
 h2{font-size:34px;text-align:center}h3{font-size:24px}
@@ -56,13 +58,14 @@ input:focus{outline:0;border-color:var(--lime2)}
 .tile.done:after{content:' ✓';font-family:Arial,sans-serif;font-size:14px}
 .tile:disabled{cursor:not-allowed;opacity:.62}
 
-#home{background:radial-gradient(circle at 85% 12%,#c4f36b55,transparent 42%),var(--ink);color:#fff;position:relative;overflow:hidden}
+/* ปรับแต่งหน้า Home ให้เต็มจอ ไม่มีพื้นที่ขาว */
+#home{background:radial-gradient(circle at 85% 12%,#c4f36b55,transparent 42%),var(--ink);color:#fff;position:relative;overflow:hidden;justify-content:space-between;padding-bottom:max(24px,env(safe-area-inset-bottom))}
 #home .hero{margin-top:auto;position:relative;z-index:1}
 #home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}
 #home h2{font-size:clamp(48px,15vw,82px);line-height:.92;text-align:left;color:var(--lime);margin:18px 0}
 #home p{color:#c4c9c0;font-size:14px}
 #home .heroBg{position:absolute;inset:0;background:linear-gradient(to top,#171a17 0%,#171a17d9 24%,transparent 65%),url('images/hero-motion-band.jpg') 65% center/cover no-repeat;opacity:.75}
-#home .btn{position:relative;z-index:1;margin-top:30px}
+#home .btn{position:relative;z-index:1;margin-top:20px}
 
 #program{background:linear-gradient(180deg,#f8faf4 0%,#f1f3ed 100%);gap:14px;padding-top:max(18px,env(safe-area-inset-top))}
 .program-head{display:flex;align-items:center;gap:11px;padding:7px 2px 2px}
@@ -95,12 +98,13 @@ input:focus{outline:0;border-color:var(--lime2)}
 .program-note .note-icon{width:31px;height:31px;display:grid;place-items:center;background:var(--lime);border-radius:10px;font-size:16px;flex:none}
 .program-note p{font-size:10px;color:#56634a}
 
-/* Exercise Guide Styles - ปรับรูปภาพให้แสดงเต็ม */
+/* ปรับแต่งการแสดงผลรูปภาพหน้า Guide ให้พอดีกับทุกหน้าจอ */
 .guide-card-img {
   width: 100%;
-  max-height: 260px;
+  max-width: 100%;
+  height: clamp(140px, 30vh, 220px);
   object-fit: contain;
-  background: #111;
+  background: #171a17;
   border-radius: 12px;
   display: block;
   margin: 0 auto;
@@ -127,7 +131,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 .detail-title{font-size:11px;color:var(--lime);font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
 #detail #dinfo{background:#202722;border:1px solid #343d35;border-radius:18px;padding:14px;color:#fff}
 .ei{display:flex;flex-direction:column;gap:12px}
-.ei img{width:100%;max-height:220px;object-fit:contain;border-radius:12px;background:#111}
+.ei img{width:100%;max-height:200px;object-fit:contain;border-radius:12px;background:#111}
 .exercise-name{color:var(--lime);font-size:18px;font-weight:800}
 .duration{display:inline-block;background:var(--lime);color:var(--ink);border-radius:30px;padding:6px 13px;font-size:10px;font-weight:900;margin-top:8px}
 .exercise-desc{color:#e5e5e5;font-size:12px;line-height:1.9;margin-top:10px}
@@ -161,7 +165,7 @@ input:focus{outline:0;border-color:var(--lime2)}
 .history-item small{color:var(--muted);display:block;font-size:11px}
 .history-tag{background:#e7f6d0;color:#36521a;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:800}
 
-@media(min-width:700px){body{padding:20px;align-items:center}.app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}.page{min-height:calc(100dvh - 105px);padding:24px 28px}#program{max-width:900px}#program .grid{gap:14px}#program .tile{min-height:92px}#program .program-summary{padding:22px 24px}#program .week-block{margin-bottom:9px}#train.page.on{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr;gap:14px;align-content:start}#train h3{grid-column:1/-1}#detail{padding:28px}#detail #tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:700px){body{padding:20px;align-items:center}.app{max-width:900px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}.app.has-nav .page{min-height:calc(100dvh - 105px);padding:24px 28px}#program{max-width:900px}#program .grid{gap:14px}#program .tile{min-height:92px}#program .program-summary{padding:22px 24px}#program .week-block{margin-bottom:9px}#train.page.on{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr;gap:14px;align-content:start}#train h3{grid-column:1/-1}#detail{padding:28px}#detail #tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.page{padding-left:13px;padding-right:13px}#program .tile{min-height:68px}.program-head h3{font-size:18px}#detail{padding:14px 10px}.ban #sym{height:112px}.ban #nm{font-size:11px}.ban #bl{font-size:9px}}
 @media(min-width:600px){.ban #sym{height:clamp(140px,20vw,190px);max-height:190px}.ban #nm{font-size:13px}.ban #bl{font-size:10px}}
 @media(max-height:670px){.vid{height:30dvh;max-height:220px}.page{padding-top:10px;padding-bottom:10px;gap:7px}}
