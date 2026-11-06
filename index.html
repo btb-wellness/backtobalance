@@ -54,13 +54,13 @@ input:focus{outline:0;border-color:var(--lime)}
 .brand-text span{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#808a7c}
 .brand-text strong{font-size:10px;font-weight:900;letter-spacing:1px;color:#fff}
 
-/* PAGE 1: HOME */
-#home{background:#0d110e;position:relative;overflow:hidden;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 18px max(16px,env(safe-area-inset-bottom));height:100dvh}
+/* PAGE 1: HOME (ปรับตำแหน่งย้ายข้อความและกล่องฟีเจอร์ลงมา) */
+#home{background:#0d110e;position:relative;overflow:hidden;justify-content:flex-end;padding:max(16px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));height:100dvh}
 #home .heroBg{position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(196,243,107,0.15) 0%,transparent 60%),linear-gradient(to top,#0d110e 10%,rgba(13,17,14,0.6) 50%,transparent 85%),url('images/hero-motion-band.jpg') center 35%/cover no-repeat;opacity:.85;z-index:0}
-#home .title-main{font-family:'Antonio',sans-serif;font-size:clamp(48px,15vw,82px);font-weight:800;line-height:0.88;background:linear-gradient(180deg,#fff 0%,#d8e2d4 60%,var(--lime) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-transform:uppercase;margin:12px 0 16px;position:relative;z-index:2}
-#home .sub-desc{color:#b0b8ac;font-size:12px;line-height:1.5;position:relative;z-index:2}
+#home .title-main{font-family:'Antonio',sans-serif;font-size:clamp(44px,14vw,76px);font-weight:800;line-height:0.9;background:linear-gradient(180deg,#fff 0%,#d8e2d4 60%,var(--lime) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-transform:uppercase;margin:8px 0 12px;position:relative;z-index:2}
+#home .sub-desc{color:#b0b8ac;font-size:12px;line-height:1.5;position:relative;z-index:2;margin-bottom:16px}
 #home .sub-desc b{color:#fff}
-#home .home-features{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(20,26,22,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:12px 8px;margin-top:auto;margin-bottom:12px}
+#home .home-features{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(20,26,22,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:12px 8px;margin-bottom:16px}
 .feature-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
 .feature-icon{width:30px;height:30px;border-radius:50%;border:1px solid rgba(196,243,107,0.4);background:rgba(196,243,107,0.08);display:grid;place-items:center;color:var(--lime)}
 .feature-icon svg{width:15px;height:15px;fill:currentColor}
@@ -101,16 +101,11 @@ input:focus{outline:0;border-color:var(--lime)}
 .detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
 .detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
 
-/* PAGE 5: WORKOUT HISTORY (ปรับแต่งสถานะสำเร็จ/ไม่สำเร็จ) */
+/* PAGE 5: WORKOUT HISTORY */
 .history-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
 .history-left{display:flex;align-items:center;gap:10px}
-
-/* ไอคอนผ่านภารกิจ (สีเขียว) */
 .history-check{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--lime);background:rgba(196,243,107,0.1);color:var(--lime);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
-
-/* ไอคอนไม่ผ่านภารกิจ (สีแดงกากบาท) */
 .history-check.failed{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
-
 .history-info strong{display:block;font-size:13px;color:#fff}
 .history-info small{color:#808a7c;font-size:10px}
 .history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;text-align:right}
@@ -170,10 +165,10 @@ input:focus{outline:0;border-color:var(--lime)}
 <body>
 <div class="app" id="appFrame">
 
-<!-- PAGE 1: HOME -->
+<!-- PAGE 1: HOME (ลบข้อความเเจ้งเตือนออกเเละย้ายตำแหน่งองค์ประกอบลงล่าง) -->
 <div id="home" class="page on">
   <div class="heroBg" aria-hidden="true"></div>
-  <div class="top-header" style="position:relative;z-index:2">
+  <div class="top-header" style="position:absolute;top:max(16px,env(safe-area-inset-top));left:18px;right:18px;z-index:2">
     <div class="brand">
       <img class="logo" src="images/logo.svg" alt="">
       <div class="brand-text">
@@ -209,7 +204,6 @@ input:focus{outline:0;border-color:var(--lime)}
     </div>
   </div>
 
-  <div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook กรุณาเปิดลิงก์ใน Safari/Chrome เพื่อใช้งานกล้อง</div>
   <button class="btn" style="position:relative;z-index:2" onclick="start()">GET STARTED →</button>
 </div>
 
@@ -297,7 +291,7 @@ input:focus{outline:0;border-color:var(--lime)}
   <div id="guideList" style="display:flex;flex-direction:column;gap:14px"></div>
 </div>
 
-<!-- PAGE 4: WORKOUT HISTORY (แสดงไอคอนผ่าน/ไม่ผ่านอย่างชัดเจน) -->
+<!-- PAGE 4: WORKOUT HISTORY -->
 <div id="history" class="page">
   <div class="top-header">
     <div class="brand">
@@ -437,19 +431,23 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE';
+const API='https://script.google.com/macros/s/AKfycbyxEmNLkH0vMTkrWOhdUI1G_MKa4Fa0EG9hsqZO6BkHuMrfXWXvBDSgMg1SqJPnWfpF4Q/exec';
 const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3;
 const MET=3.8;
 
 const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
 
+/* ฟังก์ชันดึงรูปภาพ: ใช้ iyt_i, iyt_y, iyt_t เฉพาะตอนเล่นในกล้อง และใช้ iyt เฉพาะหน้าอื่นๆ */
 function imageCandidates(id,st){
- if(id==='iyt' && (st===null || st===undefined)){
+ if(id==='iyt'){
+  if(st===null || st===undefined){
    return IMAGE_EXTENSIONS.map(ext=>'images/iyt.'+ext);
+  }
+  const iytFiles=['iyt_i','iyt_y','iyt_t'];
+  const base=iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0];
+  return IMAGE_EXTENSIONS.map(ext=>'images/'+base+'.'+ext);
  }
- const iytFiles=['iyt_i','iyt_y','iyt_t'];
- const base=(id==='iyt')?iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0]:id;
- return IMAGE_EXTENSIONS.map(ext=>'images/'+base+'.'+ext);
+ return IMAGE_EXTENSIONS.map(ext=>'images/'+id+'.'+ext);
 }
 
 function loadExerciseImage(element,id,st){
@@ -535,7 +533,6 @@ function renderExerciseGuide(){
  `).join('');
 }
 
-/* ฟังก์ชันเรนเดอร์หน้าประวัติการฝึก ปรับไอคอนติ๊กถูก (เขียว) หรือกากบาท (แดง) ตามสถานะ completed */
 function renderHistory(){
  if(!S.history || S.history.length === 0){
   $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>`;
