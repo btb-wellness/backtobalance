@@ -43,20 +43,22 @@ h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--mut
 .ban{padding:0;overflow:hidden;border-radius:18px;background:#242c25;border-color:#3b453b}.ban #sym{display:block;width:100%;height:clamp(115px,25vw,165px);object-fit:cover;object-position:center;background:#101510}.ban .cap{padding:8px 11px 10px;text-align:center}#nm{display:block;color:white;font-size:13px;font-weight:800;line-height:1.35}#bl{font-size:11px;color:var(--lime);margin-top:3px}.dash{display:flex;justify-content:space-around;text-align:center;background:#242c25;border-color:#3b453b;padding:13px 8px}.dash small{font-size:9px;letter-spacing:.1em;color:#a6afa1;font-weight:800}.dash b{display:block;font:39px 'Bebas Neue',sans-serif;color:var(--lime);line-height:1.1}#tg{background:#242c25;border-color:#3b453b;text-align:center;color:#e9eee5;min-height:58px;display:grid;place-items:center;font-size:13px}#fb{text-align:center;min-height:20px;font-size:12px;font-weight:800}.train-panel{display:flex;flex-direction:column;gap:10px}.train-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.train-actions .btn{min-height:52px}#go{min-height:58px}#result .result-score{text-align:center;font-size:14px;line-height:2}#result .result-score b{font:32px 'Bebas Neue',sans-serif}
 
 /* ===== แถบบน / เมนูล่าง ===== */
-#top{display:none;position:sticky;top:0;z-index:30;height:calc(58px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;align-items:center;justify-content:space-between;background:#171c18;color:#fff;box-shadow:0 2px 14px #0003}
+#top{display:none;z-index:30;height:calc(58px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;align-items:center;justify-content:space-between;background:#171c18;color:#fff;box-shadow:0 2px 14px #0003}
 body.bar #top{display:flex}
+body.stickytop #top{position:sticky;top:0}
 .tb-back,.tb-me{width:42px;height:42px;border-radius:50%;border:0;background:#ffffff1a;color:#fff;font-size:22px;font-weight:700;display:grid;place-items:center}
 .tb-me{background:var(--lime);color:#171c18;font:22px 'Bebas Neue',sans-serif}
 .tb-brand{display:flex;align-items:center;gap:8px}.tb-brand img{width:36px;height:36px;object-fit:contain}
 .tb-brand b{font:26px 'Bebas Neue',sans-serif;font-weight:400;letter-spacing:.07em;color:var(--lime);white-space:nowrap}
-#nav{display:none;position:fixed;bottom:0;left:0;right:0;margin:0 auto;width:100%;max-width:560px;z-index:30;background:#171c18;padding:6px 8px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;border-radius:18px 18px 0 0;box-shadow:0 -4px 18px #0003}
+#nav{display:none;background:#171c18;padding:0 8px 6px;justify-content:space-around;border-top:1px solid #ffffff14}
+body.fixednav #nav{position:fixed;bottom:0;left:0;right:0;margin:0 auto;width:100%;max-width:560px;z-index:30;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-radius:18px 18px 0 0;box-shadow:0 -4px 18px #0003;border-top:0}
 body.nav #nav{display:flex}
 #nav button{flex:1;background:none;border:0;color:#8e978a;font:700 10px 'Montserrat',system-ui,-apple-system,sans-serif;letter-spacing:.04em;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;min-height:52px}
 #nav button.on{color:var(--lime)}
 .ni{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 body.bar .page{padding-top:16px;min-height:calc(100vh - 58px);min-height:calc(100dvh - 58px - env(safe-area-inset-top))}
-body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
+body.fixednav.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 .brand-mark{background:var(--ink);padding:7px}.brand-mark img{width:100%;height:100%;object-fit:contain}
 .brand-mark.t{background:none;padding:0;width:84px;height:84px}
 
@@ -84,7 +86,7 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
  .page{min-height:calc(100dvh - 40px);padding:28px;border-radius:inherit}
  body.bar .page{padding-top:16px;min-height:calc(100dvh - 98px)}
  #top{border-radius:24px 24px 0 0}
- #nav{max-width:900px}
+ body.fixednav #nav{max-width:900px}
  #train .ban #sym{height:190px}
  .vid{--vh:56dvh;max-height:65vh}
  #detail{padding:30px}
@@ -107,7 +109,8 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 @media(orientation:landscape) and (min-width:600px){
  #train.page.on{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start;column-gap:16px;row-gap:10px}
  #train h3{grid-column:1/-1}
- #train .vid{--vh:calc(100dvh - 130px);max-height:calc(100dvh - 130px);position:sticky;top:68px;align-self:start;margin:0}
+ #train .vid{--vh:calc(100dvh - 130px);max-height:calc(100dvh - 130px);align-self:start;margin:0}
+ body.stickytop #train .vid{position:sticky;top:68px}
  #train .train-panel{min-width:0}
 }
 @media(orientation:landscape) and (max-height:600px){
@@ -118,6 +121,7 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 </head>
 <body><main class="app">
 <header id="top"><button class="tb-back" id="backBtn" onclick="goBack()" aria-label="ย้อนกลับ">←</button><div class="tb-brand"><img src="images/logo.png" alt=""><b>BACK TO BALANCE</b></div><button class="tb-me" id="meBtn" onclick="show('me')" aria-label="โปรไฟล์">?</button></header>
+<nav id="nav"><button data-p="program" onclick="show('program')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>โปรแกรม</button><button data-p="library" onclick="show('library')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M6 10h12M9 21l3-6 3 6"/></svg>ท่าออกกำลังกาย</button><button data-p="history" onclick="show('history')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</button><button data-p="me" onclick="show('me')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>โปรไฟล์</button></nav>
 
 <section id="home" class="page on">
   <div class="heroBg" aria-hidden="true"></div>
@@ -152,12 +156,11 @@ body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
 <section id="me" class="page"><h3>โปรไฟล์</h3><div class="box" id="meInfo"></div><button class="btn ghost" onclick="editProfile()">แก้ไขข้อมูลทั่วไป</button><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
 
 </main>
-<nav id="nav"><button data-p="program" onclick="show('program')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>โปรแกรม</button><button data-p="library" onclick="show('library')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M6 10h12M9 21l3-6 3 6"/></svg>ท่าออกกำลังกาย</button><button data-p="history" onclick="show('history')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</button><button data-p="me" onclick="show('me')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>โปรไฟล์</button></nav>
 
 <script>
 /* วาง Web App URL ของ Apps Script (ขึ้นต้น https://script.google.com/macros/s/ ลงท้าย /exec)
    ห้ามใส่รหัส Google Sheet */
-const API='https://script.google.com/macros/s/AKfycbzfvytYiNWmiYBbcB66idi_5Ay-CVIF-VjCHAmSvJn584SUKYwWmH4YIZ3EOBx67E1w4g/exec';
+const API='PASTE_YOUR_WEB_APP_URL_HERE';
 
 const SEC=900,BLOCK=15,PREP=3,DAYS=15,MIN_DONE=600,MET={battle:3.8};
 
@@ -534,11 +537,17 @@ window.addEventListener('DOMContentLoaded',()=>{
   else show('home');
 });
 
+/* โหมดแถบติดจอ: ปิดไว้ก่อนเพื่อให้เลื่อนหน้าได้เหมือนเวอร์ชันเก่า
+   ทดสอบเปิดได้ด้วย ?sticky (แถบบนติดจอ) และ ?fixed (เมนูติดขอบล่าง) ต่อท้ายลิงก์ */
+const STICKY_TOP=false,FIXED_NAV=false;
+document.body.classList.toggle('stickytop',STICKY_TOP||/[?&]sticky/.test(location.search));
+document.body.classList.toggle('fixednav',FIXED_NAV||/[?&]fixed/.test(location.search));
+
 /* ตัวช่วยตรวจปัญหา: เปิดลิงก์ต่อท้ายด้วย ?debug จะมีกล่องตัวเลขมุมซ้ายบน */
 if(/[?&]debug/.test(location.search)){
   const d=document.createElement('div');d.id='dbg';document.body.appendChild(d);
   setInterval(()=>{const p=document.querySelector('.page.on');
-    d.textContent='inner:'+innerHeight+'  doc:'+document.documentElement.scrollHeight+'\napp:'+document.querySelector('.app').offsetHeight+'  page:'+(p?p.id+' '+p.offsetHeight:'-')+'\nscrollY:'+Math.round(scrollY)+'  ua:'+(navigator.userAgent.match(/(CriOS|FxiOS|Line|FBAN|Version)\/[\d.]+/)||['?'])[0];},500);
+    d.textContent='inner:'+innerHeight+'  doc:'+document.documentElement.scrollHeight+'\napp:'+document.querySelector('.app').offsetHeight+'  page:'+(p?p.id+' '+p.offsetHeight:'-')+'\nclass:'+document.body.className+'\nscrollY:'+Math.round(scrollY)+'  ua:'+(navigator.userAgent.match(/(CriOS|FxiOS|Line|FBAN|Version)\/[\d.]+/)||['?'])[0];},500);
 }
 </script>
 </body>
