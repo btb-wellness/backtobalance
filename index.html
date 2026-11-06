@@ -8,18 +8,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#171a17;--panel:#222922;--lime:#c4f36b;--lime2:#91c83d;--paper:#f5f6f2;--muted:#858b82;--line:#e4e7df;--white:#fff}
+:root{--ink:#101411;--panel:#1c221e;--lime:#c4f36b;--lime2:#91c83d;--paper:#f5f6f2;--muted:#858b82;--line:#2a322c;--white:#fff}
 *{box-sizing:border-box;font-family:'Noto Sans Thai','Plus Jakarta Sans',sans-serif}
-body{margin:0;background:var(--ink);color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--ink);color:#fff;display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
 button,input{font:inherit}
 button{cursor:pointer}
-.app{width:100%;max-width:560px;min-height:100dvh;background:var(--paper);box-shadow:0 0 40px #0002;display:flex;flex-direction:column;position:relative}
+.app{width:100%;max-width:560px;min-height:100dvh;background:var(--ink);box-shadow:0 0 40px #0008;display:flex;flex-direction:column;position:relative}
 .app.has-nav{padding-bottom:85px}
 
 /* Bottom Navigation Bar */
-.bottom-nav{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:62px;background:var(--ink);display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 25px rgba(0,0,0,0.4);z-index:999;padding:0 8px;border:1px solid #2a322a}
+.bottom-nav{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:62px;background:#171a17;display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 25px rgba(0,0,0,0.5);z-index:999;padding:0 8px;border:1px solid #2a322a}
 .app.has-nav .bottom-nav{display:flex}
 .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#858b82;background:none;border:none;padding:6px;width:25%;font-size:10px;font-weight:700;transition:.2s;border-radius:16px}
 .nav-item svg{width:20px;height:20px;fill:currentColor}
@@ -32,9 +32,9 @@ h2,h3{margin:0;font-family:'Antonio','Noto Sans Thai',sans-serif;letter-spacing:
 h2{font-size:34px;text-align:center}h3{font-size:24px}
 p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
 label{font-size:12px;font-weight:700;color:var(--muted);margin-top:8px;display:block}
-input{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:13px;background:#fff;font-size:15px}
+input{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);font-size:15px}
 input:focus{outline:0;border-color:var(--lime2)}
-.btn{width:100%;padding:14px;border:0;border-radius:15px;background:var(--lime);color:var(--ink);font-size:15px;font-weight:800;transition:.15s}
+.btn{width:100%;padding:15px;border:0;border-radius:14px;background:var(--lime);color:var(--ink);font-size:15px;font-weight:800;letter-spacing:.05em;transition:.15s}
 .btn:active,.tile:active{transform:scale(.98)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .ghost{background:#fff;border:1.5px solid var(--ink);color:var(--ink)}
@@ -43,31 +43,207 @@ input:focus{outline:0;border-color:var(--lime2)}
 .sp{margin-top:auto}
 .seg{padding:11px 8px;border:1.5px solid #d8ddd2;border-radius:12px;background:#fff;color:var(--ink);font-size:12px;font-weight:700}
 .seg.on{background:var(--ink);border-color:var(--ink);color:var(--lime)}
-.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}
+.bar{height:9px;background:#2a322c;border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--lime2);border-radius:99px;transition:width .3s}
-.box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;color:#42483f;font-size:13px;line-height:1.6}
+.box{background:#1c221e;border:1px solid var(--line);border-radius:16px;padding:14px;color:#e5e5e5;font-size:13px;line-height:1.6}
 .dash{display:flex;justify-content:space-around;text-align:center}
 .dash small{display:block;font-size:9px;letter-spacing:.08em;color:var(--muted);font-weight:800}
-.dash b{display:block;font-family:'Antonio',sans-serif;font-size:28px;line-height:1.1}
+.dash b{display:block;font-family:'Antonio',sans-serif;font-size:28px;line-height:1.1;color:var(--lime)}
 .warn{display:none;background:#fef3c7;color:#854d0e;padding:10px;border-radius:12px;font-size:12px}
-.brand{display:flex;align-items:center;gap:9px}.logo{width:38px;height:38px;object-fit:contain}
+.brand{display:flex;align-items:center;gap:8px}.logo{width:32px;height:32px;object-fit:contain}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.tile{min-height:82px;border:1px solid transparent;border-radius:17px;background:#e8ebe5;color:#9aa095;font-family:'Antonio',sans-serif;font-size:21px;letter-spacing:.06em;transition:.15s}
+.tile{min-height:82px;border:1px solid transparent;border-radius:17px;background:#242c26;color:#9aa095;font-family:'Antonio',sans-serif;font-size:21px;letter-spacing:.06em;transition:.15s}
 .tile.active{background:var(--ink);color:var(--lime);border:2px solid var(--lime);box-shadow:0 5px 16px #91c83d35}
-.tile.done{background:#e7f6d0;color:#36521a;border-color:#c8e9a0}
+.tile.done{background:#233816;color:#b4f068;border-color:#3e6324}
 .tile.done:after{content:' ✓';font-family:Arial,sans-serif;font-size:14px}
 .tile:disabled{cursor:not-allowed;opacity:.62}
 
-/* หน้า Home */
-#home{background:radial-gradient(circle at 85% 12%,#c4f36b55,transparent 42%),var(--ink);color:#fff;position:relative;overflow:hidden;justify-content:flex-end;padding:max(20px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));height:100dvh;box-sizing:border-box}
-#home .hero{position:relative;z-index:1;margin-bottom:10px}
-#home .tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}
-#home h2{font-size:clamp(44px,14vw,80px);line-height:.92;text-align:left;color:var(--lime);margin:14px 0}
-#home p{color:#c4c9c0;font-size:14px}
-#home .heroBg{position:absolute;inset:0;background:linear-gradient(to top,#171a17 5%,#171a17c0 40%,transparent 70%),url('images/hero-motion-band.jpg') center/cover no-repeat;opacity:.85}
-#home .btn{position:relative;z-index:1;margin-top:15px;margin-bottom:0}
+/* =========================================================
+   NEW HOME PAGE DESIGN (ตามแบบรูปภาพ)
+   ========================================================= */
+#home{
+  background: #0d110e;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  justify-content: space-between;
+  padding: max(16px,env(safe-area-inset-top)) 20px max(16px,env(safe-area-inset-bottom));
+  height: 100dvh;
+  box-sizing: border-box;
+}
 
-#program{background:linear-gradient(180deg,#f8faf4 0%,#f1f3ed 100%);gap:14px;padding-top:max(18px,env(safe-area-inset-top))}
+/* Background Effects */
+#home .heroBg{
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 50% 28%, rgba(196,243,107,0.12) 0%, transparent 55%),
+    linear-gradient(to top, #0d110e 8%, rgba(13,17,14,0.6) 45%, transparent 80%),
+    url('images/hero-motion-band.jpg') center 40%/cover no-repeat;
+  opacity: .85;
+  z-index: 0;
+}
+
+#home .bg-circle-arc {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 35px solid rgba(196, 243, 107, 0.15);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Header Top */
+#home .home-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+#home .brand-text {
+  display: flex;
+  flex-direction: column;
+}
+#home .brand-text span {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #a0a89d;
+}
+#home .brand-text strong {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #fff;
+}
+#home .slogan-top {
+  text-align: right;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #8b9288;
+  line-height: 1.4;
+}
+
+/* Content Hero */
+#home .hero {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#home .title-main {
+  font-family: 'Antonio', sans-serif;
+  font-size: clamp(52px, 16vw, 86px);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8df 60%, var(--lime) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+
+#home .sub-desc {
+  color: #c0c7bc;
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 240px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+#home .sub-desc b {
+  color: #fff;
+  font-size: 13px;
+}
+
+/* Features 3 Icons Row */
+#home .home-features {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: auto;
+  margin-bottom: 12px;
+  background: rgba(18, 24, 20, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 12px 8px;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 243, 107, 0.4);
+  background: rgba(196, 243, 107, 0.08);
+  display: grid;
+  place-items: center;
+  color: var(--lime);
+  margin-bottom: 2px;
+}
+.feature-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.feature-title {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--lime);
+}
+
+.feature-desc {
+  font-size: 9px;
+  color: #b0b8ac;
+  line-height: 1.2;
+}
+
+/* Bottom Action & Footer */
+#home .bottom-action {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+#home .home-footer-text {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #656d62;
+  text-transform: uppercase;
+}
+
+/* ========================================================= */
+
+#program{background:linear-gradient(180deg,#f8faf4 0%,#f1f3ed 100%);color:var(--ink);gap:14px;padding-top:max(18px,env(safe-area-inset-top))}
 .program-head{display:flex;align-items:center;gap:11px;padding:7px 2px 2px}
 .program-head .logo{width:48px;height:48px;background:var(--lime);border-radius:16px;padding:7px}
 .program-head h3{font-family:'Noto Sans Thai',sans-serif;font-size:21px;font-weight:800;letter-spacing:0}
@@ -143,17 +319,17 @@ input:focus{outline:0;border-color:var(--lime2)}
 /* หน้า Train */
 #train{background:var(--ink);color:#fff;justify-content:flex-start;overflow-y:auto}
 #train h3{color:var(--lime);text-align:center}
-#train .box{background:#262d27;border-color:#384138;color:#e5e5e5}
+#train .box{background:#1c221e;border-color:#2a322c;color:#e5e5e5}
 #train .dash b{color:var(--lime)}
 #train .bar{background:#333}
 #train .bar i{background:var(--lime)}
 #train .ghost{background:transparent;color:#fff;border-color:#525252}
-.vid{position:relative;width:100%;height:45dvh;min-height:280px;background:#000;border-radius:20px;overflow:hidden;border:2px solid #384138;flex:none}
+.vid{position:relative;width:100%;height:45dvh;min-height:280px;background:#000;border-radius:20px;overflow:hidden;border:2px solid #2a322c;flex:none}
 #cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px;min-width:0;background:#000}
 .ban #sym{display:block;width:100%;height:clamp(120px,20vw,160px);object-fit:contain;object-position:center;margin:0;border-radius:0;background:#000}
-.ban .cap{padding:6px 10px 8px;min-width:0;background:#262d27}
+.ban .cap{padding:6px 10px 8px;min-width:0;background:#1c221e}
 .ban #nm{display:block;color:#fff;font-size:clamp(11px,2.8vw,13px);font-weight:800;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ban #bl{font-size:10px;color:var(--lime);margin-top:2px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .exImg{display:block;margin:0 auto;width:clamp(80px,25vw,110px);height:auto;border-radius:16px}
@@ -161,12 +337,12 @@ input:focus{outline:0;border-color:var(--lime2)}
 #result .box{text-align:center;line-height:2.1}
 
 /* ประวัติการฝึก */
-.history-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.history-item{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .history-item b{color:var(--ink);font-size:14px}
 .history-item small{color:var(--muted);display:block;font-size:11px}
 .history-tag{background:#e7f6d0;color:#36521a;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:800}
 
-/* ปรับขนาดกล้องให้ใหญ่ขึ้นและยาวขึ้นสำหรับไอแพด แท็บเล็ต และคอมพิวเตอร์ */
+/* Responsive สำหรับไอแพด / แท็บเล็ต / คอมพิวเตอร์ */
 @media(min-width:700px){
   body{padding:20px;align-items:center}
   .app{max-width:1050px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 40px)}
@@ -177,7 +353,6 @@ input:focus{outline:0;border-color:var(--lime2)}
   #program .program-summary{padding:22px 24px}
   #program .week-block{margin-bottom:9px}
   
-  /* ปรับ Grid ของหน้าฝึกสำหรับไอแพด/คอมพิวเตอร์ */
   #train.page.on{
     display:grid;
     grid-template-columns: 1.6fr 1fr;
@@ -187,14 +362,11 @@ input:focus{outline:0;border-color:var(--lime2)}
     height: 100%;
   }
   #train h3{grid-column: 1 / -1}
-  
-  /* ตัวกล้องขยายใหญ่และยาวขึ้นทั้งแนวนอน/แนวตั้ง */
   .vid{
     height: 100%;
     min-height: 520px;
     max-height: calc(100vh - 160px);
   }
-  
   .train-panel{
     display: flex;
     flex-direction: column;
@@ -207,7 +379,6 @@ input:focus{outline:0;border-color:var(--lime2)}
 }
 
 @media(min-width:700px) and (orientation: portrait){
-  /* รองรับไอแพดแนวตั้ง - ให้กล้องสูงเด่นขึ้นอีก */
   .vid{
     min-height: 580px;
     height: 62vh;
@@ -221,25 +392,79 @@ input:focus{outline:0;border-color:var(--lime2)}
 <body>
 <div class="app" id="appFrame">
 
+<!-- หน้าปก (HOME) ปรับปรุงใหม่ตามแบบรูปภาพ -->
 <div id="home" class="page on">
-  <div class="hero">
-    <div class="brand"><img class="logo" src="images/logo.svg" alt=""><span class="tag">RESISTANCE BAND · POSTURE STUDIO</span></div>
-    <h2>Back to<br>Balance</h2>
-    <p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p>
-  </div>
   <div class="heroBg" aria-hidden="true"></div>
+  <div class="bg-circle-arc" aria-hidden="true"></div>
+
+  <!-- Header Top -->
+  <div class="home-header">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
+    <div class="slogan-top">
+      STRONG POSTURE<br>
+      <span style="color:var(--lime)">BETTER YOU</span>
+    </div>
+  </div>
+
+  <!-- Main Title & Description -->
+  <div class="hero">
+    <div class="title-main">
+      BACK TO<br>BALANCE
+    </div>
+    <div class="sub-desc">
+      Revitalize your neck, shoulders &amp; upper back<br>
+      <b>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</b>
+    </div>
+  </div>
+
+  <!-- 3 Features Grid Row -->
+  <div class="home-features">
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div class="feature-title">RELIEVE TENSION</div>
+      <div class="feature-desc">คลายเมื่อยคอ บ่า ไหล่</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2zm0 7a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0v-2a2 2 0 0 1 2-2zm0 7a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0v-2a2 2 0 0 1 2-2z"/></svg>
+      </div>
+      <div class="feature-title">IMPROVE POSTURE</div>
+      <div class="feature-desc">ปรับบุคลิกภาพให้ดีขึ้น</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a1.5 1.5 0 0 0-3 0V5H6a2 2 0 0 0-2 2v4H2.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5H4v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4h1.5a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z"/></svg>
+      </div>
+      <div class="feature-title">STRENGTHEN BACK</div>
+      <div class="feature-desc">เสริมความแข็งแรงแผ่นหลัง</div>
+    </div>
+  </div>
+
   <div id="inapp" class="warn">ตรวจพบว่าเปิดผ่านแอป LINE/Facebook กรุณาเปิดลิงก์ใน Safari/Chrome เพื่อใช้งานกล้อง</div>
-  <button class="btn" onclick="start()">Get Started →</button>
+
+  <!-- Bottom CTA & Footer -->
+  <div class="bottom-action">
+    <button class="btn" onclick="start()">GET STARTED →</button>
+    <div class="home-footer-text">15 MINUTES A DAY, A STRONGER YOU</div>
+  </div>
 </div>
 
-<div id="login" class="page">
+<div id="login" class="page" style="background:#fff;color:var(--ink)">
   <h2>Log In</h2>
   <label>ชื่อผู้ใช้</label><input id="un" autocomplete="name">
   <label>อีเมล</label><input id="em" type="email" autocomplete="email">
   <button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
 </div>
 
-<div id="profile" class="page">
+<div id="profile" class="page" style="background:#fff;color:var(--ink)">
   <h2>Personalize Your Plan</h2>
   <label>เพศ</label>
   <div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
@@ -277,30 +502,30 @@ input:focus{outline:0;border-color:var(--lime2)}
 </div>
 
 <!-- หน้าแนะนำท่าฝึก -->
-<div id="exerciseGuide" class="page">
+<div id="exerciseGuide" class="page" style="background:#fff;color:var(--ink)">
   <h2>Exercise Guide</h2>
   <p style="text-align:center;margin-bottom:10px">แนะนำและสาธิตท่าฝึกทั้งหมดในโปรแกรม</p>
   <div id="guideList" style="display:flex;flex-direction:column;gap:14px"></div>
 </div>
 
 <!-- หน้าประวัติการฝึก -->
-<div id="history" class="page">
+<div id="history" class="page" style="background:#fff;color:var(--ink)">
   <h2>Workout History</h2>
   <p style="text-align:center;margin-bottom:10px">บันทึกความก้าวหน้าและการออกกำลังกายของคุณ</p>
   <div id="historyList"></div>
 </div>
 
 <!-- หน้าข้อมูลส่วนตัว (User Profile Settings) -->
-<div id="userProfile" class="page">
+<div id="userProfile" class="page" style="background:#fff;color:var(--ink)">
   <h2>My Profile</h2>
-  <div class="box" style="margin-top:10px;display:flex;flex-direction:column;gap:12px">
+  <div class="box" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;background:#f8f9f7;border-color:#e2e5de;color:var(--ink)">
     <div>
       <label>ชื่อผู้ใช้</label>
-      <input id="p_un" readonly style="background:#f5f5f5;color:#666">
+      <input id="p_un" readonly style="background:#eaede6;color:#666">
     </div>
     <div>
       <label>อีเมล</label>
-      <input id="p_em" readonly style="background:#f5f5f5;color:#666">
+      <input id="p_em" readonly style="background:#eaede6;color:#666">
     </div>
     <div>
       <label>เพศ</label>
@@ -332,9 +557,9 @@ input:focus{outline:0;border-color:var(--lime2)}
   <div class="bar"><i id="selectBar" style="width:100%"></i></div>
   <div id="tabs"></div>
   <div><div class="detail-title">EXERCISE INSTRUCTIONS</div><div class="box" id="dinfo"></div></div>
-  <div class="box" style="background:#202522;color:#bef264;border-color:#343b35;text-align:center"><b>15 MINUTES WORKOUT</b><p style="color:#aaa;margin-top:4px">ระบบจะสุ่มสลับท่าออกกำลังกายตามเวลาที่กำหนด</p></div>
+  <div class="box" style="background:#1c221e;color:#bef264;border-color:#2a322c;text-align:center"><b>15 MINUTES WORKOUT</b><p style="color:#aaa;margin-top:4px">ระบบจะสุ่มสลับท่าออกกำลังกายตามเวลาที่กำหนด</p></div>
   <button class="btn" onclick="train()">START WORKOUT →</button>
-  <button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button>
+  <button class="btn ghost" style="background:transparent;color:#fff;border-color:#444" onclick="show('program')">← BACK TO PROGRAM</button>
 </div>
 
 <div id="train" class="page">
@@ -350,16 +575,16 @@ input:focus{outline:0;border-color:var(--lime2)}
     <div class="bar" style="margin-top:8px"><i id="hb"></i></div>
     <div id="tg" class="box" style="text-align:center;margin-top:8px"></div>
     <div id="fb" style="margin-top:6px"></div>
-    <div class="row sp" style="margin-top:10px"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
+    <div class="row sp" style="margin-top:10px"><button class="btn ghost" style="background:transparent;color:#fff;border-color:#555" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div>
     <button class="btn" id="go" style="margin-top:8px" onclick="camStart()">เปิดกล้องและเริ่ม</button>
   </div>
 </div>
 
 <div id="result" class="page">
-  <div style="margin-top:16px"><img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(60px,20vw,90px)"><h2 id="rt"></h2></div>
+  <div style="margin-top:16px;text-align:center"><img class="exImg" src="images/trophy.svg" alt="" style="width:clamp(60px,20vw,90px)"><h2 id="rt"></h2></div>
   <div class="box">TOTAL POINTS<br><b id="r1" style="font-size:26px"></b><br>CALORIES BURNED<br><b id="r2" style="font-size:22px"></b> kcal<br>Exercise Time: <b id="r3"></b> | Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div>
   <button class="btn sp" onclick="nextEx()">CONTINUE</button>
-  <button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button>
+  <button class="btn ghost" style="background:transparent;color:#fff;border-color:#555" onclick="show('program')">กลับโปรแกรม</button>
 </div>
 
 <!-- Bottom Navigation Bar -->
@@ -462,7 +687,7 @@ function logout(){if(confirm('ออกจากระบบ?')){S.user=null;sav
 
 function renderExerciseGuide(){
  $('guideList').innerHTML = EX.map((e,i)=>`
-  <div class="box" style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px">
+  <div class="box" style="background:#f8f9f7;border:1px solid var(--line);border-radius:16px;padding:16px;color:var(--ink)">
    ${img(e.id,'guide-card-img',null)}
    <h3 style="color:var(--ink);font-size:18px;margin-top:12px">${e.n}</h3>
    <p style="margin-top:6px;color:#444"><b>วิธีฝึก:</b> ${e.how}</p>
@@ -475,7 +700,7 @@ function renderExerciseGuide(){
 
 function renderHistory(){
  if(!S.history || S.history.length === 0){
-  $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>`;
+  $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted);background:#f8f9f7;border-color:#e2e5de">ยังไม่มีประวัติการฝึก</div>`;
   return;
  }
  $('historyList').innerHTML = S.history.map(item => `
