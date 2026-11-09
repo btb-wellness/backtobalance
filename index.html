@@ -210,8 +210,8 @@ input:focus{outline:0;border-color:var(--lime)}
 <!-- LOGIN PAGE -->
 <div id="login" class="page">
   <h2>Log In</h2>
-  <label>ชื่อผู้ใช้</label><input id="un" autocomplete="name" placeholder="ชื่อผู้ใช้ของคุณ">
-  <label>อีเมล</label><input id="em" type="email" autocomplete="email" placeholder="example@email.com">
+  <label>ชื่อผู้ใช้</label><input id="un" autocomplete="username" placeholder="btb01">
+  <label>รหัสผ่าน</label><input id="pw" type="password" autocomplete="current-password" placeholder="Bxxxxxxx_btb01">
   <button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
 </div>
 
@@ -330,10 +330,6 @@ input:focus{outline:0;border-color:var(--lime)}
       <input id="p_un" readonly style="opacity:0.7">
     </div>
     <div>
-      <label>อีเมล</label>
-      <input id="p_em" readonly style="opacity:0.7">
-    </div>
-    <div>
       <label>เพศ</label>
       <div class="row" style="margin-top:6px"><button class="seg" id="pg1" onclick="genP('ชาย')">ชาย</button><button class="seg" id="pg2" onclick="genP('หญิง')">หญิง</button></div>
     </div>
@@ -402,7 +398,6 @@ input:focus{outline:0;border-color:var(--lime)}
   <h2>WORKOUT <span style="color:var(--lime)">COMPLETED</span></h2>
   <div class="box" style="margin-top:16px">
     TOTAL POINTS<br><b id="r1" style="font-size:32px;color:var(--lime);font-family:'Antonio'">0</b><br>
-    CALORIES BURNED<br><b id="r2" style="font-size:24px;color:#fff;font-family:'Antonio'">0</b> kcal<br>
     <small style="color:var(--muted)">Exercise Time: <span id="r3">00:00</span> | Avg Accuracy: <span id="r4">0%</span></small>
   </div>
   <button class="btn sp" onclick="nextEx()">CONTINUE</button>
@@ -431,9 +426,10 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='PASTE_YOUR_WEB_APP_URL_HERE';
-const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3;
-const MET=3.8;
+const API='https://script.google.com/macros/s/AKfycbzOwugD0LPpaiANpxnRofyYGYryQRBUGrK8-LptB-yAITQdjsv8ewrbbOYNVl1gGIL8ng/exec';
+const SEC=900,BLOCK=15,PREP=3,RELAX=3,DAYS=15,PER=3;
+const USER_RE=/^btb\d{2}$/;
+const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
 const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
 
@@ -470,10 +466,10 @@ function fallbackExerciseImage(element,id,st){
 }
 
 const EX=[
-{id:'iyt',n:'MODIFIED BAND IYT',focus:'Shoulders, Upper Back',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที รวม 15 วินาทีต่อ Cycle',ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
-{id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 5 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
-{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
-{id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
+{id:'iyt',n:'MODIFIED BAND IYT',focus:'Shoulders, Upper Back',h:15,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T โดยค้างแต่ละตำแหน่ง 15 วินาที',ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
+{id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:15,how:'ยืนตรง งอข้อศอกประมาณ 90° กางแขนคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 15 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
+{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:15,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านอย่างนุ่มนวล รักษาศีรษะตรงกับลำตัว ค้างไว้ 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
+{id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกในระดับไหล่เพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
 const STG=[
@@ -506,13 +502,27 @@ function show(id){
  if(id==='exerciseGuide') renderExerciseGuide();
  if(id==='history') renderHistory();
  if(id==='userProfile') loadUserProfileSettings();
+ if(S.user&&typeof api==='function')api('event',{username:S.user.username,eventType:'PAGE_VIEW',page:id,detail:'เปิดหน้า '+id}).catch(()=>{});
 }
 
 function start(){if(S.user){show('program')}else show('login');}
-function login(){const u=$('un').value.trim(),e=$('em').value.trim();if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');S.user={...(S.user||{}),username:u,email:e};save();S.user.weight?show('program'):show('profile');}
+async function api(action,data={}){
+ if(!API||API.includes('PASTE_YOUR')) throw new Error('ยังไม่ได้ตั้งค่า Google Apps Script URL');
+ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:S.user?.token||'',...data})});
+ const out=await res.json();if(!res.ok||out.ok===false)throw new Error(out.message||'เชื่อมต่อระบบไม่สำเร็จ');return out;
+}
+async function login(){
+ const u=$('un').value.trim().toLowerCase(),p=$('pw').value;
+ if(!USER_RE.test(u))return alert('ชื่อผู้ใช้ต้องอยู่ในรูปแบบ btbxx เช่น btb01');
+ if(!PASS_RE.test(p)||!p.endsWith('_'+u))return alert('รหัสผ่านต้องเป็น B ตามด้วยอักขระ 7 ตัว และ _'+u);
+ const btn=document.querySelector('#login .btn');btn.disabled=true;btn.textContent='กำลังตรวจสอบ...';
+ try{const out=await api('login',{username:u,password:p});$('pw').value='';S.user={...(S.user||{}),...out.user,username:u,token:out.token};S.done={};(out.doneDays||[]).forEach(d=>S.done[d]=true);if(out.history)S.history=out.history;save();show(S.user.weight?'program':'profile');}
+ catch(e){alert(e.message||'เข้าสู่ระบบไม่สำเร็จ');}
+ finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ';}
+}
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
-function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();show('program');}
-function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home');}}
+async function saveProfile(){const w=+$('wt').value,h=+$('ht').value;if(!S.tmpG||!$('dob').value||w<20||h<100)return alert('กรอกข้อมูลให้ครบ');Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});save();try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}});show('program')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}}
+async function logout(){if(confirm('ออกจากระบบ?')){try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}S.user=null;save();show('home');}}
 
 function renderExerciseGuide(){
  $('guideList').innerHTML = EX.map((e,i)=>`
@@ -532,7 +542,8 @@ function renderExerciseGuide(){
  `).join('');
 }
 
-function renderHistory(){
+async function renderHistory(){
+ if(S.user){try{const out=await api('history',{username:S.user.username});if(out.history){S.history=out.history;S.done={};out.history.filter(x=>x.completed).forEach(x=>S.done[x.day]=true);save();}}catch(e){console.warn('History sync:',e);}}
  if(!S.history || S.history.length === 0){
   $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>`;
   return;
@@ -550,7 +561,7 @@ function renderHistory(){
     </div>
     <div class="history-badge ${isOk ? '' : 'failed'}">
      ${item.score} คะแนน<br>
-     <small style="font-weight:normal;opacity:0.8">${item.calories || 0} kcal</small>
+     <small style="font-weight:normal;opacity:0.8">${item.time || "00:00"} นาที</small>
     </div>
    </div>
   `;
@@ -560,7 +571,6 @@ function renderHistory(){
 function loadUserProfileSettings(){
  if(!S.user) return;
  $('p_un').value = S.user.username || '';
- $('p_em').value = S.user.email || '';
  $('p_dob').value = S.user.dob || '';
  $('p_wt').value = S.user.weight || 65;
  $('p_ht').value = S.user.height || 172;
@@ -571,12 +581,12 @@ function genP(g){
  $('pg1').classList.toggle('on', g==='ชาย');
  $('pg2').classList.toggle('on', g==='หญิง');
 }
-function updateProfileSettings(){
+async function updateProfileSettings(){
  const w = +$('p_wt').value, h = +$('p_ht').value;
  if(!S.tmpG || !$('p_dob').value || w < 20 || h < 100) return alert('กรอกข้อมูลให้ถูกต้อง');
  Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
  save();
- alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว');
+ try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}});alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
 }
 
 const dayDone=d=>!!S.done[d];
@@ -629,32 +639,62 @@ function renderDetail(){
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}else sel.push(i);renderDetail();}
 
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
+const angleDeg=(a,b)=>Math.atan2(-(b.y-a.y),Math.abs(b.x-a.x))*180/Math.PI;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 let T={};
 function evalPose(lm,id){
- if(id==='neck'){const L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility;const [e,s]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];if(Math.min(e.visibility,s.visibility)<.5)return null;const cva=Math.atan2(s.y-e.y,Math.abs(e.x-s.x))*180/Math.PI;const ok=cva>=50;return{ok,cva,h:5,t:'ยืนตะแคงให้เห็นหูและไหล่',m:ok?'ศีรษะตรงกับไหล่ ค้างไว้':'ดึงคางเข้า เก็บศีรษะให้ตรงกับไหล่'};}
- for(const i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
- const A=[[11,13,15],[12,14,16]],el=A.map(a=>ang(lm[a[0]],lm[a[1]],lm[a[2]])),ev=A.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),sw=Math.abs(lm[11].x-lm[12].x),wd=Math.abs(lm[15].x-lm[16].x),str=el[0]>150&&el[1]>150;
- if(id==='iyt'){const s=STG[T.st],ok=str&&ev.every(v=>v>=s.r[0]&&v<=s.r[1]);return{ok,h:5,t:s.t,m:ok?'Good! ค้างไว้':str?'ปรับแขนตามท่า':'เหยียดข้อศอกให้ตรง'};}
- if(id==='w'){const ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y&&[13,14].every((k,i)=>lm[k].y>lm[11+i].y-.05&&lm[k].y<lm[11+i].y+.25);return{ok,h:5,t:'งอข้อศอกเป็นตัว W ดึงยางเก็บสะบัก',m:ok?'Good! ค้างไว้':'งอศอก ยกมือเหนือข้อศอก'};}
- const ok=str&&(ev[0]+ev[1])/2>=-45&&(ev[0]+ev[1])/2<=15&&wd>2*sw;return{ok,h:15,t:'กางแขนเหยียดตรงออกด้านข้างเพื่อยืดอก',m:ok?'Good! ค้างไว้':'เหยียดแขนตรงและกางออกให้กว้างขึ้น'};
+ const vis=ids=>ids.every(i=>(lm[i]?.visibility??0)>=.55);
+ const elbowL=ang(lm[11],lm[13],lm[15]),elbowR=ang(lm[12],lm[14],lm[16]);
+ const straightL=elbowL>=155,straightR=elbowR>=155;
+ const shoulderMid={x:(lm[11].x+lm[12].x)/2,y:(lm[11].y+lm[12].y)/2};
+ const hipMid={x:(lm[23].x+lm[24].x)/2,y:(lm[23].y+lm[24].y)/2};
+ if(id==='neck'){
+  if(!vis([7,11,23])&&!vis([8,12,24]))return null;
+  const left=vis([7,11,23]),ear=left?lm[7]:lm[8],shoulder=left?lm[11]:lm[12],hip=left?lm[23]:lm[24];
+  // Craniovertebral-angle approximation from ear-to-shoulder line vs horizontal image axis.
+  const cva=Math.atan2(shoulder.y-ear.y,Math.abs(ear.x-shoulder.x))*180/Math.PI;
+  const trunkTilt=Math.abs(Math.atan2(hip.y-shoulder.y,Math.abs(hip.x-shoulder.x))*180/Math.PI-90);
+  const ok=cva>=48&&cva<=65&&trunkTilt<=18;
+  return{ok,h:15,t:'แนวศีรษะและคอ (มุม CVA โดยประมาณ)',m:ok?'รักษาศีรษะตรง ไม่ยื่นคาง':'ปรับศีรษะให้อยู่แนวเดียวกับลำตัว',angle:Math.round(cva)};
+ }
+ if(!vis([11,12,13,14,15,16,23,24]))return null;
+ const shoulderToWristL=angleDeg(lm[11],lm[15]),shoulderToWristR=angleDeg(lm[12],lm[16]);
+ const armAvg=(shoulderToWristL+shoulderToWristR)/2;
+ const symmetry=Math.abs(shoulderToWristL-shoulderToWristR);
+ if(id==='iyt'){
+  const stage=STG[T.st||0],ok=straightL&&straightR&&symmetry<=22&&armAvg>=stage.r[0]&&armAvg<=stage.r[1];
+  return{ok,h:15,t:stage.t,m:ok?'Good! รักษาตำแหน่งแขนไว้':!straightL||!straightR?'เหยียดข้อศอกให้ตรง':'ปรับระดับแขนให้สมมาตรตามท่า',angle:Math.round(armAvg)};
+ }
+ if(id==='w'){
+  const avgElbow=(elbowL+elbowR)/2;
+  const wristsAboveElbows=lm[15].y<lm[13].y&&lm[16].y<lm[14].y;
+  const elbowsBelowShoulders=lm[13].y>lm[11].y-.12&&lm[14].y>lm[12].y-.12;
+  const ok=avgElbow>=70&&avgElbow<=115&&symmetry<=25&&wristsAboveElbows&&elbowsBelowShoulders;
+  return{ok,h:15,t:'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',m:ok?'รักษาท่า W และบีบสะบัก':'ปรับข้อศอกประมาณ 70–115° และยกมือเหนือข้อศอก',angle:Math.round(avgElbow)};
+ }
+ if(id==='pec'){
+  const ok=straightL&&straightR&&armAvg>=0&&armAvg<=20&&symmetry<=20;
+  return{ok,h:15,t:'กางแขนระดับไหล่เพื่อยืดหน้าอก',m:ok?'รักษาแขนระดับไหล่และเปิดอก':'เหยียดศอกและกางแขนให้อยู่ระดับไหล่',angle:Math.round(armAvg)};
+ }
+ return null;
 }
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 function onResults(r){
  const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
  if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
- const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0)return;
+ const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0||T.relax>0)return;
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();});
  const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');if(T.hold>=q.h){T.hold=0;if(id==='iyt'){if(T.st<2){T.st++;T.stageTimer=0;setImg();fb('เปลี่ยนเป็นท่าถัดไป!','#27ae60')}else{T.st=0;T.stageTimer=0;setImg();T.reps++;s.reps++;s.score+=100;fb('ครบ Cycle IYT 1 ครั้ง! +100','#27ae60')}}else{T.reps++;s.reps++;s.score+=100;fb('ครบ 1 ครั้ง! +100','#27ae60')}}}else{T.hold=0;fb(q.m,'#e74c3c');}
+ if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');if(T.hold>=q.h){T.hold=0;if(id==='iyt'){if(T.st<2){T.st++;setImg();T.relax=RELAX;fb('พักเปลี่ยนท่า IYT: 3 วินาที','#f1c40f')}else{T.st=0;setImg();T.reps++;s.reps++;s.score+=100;T.relax=RELAX;fb('ครบ IYT 1 รอบ! +100','#27ae60')}}else{T.reps++;s.reps++;s.score+=100;T.relax=RELAX;fb('ครบ 1 ครั้ง! +100','#27ae60')}}}else{T.hold=0;fb(q.m,'#e74c3c');}
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
-function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.blockLeft=BLOCK;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที':e.id==='pec'?'ค้างท่า 15 วินาที':'ค้างท่า 5 วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
+function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];T.blockLeft=e.id==='iyt'?45:BLOCK;setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 15 วินาที (รวม 45 วินาที)':'ค้างท่า 15 วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
  T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
@@ -674,41 +714,39 @@ async function camStart(){
 }
 async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
 function tick(){
- if(T.pause)return;if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
+ if(T.pause)return;
+ if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
- if(T.prep>0){T.prep--;fb(T.prep?'เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')':'เริ่ม!','#7f8c8d')}else{
-  T.stats[T.cur].sec++;
-  /* เพิ่มการเปลี่ยนรูปท่า IYT สลับตามเวลาทุกๆ 5 วินาที */
-  if(EX[T.cur].id==='iyt'){
-    T.stageTimer=(T.stageTimer||0)+1;
-    if(T.stageTimer>=5){
-      T.stageTimer=0;
-      T.st=(T.st+1)%3;
-      setImg();
-    }
-  }
+ if(T.relax>0){
+  fb('RELAX • '+T.relax+' วินาที','#f1c40f');$('tg').innerText='ผ่อนคลายกล้ามเนื้อ เตรียมท่าถัดไป';T.relax--;
+  if(T.relax===0&&T.pendingEx!==undefined){const next=T.pendingEx;delete T.pendingEx;setEx(next);}
+ }else if(T.prep>0){
+  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');T.prep--;
+ }else{
+  T.stats[T.cur].sec++;T.blockLeft--;
  }
- T.blockLeft--;$('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
- if(T.blockLeft<=0&&T.left>0)setEx(pick());if(T.left<=0)finish(false);
+ $('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
+ if(T.blockLeft<=0&&T.left>0&&T.relax===0&&T.prep===0){T.pendingEx=pick();T.relax=RELAX;}
+ if(T.left<=0)finish(false);
 }
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('cam').srcObject=null;}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE';}
 function finish(manual){
  if(!T.run){show('detail');return;}const was=T.left<=0;
  if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
- const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';const sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0,kc=0;
- Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score),c=Math.round(MET*(S.user?.weight||65)*s.sec/3600);tot+=sc;kc+=c;});
+ const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';const sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
+ Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score);tot+=sc;});
  if(was){S.done[day]=true;}
  S.history.push({
   day,
   completed: was,
   score: tot,
-  calories: kc,
   time: fmt(used),
   date: new Date().toLocaleDateString('th-TH')
  });
  save();
- $('r1').innerText=tot;$('r2').innerText=kc;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
+ api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:fmt(used),accuracy:acc,date:new Date().toISOString(),durationSeconds:used}}).catch(e=>console.error('Workout sync:',e));
+ $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
 }
 function nextEx(){show('program');}
 </script>
