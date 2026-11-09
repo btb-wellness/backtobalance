@@ -426,7 +426,7 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbzOwugD0LPpaiANpxnRofyYGYryQRBUGrK8-LptB-yAITQdjsv8ewrbbOYNVl1gGIL8ng/exec';
+const API='PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 const SEC=900,BLOCK=15,PREP=3,RELAX=3,DAYS=15,PER=3;
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
@@ -473,9 +473,9 @@ const EX=[
 ];
 
 const STG=[
-{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',r:[70,100]},
-{t:'ท่า Y: กางแขนเฉียงประมาณ 45°',r:[25,65]},
-{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',r:[-20,20]}
+{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง',r:[145,180]},
+{t:'ท่า Y: กางแขนเฉียงประมาณ 45°',r:[110,144]},
+{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่',r:[75,109]}
 ];
 
 const $=id=>document.getElementById(id);
@@ -639,64 +639,130 @@ function renderDetail(){
 function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}else sel.push(i);renderDetail();}
 
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
-const angleDeg=(a,b)=>Math.atan2(-(b.y-a.y),Math.abs(b.x-a.x))*180/Math.PI;
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-let T={};
-function evalPose(lm,id){
- const vis=ids=>ids.every(i=>(lm[i]?.visibility??0)>=.55);
- const elbowL=ang(lm[11],lm[13],lm[15]),elbowR=ang(lm[12],lm[14],lm[16]);
- const straightL=elbowL>=155,straightR=elbowR>=155;
- const shoulderMid={x:(lm[11].x+lm[12].x)/2,y:(lm[11].y+lm[12].y)/2};
- const hipMid={x:(lm[23].x+lm[24].x)/2,y:(lm[23].y+lm[24].y)/2};
- if(id==='neck'){
-  if(!vis([7,11,23])&&!vis([8,12,24]))return null;
-  const left=vis([7,11,23]),ear=left?lm[7]:lm[8],shoulder=left?lm[11]:lm[12],hip=left?lm[23]:lm[24];
-  // Craniovertebral-angle approximation from ear-to-shoulder line vs horizontal image axis.
-  const cva=Math.atan2(shoulder.y-ear.y,Math.abs(ear.x-shoulder.x))*180/Math.PI;
-  const trunkTilt=Math.abs(Math.atan2(hip.y-shoulder.y,Math.abs(hip.x-shoulder.x))*180/Math.PI-90);
-  const ok=cva>=48&&cva<=65&&trunkTilt<=18;
-  return{ok,h:15,t:'แนวศีรษะและคอ (มุม CVA โดยประมาณ)',m:ok?'รักษาศีรษะตรง ไม่ยื่นคาง':'ปรับศีรษะให้อยู่แนวเดียวกับลำตัว',angle:Math.round(cva)};
+
+// ฟังก์ชัน evalPose ปรับปรุงองศาชีวกลศาสตร์ใหม่
+function evalPose(lm, id) {
+ const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.5);
+ 
+ const elbowL = ang(lm[11], lm[13], lm[15]);
+ const elbowR = ang(lm[12], lm[14], lm[16]);
+ const straightL = elbowL >= 145;
+ const straightR = elbowR >= 145;
+
+ const shoulderAngleL = ang(lm[23], lm[11], lm[13]);
+ const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
+ const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
+
+ if (id === 'neck') {
+  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
+  const left = vis([7, 11, 23]);
+  const ear = left ? lm[7] : lm[8];
+  const shoulder = left ? lm[11] : lm[12];
+  const hip = left ? lm[23] : lm[24];
+
+  const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
+  const neckAngle = ang(hip, shoulder, ear);
+  
+  const ok = trunkAngle <= 15 && neckAngle >= 40 && neckAngle <= 68;
+  return {
+    ok, h: 15,
+    t: 'แนวศีรษะและคอ (Isometric Extension)',
+    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
+    angle: Math.round(neckAngle)
+  };
  }
- if(!vis([11,12,13,14,15,16,23,24]))return null;
- const shoulderToWristL=angleDeg(lm[11],lm[15]),shoulderToWristR=angleDeg(lm[12],lm[16]);
- const armAvg=(shoulderToWristL+shoulderToWristR)/2;
- const symmetry=Math.abs(shoulderToWristL-shoulderToWristR);
- if(id==='iyt'){
-  const stage=STG[T.st||0],ok=straightL&&straightR&&symmetry<=22&&armAvg>=stage.r[0]&&armAvg<=stage.r[1];
-  return{ok,h:15,t:stage.t,m:ok?'Good! รักษาตำแหน่งแขนไว้':!straightL||!straightR?'เหยียดข้อศอกให้ตรง':'ปรับระดับแขนให้สมมาตรตามท่า',angle:Math.round(armAvg)};
+
+ if (!vis([11, 12, 13, 14, 15, 16])) return null;
+
+ if (id === 'iyt') {
+  const stage = STG[T.st || 0];
+  let ok = false;
+  let msg = '';
+
+  if (T.st === 0) {
+   ok = straightL && straightR && avgShoulderAngle >= 145;
+   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
+  } else if (T.st === 1) {
+   ok = straightL && straightR && avgShoulderAngle >= 110 && avgShoulderAngle < 145;
+   msg = ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงทำมุม Y ประมาณ 45 องศา';
+  } else if (T.st === 2) {
+   ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle < 110;
+   msg = ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างลำตัวระดับไหล่';
+  }
+
+  return { ok, h: 15, t: stage.t, m: msg, angle: Math.round(avgShoulderAngle) };
  }
- if(id==='w'){
-  const avgElbow=(elbowL+elbowR)/2;
-  const wristsAboveElbows=lm[15].y<lm[13].y&&lm[16].y<lm[14].y;
-  const elbowsBelowShoulders=lm[13].y>lm[11].y-.12&&lm[14].y>lm[12].y-.12;
-  const ok=avgElbow>=70&&avgElbow<=115&&symmetry<=25&&wristsAboveElbows&&elbowsBelowShoulders;
-  return{ok,h:15,t:'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',m:ok?'รักษาท่า W และบีบสะบัก':'ปรับข้อศอกประมาณ 70–115° และยกมือเหนือข้อศอก',angle:Math.round(avgElbow)};
+
+ if (id === 'w') {
+  const avgElbow = (elbowL + elbowR) / 2;
+  const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
+  const ok = avgElbow >= 70 && avgElbow <= 115 && avgShoulderAngle >= 30 && avgShoulderAngle <= 70 && wristsAboveElbows;
+  return {
+    ok, h: 15,
+    t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
+    m: ok ? 'รักษาท่า W และบีบสะบัก' : 'ดึงศอกลงด้านข้าง งอศอก 90° และเกร็งสะบัก',
+    angle: Math.round(avgElbow)
+  };
  }
- if(id==='pec'){
-  const ok=straightL&&straightR&&armAvg>=0&&armAvg<=20&&symmetry<=20;
-  return{ok,h:15,t:'กางแขนระดับไหล่เพื่อยืดหน้าอก',m:ok?'รักษาแขนระดับไหล่และเปิดอก':'เหยียดศอกและกางแขนให้อยู่ระดับไหล่',angle:Math.round(armAvg)};
+
+ if (id === 'pec') {
+  const ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle <= 110;
+  return {
+    ok, h: 15,
+    t: 'กางแขนระดับไหล่เพื่อยืดหน้าอก',
+    m: ok ? 'รักษาแขนระดับไหล่และเปิดอก' : 'เหยียดศอกตรงและกางแขนระดับไหล่',
+    angle: Math.round(avgShoulderAngle)
+  };
  }
  return null;
 }
+
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
+
 function onResults(r){
  const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
  if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
- const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;if(T.prep>0||T.relax>0)return;
+ const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
+ 
+ // หยุดประมวลผลท่าชั่วคราวระหว่างเตรียมตัว หรือผ่อนคลาย (Relax 3 วินาที)
+ if(T.prep>0||T.relax>0)return;
+ 
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();});
  const s=T.stats[T.cur];T.total++;s.total++;
- if(q.ok){T.good++;s.good++;T.hold+=dt;fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');if(T.hold>=q.h){T.hold=0;if(id==='iyt'){if(T.st<2){T.st++;setImg();T.relax=RELAX;fb('พักเปลี่ยนท่า IYT: 3 วินาที','#f1c40f')}else{T.st=0;setImg();T.reps++;s.reps++;s.score+=100;T.relax=RELAX;fb('ครบ IYT 1 รอบ! +100','#27ae60')}}else{T.reps++;s.reps++;s.score+=100;T.relax=RELAX;fb('ครบ 1 ครั้ง! +100','#27ae60')}}}else{T.hold=0;fb(q.m,'#e74c3c');}
+ if(q.ok){
+  T.good++;s.good++;T.hold+=dt;
+  fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
+  if(T.hold>=q.h){
+   T.hold=0;
+   T.relax=RELAX; // เข้าสู่สถานะ Relax 3 วินาที
+   if(id==='iyt'){
+    if(T.st<2){
+     T.st++;setImg();
+     fb('พักเปลี่ยนท่า IYT: 3 วินาที','#f1c40f');
+    }else{
+     T.st=0;setImg();T.reps++;s.reps++;s.score+=100;
+     fb('ครบ IYT 1 รอบ! พัก 3 วินาที (+100)','#27ae60');
+    }
+   }else{
+    T.reps++;s.reps++;s.score+=100;
+    fb('ครบ 1 ครั้ง! พัก 3 วินาที (+100)','#27ae60');
+   }
+  }
+ }else{
+  T.hold=0;fb(q.m,'#e74c3c');
+ }
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
+
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
 function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];T.blockLeft=e.id==='iyt'?45:BLOCK;setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 15 วินาที (รวม 45 วินาที)':'ค้างท่า 15 วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
- T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ T={run:false,pause:false,prep:0,relax:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
  $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่าทุก 15 วินาที';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
@@ -713,22 +779,38 @@ async function camStart(){
  }catch(e){stopCam();$('go').disabled=false;fb(e.name==='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c');}
 }
 async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
+
 function tick(){
  if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
+ 
+ // จัดการระบบนับถอยหลังพัก 3 วินาที (Relax Countdown)
  if(T.relax>0){
-  fb('RELAX • '+T.relax+' วินาที','#f1c40f');$('tg').innerText='ผ่อนคลายกล้ามเนื้อ เตรียมท่าถัดไป';T.relax--;
-  if(T.relax===0&&T.pendingEx!==undefined){const next=T.pendingEx;delete T.pendingEx;setEx(next);}
+  fb('RELAX • ผ่อนคลายกล้ามเนื้อ '+T.relax+' วินาที','#f1c40f');
+  $('tg').innerText='ผ่อนคลายกล้ามเนื้อ เตรียมความพร้อมสำหรับท่าถัดไป';
+  T.relax--;
+  if(T.relax===0&&T.pendingEx!==undefined){
+   const next=T.pendingEx;
+   delete T.pendingEx;
+   setEx(next);
+  }
  }else if(T.prep>0){
-  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');T.prep--;
+  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');
+  T.prep--;
  }else{
-  T.stats[T.cur].sec++;T.blockLeft--;
+  T.stats[T.cur].sec++;
+  T.blockLeft--;
  }
+
  $('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
- if(T.blockLeft<=0&&T.left>0&&T.relax===0&&T.prep===0){T.pendingEx=pick();T.relax=RELAX;}
+ if(T.blockLeft<=0&&T.left>0&&T.relax===0&&T.prep===0){
+  T.pendingEx=pick();
+  T.relax=RELAX;
+ }
  if(T.left<=0)finish(false);
 }
+
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('cam').srcObject=null;}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE';}
 function finish(manual){
