@@ -221,6 +221,10 @@ input:focus{outline:0;border-color:var(--lime)}
   <label>เพศ</label>
   <div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
   <label>วันเกิด</label><input id="dob" type="date">
+  <div class="row">
+    <div><label>น้ำหนัก (kg)</label><input id="wt" type="number" placeholder="เช่น 60"></div>
+    <div><label>ส่วนสูง (cm)</label><input id="ht" type="number" placeholder="เช่น 170"></div>
+  </div>
   <button class="btn sp" onclick="saveProfile()">บันทึกข้อมูล →</button>
 </div>
 
@@ -332,6 +336,16 @@ input:focus{outline:0;border-color:var(--lime)}
     <div>
       <label>วันเดือนปีเกิด</label>
       <input id="p_dob" type="date">
+    </div>
+    <div class="row">
+      <div>
+        <label>น้ำหนัก (kg)</label>
+        <input id="p_wt" type="number" placeholder="น้ำหนัก">
+      </div>
+      <div>
+        <label>ส่วนสูง (cm)</label>
+        <input id="p_ht" type="number" placeholder="ส่วนสูง">
+      </div>
     </div>
     <button class="btn" style="margin-top:8px" onclick="updateProfileSettings()">อัปเดตข้อมูล</button>
   </div>
@@ -507,7 +521,13 @@ async function login(){
  finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ';}
 }
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
-async function saveProfile(){if(!S.tmpG||!$('dob').value)return alert('กรอกข้อมูลให้ครบ');Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value});save();try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('dob').value}});show('program')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}}
+async function saveProfile(){
+ const w=$('wt').value ? +$('wt').value : null, h=$('ht').value ? +$('ht').value : null;
+ if(!S.tmpG||!$('dob').value)return alert('กรอกข้อมูลเพศและวันเกิดให้ครบ');
+ Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
+ save();
+ try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}});show('program')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+}
 async function logout(){if(confirm('ออกจากระบบ?')){try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}S.user=null;save();show('home');}}
 
 function renderExerciseGuide(){
@@ -558,6 +578,8 @@ function loadUserProfileSettings(){
  if(!S.user) return;
  $('p_un').value = S.user.username || '';
  $('p_dob').value = S.user.dob || '';
+ $('p_wt').value = S.user.weight || '';
+ $('p_ht').value = S.user.height || '';
  genP(S.user.gender || 'ชาย');
 }
 function genP(g){
@@ -566,10 +588,11 @@ function genP(g){
  $('pg2').classList.toggle('on', g==='หญิง');
 }
 async function updateProfileSettings(){
+ const w = $('p_wt').value ? +$('p_wt').value : null, h = $('p_ht').value ? +$('p_ht').value : null;
  if(!S.tmpG || !$('p_dob').value) return alert('กรอกข้อมูลให้ถูกต้อง');
- Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value });
+ Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
  save();
- try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('p_dob').value}});alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+ try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}});alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
 }
 
 const dayDone=d=>!!S.done[d];
@@ -818,6 +841,3 @@ function nextEx(){show('program');}
 </script>
 </body>
 </html>
-
-
-ผ
