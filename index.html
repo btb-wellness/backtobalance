@@ -426,7 +426,7 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API='https://script.google.com/macros/s/AKfycbwBxmUqxGsTdMaByzZTHffXuiWZPFocx6nA9bETr09zG6XH3Zz01JqjPPEJciqgvN13SA/exec';
 const SEC=900,BLOCK=15,PREP=3,RELAX=3,DAYS=15,PER=3;
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
@@ -457,7 +457,7 @@ function loadExerciseImage(element,id,st){
  element.src=candidates[index];
 }
 const IMG=(id,st)=>imageCandidates(id,st)[0];
-const img=(id,c,st)=><img class="${c}" src="${IMG(id,st)}" alt="" onerror="fallbackExerciseImage(this, '${id}', ${st===undefined||st===null?'null':st})">;
+const img=(id,c,st)=>`<img class="${c}" src="${IMG(id,st)}" alt="" onerror="fallbackExerciseImage(this, '${id}', ${st===undefined||st===null?'null':st})">`;
 function fallbackExerciseImage(element,id,st){
  const candidates=imageCandidates(id,st);
  let index=Math.max(0,candidates.indexOf(element.getAttribute('src')));
@@ -551,7 +551,7 @@ function renderExerciseGuide(){
 async function renderHistory(){
  if(S.user){try{const out=await api('history',{username:S.user.username});if(out.history){S.history=out.history;S.done={};out.history.filter(x=>x.completed).forEach(x=>S.done[x.day]=true);save();}}catch(e){console.warn('History sync:',e);}}
  if(!S.history || S.history.length === 0){
-  $('historyList').innerHTML = <div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>;
+  $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>`;
   return;
  }
  $('historyList').innerHTML = S.history.map(item => {
@@ -600,18 +600,18 @@ function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c;}
 function renderProgram(){
  const c=curDay(),n=Math.min(c-1,DAYS),pct=Math.round(n/DAYS*100);
  $('ppercent').innerText=pct+'%';
- $('circleProg').style.background=conic-gradient(var(--lime) ${pct*3.6}deg, #222c24 0deg);
- $('pnumStr').innerText=${n} / 15 วัน ที่ทำสำเร็จ;
+ $('circleProg').style.background=`conic-gradient(var(--lime) ${pct*3.6}deg, #222c24 0deg)`;
+ $('pnumStr').innerText=`${n} / 15 วัน ที่ทำสำเร็จ`;
  $('ptxt').innerText=n===DAYS?'ยอดเยี่ยม! ทำครบแล้ว':n===0?'พร้อมเริ่มต้นวันแรกหรือยัง?':'ทำต่อเนื่องอีกนิด!';
  
  let html='';
  for(let w=1;w<=5;w++){
   const first=(w-1)*PER+1,last=w*PER,weekCount=[first,first+1,first+2].filter(dayDone).length;
-  html+=<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#a0a89c;font-weight:700;margin-bottom:6px"><span>สัปดาห์ที่ ${w}</span><small>${weekCount}/3 วันสำเร็จ</small></div><div class="grid-days">;
+  html+=`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#a0a89c;font-weight:700;margin-bottom:6px"><span>สัปดาห์ที่ ${w}</span><small>${weekCount}/3 วันสำเร็จ</small></div><div class="grid-days">`;
   for(let d=first;d<=last;d++){
    const state=dayDone(d)?'done':d===c?'active':'lock';
    const status=state==='done'?'DONE':state==='active'?'START TODAY':'LOCKED';
-   html+=<button class="tile-day ${state}" ${state==='lock'?'disabled':''} onclick="openDay(${d})"><span class="d-title">DAY ${d}</span><span class="d-status">${status}</span></button>;
+   html+=`<button class="tile-day ${state}" ${state==='lock'?'disabled':''} onclick="openDay(${d})"><span class="d-title">DAY ${d}</span><span class="d-status">${status}</span></button>`;
   }
   html+='</div></div>';
  }
