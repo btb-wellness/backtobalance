@@ -436,7 +436,7 @@ const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG'
 function imageCandidates(id,st){
  if(id==='iyt'){
   if(st===null || st===undefined){
-   return IMAGE_EXTENSIONS.map(ext=>'images/iyt_i.'+ext);
+   return IMAGE_EXTENSIONS.map(ext=>'images/iyt.'+ext);
   }
   const iytFiles=['iyt_i','iyt_y','iyt_t'];
   const base=iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0];
