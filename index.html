@@ -472,6 +472,21 @@ const EX=[
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
+// ฟังก์ชันสำหรับแอบโหลดรูปภาพทั้งหมดเตรียมไว้ล่วงหน้า (Preload)
+function preloadAllImages() {
+ const imagesToPreload = [];
+ EX.forEach(e => {
+  imagesToPreload.push(...imageCandidates(e.id, null));
+ });
+ [0, 1, 2].forEach(st => {
+  imagesToPreload.push(...imageCandidates('iyt', st));
+ });
+ imagesToPreload.forEach(src => {
+  const img = new Image();
+  img.src = src;
+ });
+}
+
 const STG=[
 {t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[145,180]},
 {t:'ท่า Y: กางแขนเฉียงประมาณ 45° (ค้าง 5 วินาที)',r:[110,144]},
@@ -847,6 +862,9 @@ function finish(manual){
  $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
 }
 function nextEx(){show('program');}
+
+// สั่งทำงานฟังก์ชัน Preload รูปภาพทันทีที่โหลดสคริปต์
+preloadAllImages();
 </script>
 </body>
 </html>
