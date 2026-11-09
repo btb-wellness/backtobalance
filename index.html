@@ -1,699 +1,843 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f7f1">
+<meta name="theme-color" content="#0d110e">
 <title>Back to Balance</title>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#171c18;--lime:#c5f36b;--green:#91c928;--paper:#f5f7f1;--muted:#7c8579;--line:#e2e7dd}
-*{box-sizing:border-box}
+:root{--ink:#0d110e;--panel:#161c18;--card:#18201a;--lime:#c4f36b;--lime2:#91c83d;--muted:#808a7c;--line:#222b24;--white:#fff;--red:#ef4444}
+*{box-sizing:border-box;font-family:'Noto Sans Thai','Plus Jakarta Sans',sans-serif}
+body{margin:0;background:#050706;color:#fff;display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{width:100%;max-width:560px;min-height:100dvh;background:var(--ink);box-shadow:0 0 40px #0008;display:flex;flex-direction:column;position:relative}
+.app.has-nav{padding-bottom:80px}
 
-html,body{margin:0;min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto;font-family:'Montserrat',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-body{min-height:100vh;background:#e7e9e3;overscroll-behavior-y:auto}button,input{font:inherit}button{cursor:pointer}
+/* Bottom Navigation Bar */
+.bottom-nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:520px;height:64px;background:rgba(18, 23, 20, 0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;justify-content:space-around;align-items:center;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,0.6);z-index:999;padding:0 8px;border:1px solid rgba(255,255,255,0.08)}
+.app.has-nav .bottom-nav{display:flex}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#6b7567;background:none;border:none;padding:6px;width:25%;font-size:10px;font-weight:700;transition:.2s;border-radius:16px}
+.nav-item svg{width:22px;height:22px;fill:currentColor}
+.nav-item.active{color:var(--lime)}
 
-/* Mobile: use the document as the only vertical scroll container. */
-.app{width:100%;max-width:560px;margin:0 auto;min-height:100vh;height:auto;background:var(--paper);box-shadow:0 0 40px #0001;position:relative;overflow:visible}
-.page{display:none;min-height:100vh;height:auto;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));gap:13px;flex-direction:column;flex-shrink:0}.page.on{display:flex}
-h2,h3{margin:0;font-family:'Bebas Neue',system-ui,-apple-system,sans-serif;font-weight:400;letter-spacing:.04em}
-h2{font-size:44px;text-align:center}h3{font-size:30px}p{margin:0;color:var(--muted);line-height:1.6}label{font-size:12px;font-weight:800;letter-spacing:.06em;color:#66705f}input{width:100%;height:58px;padding:0 16px;border:2px solid var(--line);border-radius:17px;background:white;font-size:16px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 4px #c5f36b35}.btn{min-height:54px;width:100%;border:0;border-radius:17px;padding:13px 16px;background:var(--lime);color:var(--ink);font-weight:800;font-size:16px;box-shadow:0 7px 18px #9dcf4530}.btn:active{transform:scale(.985)}.btn:disabled{opacity:.55}.btn.ghost{background:transparent;border:2px solid #687064;color:inherit;box-shadow:none}.btn.red{background:#df4145;color:white;box-shadow:none}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.sp{margin-top:auto}.box{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;font-size:14px;line-height:1.6}.bar{height:9px;background:#e3e6df;border-radius:99px;overflow:hidden}.bar i{display:block;width:0;height:100%;border-radius:99px;background:var(--green);transition:width .25s}.seg{min-height:46px;border:1.5px solid #d7ddd2;border-radius:13px;background:white;color:#4f584b;font-size:13px;font-weight:800;padding:9px}.seg.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.brand-mark{width:54px;height:54px;border-radius:17px;background:var(--lime);display:grid;place-items:center;margin:auto;font-size:30px}.brand-title{text-align:center;font:51px 'Bebas Neue',sans-serif;letter-spacing:.04em;line-height:1}.brand-sub{text-align:center;color:#7a982f;font-size:12px;font-weight:800;letter-spacing:.13em}.login-top{padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center}.login-welcome{margin-top:28px}.login-welcome h2{text-align:left;font-size:50px;margin-bottom:8px}.login-welcome p{font-size:15px}.login-fields{display:flex;flex-direction:column;gap:10px;margin-top:16px}.input-wrap{position:relative}.input-wrap span{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:#8ebd25}.input-wrap input{padding-left:52px}.login-note,.login-footer{font-size:11px;font-weight:800;letter-spacing:.1em;color:#87917e}.login-footer{text-align:center;margin:5px 0}#login{background:radial-gradient(ellipse at 100% 32%,#e8f0dc 0,transparent 34%),var(--paper)}#login .btn{min-height:64px;font-size:19px}
+.page{display:none;flex-direction:column;gap:12px;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));min-height:100dvh;flex:1;overflow-y:auto}
+.app.has-nav .page{min-height:calc(100dvh - 80px)}
+.page.on{display:flex}
+h2,h3{margin:0;font-family:'Antonio','Noto Sans Thai',sans-serif;letter-spacing:.04em}
+h2{font-size:32px;text-align:left;color:#fff}h3{font-size:22px}
+p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+label{font-size:12px;font-weight:700;color:#a0a89c;margin-top:8px;display:block}
+input{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:#141a16;color:#fff;font-size:14px}
+input:focus{outline:0;border-color:var(--lime)}
+.btn{width:100%;padding:14px;border:0;border-radius:14px;background:var(--lime);color:var(--ink);font-size:14px;font-weight:800;letter-spacing:.05em;transition:.15s;display:flex;justify-content:center;align-items:center;gap:6px}
+.btn:active,.tile:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.ghost{background:transparent;border:1px solid #333d35;color:#fff}
+.red{background:var(--red);color:#fff}
+.row{display:flex;gap:9px}.row>*{flex:1}
+.sp{margin-top:auto}
+.seg{padding:11px 8px;border:1px solid var(--line);border-radius:12px;background:#141a16;color:#a0a89c;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg.on{background:var(--card);border-color:var(--lime);color:var(--lime);box-shadow:0 0 12px rgba(196,243,107,0.15)}
+.bar{height:8px;background:#202822;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--lime);border-radius:99px;transition:width .3s}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;color:#e5e5e5;font-size:13px;line-height:1.6}
 
-#home{background:radial-gradient(circle at 88% 12%,#c5f36b55,transparent 38%),var(--ink);color:white;justify-content:space-between;position:relative;isolation:isolate;overflow:hidden;--hx:72%;--hy:50%}
-#home>*{position:relative;z-index:1}
-#home>.heroBg{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,#171717b3 0,#17171700 30%),linear-gradient(to top,#171717 0,#171717e6 24%,#17171700 62%),linear-gradient(to right,#17171799 0,#17171700 55%),url(images/hero-motion-band.jpg) var(--hx) var(--hy)/cover no-repeat,#171717}
-.home-brand-top{display:flex;align-items:center;gap:12px;margin-top:4px}
-.home-logo{width:54px;height:54px;object-fit:contain}
-.tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:99px}
-#home .hero{margin:auto 0 0}
-#home h2{font-size:clamp(66px,20vw,108px);line-height:.9;text-align:left;color:var(--lime);margin:16px 0 20px}
-#home p{color:#c0c7ba;font-size:14px}
-#home .hero,#home .warn{text-shadow:0 2px 14px #000a}
+/* Header */
+.top-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.brand{display:flex;align-items:center;gap:8px}.logo{width:30px;height:30px;object-fit:contain}
+.brand-text{display:flex;flex-direction:column}
+.brand-text span{font-size:8px;font-weight:800;letter-spacing:1.5px;color:#808a7c}
+.brand-text strong{font-size:10px;font-weight:900;letter-spacing:1px;color:#fff}
 
-.warn{display:none;padding:10px;border-radius:12px;background:#fff4c8;color:#815b00;font-size:12px}#program .program-head{display:flex;align-items:center;justify-content:center;gap:10px}#program .program-head .brand-mark{margin:0;width:42px;height:42px;font-size:24px}#program .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}#program .tile{height:78px;border:2px solid transparent;border-radius:18px;background:#e7e9e5;color:#9ca39a;font:26px 'Bebas Neue',sans-serif}#program .tile.active{background:var(--ink);color:var(--lime);border-color:var(--lime)}#program .tile.done{background:var(--lime);color:var(--ink)}#program .tile.done:after{content:' ✓'}#detail,#train{background:#151a16;color:white}#detail h3,#train h3{color:var(--lime)}#detail p{color:#b8c0b2}#detail label{color:var(--lime)}#detail .box{background:#222a23;border-color:#384238;color:#e9eee5}.detail-header{display:flex;justify-content:space-between;gap:8px}.badge{background:var(--lime);color:#172017;border-radius:99px;padding:7px 12px;font-size:10px;font-weight:900}#tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#detail .seg.ex{position:relative;text-align:left;display:flex;flex-direction:column;gap:6px;padding:8px;background:#222a23;color:white;border:1px solid #3c463b;border-radius:15px;min-width:0}#detail .seg.ex.on{border:2px solid var(--lime);background:#293522}#detail .seg.ex img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:#111}.ex-number{font:15px 'Bebas Neue',sans-serif;color:var(--lime)}.ex-name{font-size:12px;line-height:1.4;min-height:34px}.ex-time{font-size:10px;color:#aeb8a7}.selected-check{display:none;position:absolute;right:13px;top:13px;background:var(--lime);color:#111;border-radius:50%;width:23px;height:23px;text-align:center;line-height:23px}#detail .seg.ex.on .selected-check{display:block}#dinfo .ei{display:flex;flex-direction:column;gap:10px}#dinfo .ei img{width:100%;height:180px;object-fit:cover;border-radius:12px}#dinfo .exercise-name{color:var(--lime);font-size:18px;font-weight:800}#dinfo .exercise-desc{font-size:13px;line-height:1.8;color:#e5e9e1}#dinfo .exercise-benefit{background:#303b2b;border-left:3px solid var(--lime);padding:10px;border-radius:8px;color:#d8f4a4;font-size:12px}#detail .seg:not(.ex){background:#222a23;color:#ddd;border-color:#485147}#detail .seg:not(.ex).on{background:var(--lime);color:#172017;border-color:var(--lime)}#detail .btn:not(.ghost){background:linear-gradient(135deg,#d0f77b,#91c928)}#train{gap:12px;justify-content:flex-start}#train h3{text-align:center;font-size:31px;margin:2px 0}
+/* PAGE 1: HOME */
+#home{background:#0d110e;position:relative;overflow:hidden;justify-content:flex-end;padding:max(16px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));height:100dvh}
+#home .heroBg{position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(196,243,107,0.15) 0%,transparent 60%),linear-gradient(to top,#0d110e 10%,rgba(13,17,14,0.6) 50%,transparent 85%),url('images/hero-motion-band.jpg') center 35%/cover no-repeat;opacity:.85;z-index:0}
+#home .title-main{font-family:'Antonio',sans-serif;font-size:clamp(44px,14vw,76px);font-weight:800;line-height:0.9;background:linear-gradient(180deg,#fff 0%,#d8e2d4 60%,var(--lime) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-transform:uppercase;margin:8px 0 12px;position:relative;z-index:2}
+#home .sub-desc{color:#b0b8ac;font-size:12px;line-height:1.5;position:relative;z-index:2;margin-bottom:16px}
+#home .sub-desc b{color:#fff}
+#home .home-features{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(20,26,22,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:12px 8px;margin-bottom:16px}
+.feature-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.feature-icon{width:30px;height:30px;border-radius:50%;border:1px solid rgba(196,243,107,0.4);background:rgba(196,243,107,0.08);display:grid;place-items:center;color:var(--lime)}
+.feature-icon svg{width:15px;height:15px;fill:currentColor}
+.feature-title{font-size:8px;font-weight:800;letter-spacing:0.8px;color:var(--lime)}
+.feature-desc{font-size:9px;color:#a0a89c}
 
-.vid{--ar:1.3333;--vh:52vh;--vh:52dvh;position:relative;width:100%;max-width:100%;height:var(--vh);max-height:58vh;margin:0 auto;flex:none;background:#050505;border:2px solid #3b413b;border-radius:19px;overflow:hidden}
-#cv,#cam{display:block;width:100%;height:100%;object-fit:cover}
-#cam{position:absolute;top:0;left:0;opacity:0;pointer-events:none}
-.ban{padding:0;overflow:hidden;border-radius:18px;background:#242c25;border-color:#3b453b}.ban #sym{display:block;width:100%;height:clamp(115px,25vw,165px);object-fit:cover;object-position:center;background:#101510}.ban .cap{padding:8px 11px 10px;text-align:center}#nm{display:block;color:white;font-size:13px;font-weight:800;line-height:1.35}#bl{font-size:11px;color:var(--lime);margin-top:3px}.dash{display:flex;justify-content:space-around;text-align:center;background:#242c25;border-color:#3b453b;padding:13px 8px}.dash small{font-size:9px;letter-spacing:.1em;color:#a6afa1;font-weight:800}.dash b{display:block;font:39px 'Bebas Neue',sans-serif;color:var(--lime);line-height:1.1}#tg{background:#242c25;border-color:#3b453b;text-align:center;color:#e9eee5;min-height:58px;display:grid;place-items:center;font-size:13px}#fb{text-align:center;min-height:20px;font-size:12px;font-weight:800}.train-panel{display:flex;flex-direction:column;gap:10px}.train-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.train-actions .btn{min-height:52px}#go{min-height:58px}#result .result-score{text-align:center;font-size:14px;line-height:2}#result .result-score b{font:32px 'Bebas Neue',sans-serif}
+/* PAGE 2: PROGRAM */
+#program{gap:12px}
+.progress-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;align-items:center;gap:16px;position:relative}
+.circle-progress{position:relative;width:72px;height:72px;border-radius:50%;background:conic-gradient(var(--lime) 0deg, #222c24 0deg);display:grid;place-items:center;flex:none}
+.circle-progress:before{content:'';position:absolute;width:58px;height:58px;border-radius:50%;background:var(--card)}
+.circle-progress span{position:relative;z-index:1;font-family:'Antonio',sans-serif;font-size:22px;color:#fff;font-weight:700}
+.progress-info{display:flex;flex-direction:column;gap:2px;flex:1}
+.progress-info small{color:var(--lime);font-size:9px;font-weight:800;letter-spacing:1px}
+.progress-info strong{font-size:14px;color:#fff}
+.progress-info b{font-size:18px;color:var(--lime);font-family:'Antonio',sans-serif}
+.btn-start-today{background:var(--lime);color:var(--ink);border:0;border-radius:20px;padding:8px 14px;font-size:11px;font-weight:800;white-space:nowrap;margin-left:auto}
 
+.grid-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.tile-day{background:#131815;border:1px solid #222a23;border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;color:#707a6c;transition:.2s;position:relative}
+.tile-day.active{background:var(--card);border:1.5px solid var(--lime);color:#fff;box-shadow:0 4px 16px rgba(196,243,107,0.15)}
+.tile-day.done{background:#18281a;border-color:#2d4a2f;color:var(--lime)}
+.tile-day .d-title{font-family:'Antonio',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.5px}
+.tile-day .d-status{font-size:8px;font-weight:700;letter-spacing:0.5px}
+.tile-day.active .d-status{color:var(--lime)}
+
+/* PAGE 3: EXERCISE GUIDE */
+.guide-item{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.guide-item-top{display:flex;gap:16px;align-items:flex-start}
+.guide-item img{width:140px;height:120px;object-fit:contain;background:#000;border-radius:14px;border:1px solid #222b24;flex:none}
+.guide-content{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.guide-content h4{margin:0;font-size:17px;color:#fff;font-weight:800}
+.guide-pill{display:inline-block;background:#202d1d;color:var(--lime);font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;align-self:flex-start}
+.guide-body{font-size:13px;color:#c2c9be;line-height:1.6;background:#121714;padding:12px;border-radius:12px;border:1px solid #1e261f}
+.guide-benefit{font-size:12px;color:var(--lime);display:flex;align-items:center;gap:6px;font-weight:700}
+
+/* PAGE 4: DAILY WORKOUT DETAIL */
+.detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
+.detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
+
+/* PAGE 5: WORKOUT HISTORY */
+.history-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.history-left{display:flex;align-items:center;gap:10px}
+.history-check{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--lime);background:rgba(196,243,107,0.1);color:var(--lime);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.history-check.failed{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
+.history-info strong{display:block;font-size:13px;color:#fff}
+.history-info small{color:#808a7c;font-size:10px}
+.history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;text-align:right}
+.history-badge.failed{background:#2b1d1d;border-color:#442f2f;color:#fca5a5}
+
+/* PAGE 6: TRAIN / CAMERA */
+#train{background:var(--ink);justify-content:flex-start}
+.vid{position:relative;width:100%;height:48dvh;min-height:300px;background:#000;border-radius:20px;overflow:hidden;border:1px solid #222b24;flex:none}
+#cv{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+#cam{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.train-panel{display:flex;flex-direction:column;gap:10px;flex:1}
+.ban{padding:0;overflow:hidden;text-align:center;display:flex;flex-direction:column;border-radius:16px;background:#000;border:1px solid #222b24}
+.ban #sym{display:block;width:100%;height:clamp(110px,22vw,150px);object-fit:contain;background:#000}
+.ban .cap{padding:6px 10px;background:var(--card)}
+.ban #nm{display:block;color:#fff;font-size:13px;font-weight:800}
+.ban #bl{font-size:10px;color:var(--lime);margin-top:2px}
+
+.dash-big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.dash-big small{display:block;font-size:9px;color:#808a7c;font-weight:800;letter-spacing:0.5px}
+.dash-big b{display:block;font-family:'Antonio',sans-serif;font-size:32px;line-height:1;color:var(--lime);margin-top:4px}
+
+#fb{text-align:center;font-weight:800;font-size:12px;min-height:18px}
+
+/* RESPONSIVE IPAD/PC */
 @media(min-width:700px){
- body{padding:20px 0;min-height:100vh}
- .app{max-width:900px;height:calc(100vh - 40px);min-height:calc(100vh - 40px);border-radius:24px;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
- .page{min-height:calc(100vh - 40px);padding:28px;border-radius:inherit}
- #top{border-radius:24px 24px 0 0}
- body.bar .page{min-height:100%}
- #train .ban #sym{height:190px}
- .vid{--vh:56vh;--vh:56dvh;max-height:65vh}
- #detail{padding:30px}
- #detail #tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
+  body{padding:16px;align-items:center}
+  .app{max-width:880px;border-radius:24px;overflow:hidden;min-height:calc(100dvh - 32px)}
+  .app.has-nav .page{min-height:calc(100dvh - 96px);padding:20px 24px}
+  
+  #train.page.on{
+    display:grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 14px;
+    align-content: start;
+  }
+  #train .top-header{grid-column: 1 / -1; margin-bottom:0}
+  
+  .vid{
+    height: 100%;
+    min-height: 480px;
+    max-height: calc(100vh - 150px);
+  }
+  .train-panel{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .dash-big b{font-size: 38px}
 
-@media(max-width:390px){
- .page{padding-left:14px;padding-right:14px}
- .ban #sym{height:clamp(105px,28vw,130px)}
- .dash b{font-size:28px}
- #nm{font-size:12px}
- .vid{--vh:46vh;--vh:46dvh}
-}
-
-@media(max-height:700px) and (max-width:699px){
- .page{padding-top:10px;padding-bottom:12px;gap:8px}
- .ban #sym{height:95px}
- .dash{padding:9px}
- .dash b{font-size:25px}
- .vid{--vh:40vh;--vh:40dvh}
-}
-
-#top{display:none;position:sticky;top:0;z-index:30;height:calc(58px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;align-items:center;justify-content:space-between;background:#171c18;color:#fff;box-shadow:0 2px 14px #0003}
-body.bar #top{display:flex}
-.tb-back,.tb-me{width:42px;height:42px;border-radius:50%;border:0;background:#ffffff1a;color:#fff;font-size:22px;font-weight:700;display:grid;place-items:center}
-.tb-me{background:var(--lime);color:#171c18;font:22px 'Bebas Neue',sans-serif}
-.tb-brand{display:flex;align-items:center;gap:8px}.tb-brand img{width:36px;height:36px;object-fit:contain}
-.tb-brand b{font:26px 'Bebas Neue',sans-serif;font-weight:400;letter-spacing:.07em;color:var(--lime);white-space:nowrap}
-body.bar .page{padding-top:16px;min-height:calc(100% - 58px - env(safe-area-inset-top))}
-#nav{display:none;position:fixed;bottom:0;left:0;right:0;margin:0 auto;width:100%;max-width:560px;z-index:30;background:#171c18;padding:6px 8px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;border-radius:18px 18px 0 0;box-shadow:0 -4px 18px #0003}
-body.nav #nav{display:flex}
-#nav button{flex:1;background:none;border:0;color:#8e978a;font:700 10px 'Montserrat',system-ui,-apple-system,sans-serif;letter-spacing:.04em;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;min-height:52px}
-#nav button.on{color:var(--lime)}
-.ni{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-body.nav .page{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
-.brand-mark{background:var(--ink);padding:7px}.brand-mark img{width:100%;height:100%;object-fit:contain}
-.brand-mark.t{background:none;padding:0;width:84px;height:84px}
-
-#stg{display:none;justify-content:center;gap:8px;margin-bottom:6px}
-#stg span{width:36px;height:27px;border-radius:8px;background:#3a443a;color:#9aa595;font:18px 'Bebas Neue',sans-serif;display:grid;place-items:center}
-#stg span.on{background:var(--lime);color:#172017}
-
-.lib{display:flex;flex-direction:column;gap:8px}.lib img{display:block;width:100%;border-radius:12px;background:#101510}
-.lib .exercise-name{font-weight:800;font-size:17px}.lib .exercise-desc{font-size:13px;line-height:1.7}
-.lib .exercise-benefit{background:#eef6dc;border-left:3px solid var(--green);padding:9px;border-radius:8px;font-size:12px;color:#4d6a12}
-#histSum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
-#histSum div{background:var(--ink);color:var(--lime);border-radius:16px;padding:12px 4px}
-#histSum b{font:36px 'Bebas Neue',sans-serif;display:block;line-height:1}#histSum small{color:#b7c2ad;font-size:11px}
-.hist{display:flex;justify-content:space-between;gap:10px;align-items:center}.hist small{color:var(--muted);font-size:11px}
-.hist .ok{color:#5c8a0a;font-size:11px;font-weight:800}.hist .no{color:#c0392b;font-size:11px;font-weight:800}
-.hist .hr{text-align:right}.hist .hr b{font:32px 'Bebas Neue',sans-serif;display:block;line-height:1}
-#meInfo{display:grid;gap:10px}#meInfo div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px}#meInfo small{color:var(--muted)}
-@media(min-width:700px){#nav{max-width:900px}}
-
-@media (max-height:700px) and (orientation:portrait){.vid{--vh:42vh;--vh:42dvh}}
-@media (orientation:landscape) and (min-width:600px){
- #train.page.on{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start;column-gap:16px;row-gap:10px}
- #train h3{grid-column:1/-1}
- #train .vid{--vh:calc(100vh - 120px);--vh:calc(100dvh - 120px);max-height:calc(100vh - 120px);max-height:calc(100dvh - 120px);position:sticky;top:68px;align-self:start;margin:0}
- #train .train-panel{min-width:0}
-}
-@media (orientation:landscape) and (max-height:600px){
- #train h3{display:none}#train .vid{--vh:calc(100vh - 80px);--vh:calc(100dvh - 80px);max-height:calc(100vh - 80px);max-height:calc(100dvh - 80px);top:50px}
- #home h2{font-size:clamp(34px,9vw,52px);margin:12px 0}#home{--hy:35%}
-}
-
-/* Final viewport fixes for iOS Safari and Chrome on iPhone. */
-@media(max-width:699px){
-  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
-  body{position:static;touch-action:pan-y}
-  .app{height:auto;min-height:100vh;min-height:100svh;overflow:visible}
-  .page{height:auto;min-height:100vh;min-height:100svh;overflow:visible;overscroll-behavior:auto}
-  body.bar .page{min-height:calc(100svh - 58px - env(safe-area-inset-top));padding-top:16px}
-  body.nav .page{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
-  #top{position:sticky;top:0}
-  #nav{position:fixed;bottom:0;left:0;right:0}
-}
-@media(min-width:700px){
-  body.bar .page{min-height:calc(100vh - 98px)}
-  body.nav .page{padding-bottom:110px}
+  .guide-item img{width:160px;height:120px}
 }
 </style>
 </head>
-<body><main class="app">
-<header id="top"><button class="tb-back" id="backBtn" onclick="goBack()" aria-label="ย้อนกลับ">←</button><div class="tb-brand"><img src="images/logo.png" alt=""><b>BACK TO BALANCE</b></div><button class="tb-me" id="meBtn" onclick="show('me')" aria-label="โปรไฟล์">?</button></header>
+<body>
+<div class="app" id="appFrame">
 
-<section id="home" class="page on">
+<!-- PAGE 1: HOME -->
+<div id="home" class="page on">
   <div class="heroBg" aria-hidden="true"></div>
-  <div class="home-brand-top">
-    <img class="home-logo" src="images/logo.png" alt="Back to Balance">
-    <span class="tag">RESISTANCE BAND · POSTURE STUDIO</span>
+  <div class="top-header" style="position:absolute;top:max(16px,env(safe-area-inset-top));left:18px;right:18px;z-index:2">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
   </div>
-  <div class="hero">
-    <h2>Back to<br>Balance</h2>
-    <p>Revitalize your neck, shoulders &amp; upper back<br>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</p>
+
+  <div style="position:relative;z-index:2;margin-top:auto">
+    <div class="title-main">BACK TO<br>BALANCE</div>
+    <div class="sub-desc">
+      YOUR PERSONAL WELLNESS JOURNEY<br>
+      <b>ฟื้นฟูคอ บ่า ไหล่ ด้วยยางยืด วันละ 15 นาที</b>
+    </div>
   </div>
-  <div id="inapp" class="warn">กรุณาเปิดเว็บไซต์ผ่าน Safari หรือ Chrome เพื่อใช้งานกล้อง</div>
-  <button class="btn" onclick="start()">Get Started →</button>
-</section>
 
-<section id="login" class="page"><div class="login-top"><div class="brand-mark"><img src="images/logo.png" alt=""></div><div class="brand-title">BACK TO BALANCE</div><div class="brand-sub">YOUR PERSONAL WELLNESS</div></div><div class="login-welcome"><h2>Welcome Back</h2><p>เริ่มต้นดูแลสุขภาพคอ บ่า และไหล่<br>ไปกับโปรแกรมออกกำลังกายของคุณ</p></div><div class="login-fields"><label>USERNAME</label><div class="input-wrap"><span>●</span><input id="un" autocomplete="username" placeholder="กรอกชื่อผู้ใช้"></div><label>EMAIL ADDRESS</label><div class="input-wrap"><span>✉</span><input id="em" type="email" autocomplete="email" placeholder="กรอกอีเมลของคุณ"></div><div class="login-note">● &nbsp; YOUR JOURNEY STARTS HERE</div></div><button class="btn sp" onclick="login()">เข้าสู่ระบบ →</button><div class="login-footer">BACK TO BALANCE · POSTURE STUDIO</div></section>
+  <div class="home-features">
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="feature-title">RELIEVE TENSION</div>
+      <div class="feature-desc">คลายเมื่อยคอ บ่า ไหล่</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2zm0 7a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0v-2a2 2 0 0 1 2-2zm0 7a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0v-2a2 2 0 0 1 2-2z"/></svg></div>
+      <div class="feature-title">IMPROVE POSTURE</div>
+      <div class="feature-desc">ปรับบุคลิกภาพให้ดีขึ้น</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a1.5 1.5 0 0 0-3 0V5H6a2 2 0 0 0-2 2v4H2.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5H4v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4h1.5a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z"/></svg></div>
+      <div class="feature-title">STRENGTHEN BACK</div>
+      <div class="feature-desc">เสริมความแข็งแรงแผ่นหลัง</div>
+    </div>
+  </div>
 
-<section id="profile" class="page"><h2>Personalize<br>Your Plan</h2><label>เพศ</label><div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div><label>วันเกิด</label><input id="dob" type="date"><label>น้ำหนัก (kg)</label><input id="wt" type="number" min="20"><label>ส่วนสูง (cm)</label><input id="ht" type="number" min="100"><button class="btn sp" onclick="saveProfile()">บันทึกข้อมูลและไปต่อ →</button></section>
+  <button class="btn" style="position:relative;z-index:2" onclick="start()">GET STARTED →</button>
+</div>
 
-<section id="program" class="page"><div class="program-head"><h3>โปรแกรม 5 สัปดาห์</h3></div><div class="bar"><i id="pbar"></i></div><p id="ptxt" style="text-align:center"></p><div id="weeks"></div><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
+<!-- LOGIN PAGE -->
+<div id="login" class="page">
+  <h2>Log In</h2>
+  <label>ชื่อผู้ใช้</label><input id="un" autocomplete="username" placeholder="btb01">
+  <label>รหัสผ่าน</label><input id="pw" type="password" autocomplete="current-password" placeholder="Bxxxxxxx_btb01">
+  <button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
+</div>
 
-<section id="detail" class="page"><div class="detail-header"><span class="badge" id="weekBadge">WEEK 01</span><span class="badge">RESISTANCE BAND</span></div><div><h3>Daily Workout</h3><p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ด้วยยางยืด</p></div><div class="detail-header"><span class="badge">EXERCISE SELECTION</span><span id="selectCount" style="font-size:11px;color:#c5f36b">4 EXERCISES</span></div><div class="bar"><i id="selectBar" style="width:100%"></i></div><div id="tabs"></div><div><label>EXERCISE INSTRUCTIONS</label><div class="box" id="dinfo"></div></div><div class="box" style="text-align:center;color:#c5f36b"><b>15 MINUTES WORKOUT</b><p>ระบบจะสุ่มสลับท่าจากรายการที่เลือก</p></div><button class="btn" onclick="train()">START WORKOUT →</button><button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button></section>
+<!-- PROFILE INITIAL PAGE -->
+<div id="profile" class="page">
+  <h2>Personalize Your Plan</h2>
+  <label>เพศ</label>
+  <div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
+  <label>วันเกิด</label><input id="dob" type="date">
+  <div class="row">
+    <div><label>น้ำหนัก (kg)</label><input id="wt" type="number" placeholder="เช่น 60"></div>
+    <div><label>ส่วนสูง (cm)</label><input id="ht" type="number" placeholder="เช่น 170"></div>
+  </div>
+  <button class="btn sp" onclick="saveProfile()">บันทึกข้อมูล →</button>
+</div>
 
-<section id="train" class="page"><h3 id="tt">Back to Balance - Day 1</h3><div class="vid" id="vidbox"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div><div class="train-panel"><div class="box ban"><img id="sym" alt="ท่าออกกำลังกาย"><div class="cap"><div id="stg"><span>I</span><span>Y</span><span>T</span></div><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่าจากรายการที่เลือก</p></div></div><div class="box dash"><div><small>TIME REMAINING</small><b id="tm">15:00</b></div><div><small>SCORE</small><b id="sc">0</b></div><div><small>REPS</small><b id="rp">0</b></div></div><div class="bar"><i id="hb"></i></div><div id="tg" class="box">กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที</div><div id="fb"></div><div class="train-actions"><button class="btn ghost" id="pz" onclick="pause()">PAUSE</button><button class="btn red" onclick="finish(true)">จบการฝึก</button></div><button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button></div></section>
+<!-- PAGE 2: PROGRAM -->
+<div id="program" class="page">
+  <div class="top-header">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
+  </div>
 
-<section id="result" class="page"><div style="text-align:center;margin-top:18px"><div class="brand-mark t"><img src="images/trophy.svg" alt=""></div><h2 id="rt">Completed!</h2></div><div class="box result-score">TOTAL POINTS<br><b id="r1">0</b><br>CALORIES BURNED<br><b id="r2">0</b> kcal<br>Exercise Time: <b id="r3"></b><br>Avg Accuracy: <b id="r4"></b><br><span id="r5"></span></div><button class="btn sp" onclick="nextEx()">CONTINUE</button><button class="btn ghost" onclick="show('program')">กลับโปรแกรม</button></section>
+  <h2 style="font-family:'Antonio',sans-serif;font-size:28px">BACK TO<br><span style="color:var(--lime)">BALANCE</span></h2>
+  <p>YOUR PERSONAL WELLNESS JOURNEY</p>
 
-<section id="library" class="page"><h3>ท่าออกกำลังกาย</h3><p style="text-align:center">วิธีปฏิบัติและประโยชน์ของแต่ละท่า</p><div id="libList" style="display:flex;flex-direction:column;gap:12px"></div></section>
+  <div class="progress-card">
+    <div class="circle-progress" id="circleProg">
+      <span id="ppercent">0%</span>
+    </div>
+    <div class="progress-info">
+      <small>15-DAY CHALLENGE</small>
+      <strong>ความคืบหน้าของคุณ</strong>
+      <b id="pnumStr">0 / 15 วัน ที่ทำสำเร็จ</b>
+      <p id="ptxt" style="font-size:10px;margin-top:2px">พร้อมเริ่มต้นวันแรกหรือยัง?</p>
+    </div>
+    <button class="btn-start-today" onclick="openDay(curDay())">เริ่มวันนี้ →</button>
+  </div>
 
-<section id="history" class="page"><h3>ประวัติการออกกำลังกาย</h3><div id="histSum"></div><div id="histList" style="display:flex;flex-direction:column;gap:10px"></div></section>
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <strong style="font-size:14px">ตารางฝึกประจำวัน</strong>
+      <span style="font-size:10px;color:var(--muted)">วันละ 15 นาที</span>
+    </div>
+    <div id="weeksList" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
 
-<section id="me" class="page"><h3>โปรไฟล์</h3><div class="box" id="meInfo"></div><button class="btn ghost" onclick="editProfile()">แก้ไขข้อมูลทั่วไป</button><button class="btn ghost sp" onclick="logout()">ออกจากระบบ</button></section>
+  <div class="box" style="display:flex;align-items:center;gap:12px;background:#121814;border-color:#1e2720">
+    <div style="width:36px;height:36px;border-radius:50%;background:rgba(196,243,107,0.15);color:var(--lime);display:grid;place-items:center;font-size:18px;flex:none">✦</div>
+    <div>
+      <b style="color:#fff;font-size:12px">เริ่มต้นอย่างมั่นใจ เสมอ</b>
+      <p style="font-size:10px">ทำภารกิจแต่ละวันให้สำเร็จ เพื่อปลดล็อกวันถัดไป</p>
+    </div>
+  </div>
+</div>
 
-</main>
-<nav id="nav"><button data-p="program" onclick="show('program')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>โปรแกรม</button><button data-p="library" onclick="show('library')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M6 10h12M9 21l3-6 3 6"/></svg>ท่าออกกำลังกาย</button><button data-p="history" onclick="show('history')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</button><button data-p="me" onclick="show('me')"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>โปรไฟล์</button></nav>
+<!-- PAGE 3: EXERCISE GUIDE -->
+<div id="exerciseGuide" class="page">
+  <div class="top-header">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
+  </div>
+
+  <h2>EXERCISE <span style="color:var(--lime)">GUIDE</span></h2>
+  <p style="font-size:14px;margin-bottom:8px">แนะนำและสาธิตท่าฝึกทั้งหมดในโปรแกรม</p>
+
+  <div id="guideList" style="display:flex;flex-direction:column;gap:14px"></div>
+</div>
+
+<!-- PAGE 4: WORKOUT HISTORY -->
+<div id="history" class="page">
+  <div class="top-header">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
+  </div>
+
+  <h2>WORKOUT <span style="color:var(--lime)">HISTORY</span></h2>
+  <p>บันทึกความก้าวหน้าและการออกกำลังกายของคุณ</p>
+
+  <div id="historyList" style="display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
+<!-- PAGE 5: USER PROFILE -->
+<div id="userProfile" class="page">
+  <div class="top-header">
+    <div class="brand">
+      <img class="logo" src="images/logo.svg" alt="">
+      <div class="brand-text">
+        <span>RESISTANCE BAND</span>
+        <strong>POSTURE STUDIO</strong>
+      </div>
+    </div>
+  </div>
+
+  <h2>MY <span style="color:var(--lime)">PROFILE</span></h2>
+  <p>จัดการข้อมูลส่วนตัวของคุณ</p>
+
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+    <div>
+      <label>ชื่อผู้ใช้</label>
+      <input id="p_un" readonly style="opacity:0.7">
+    </div>
+    <div>
+      <label>เพศ</label>
+      <div class="row" style="margin-top:6px"><button class="seg" id="pg1" onclick="genP('ชาย')">ชาย</button><button class="seg" id="pg2" onclick="genP('หญิง')">หญิง</button></div>
+    </div>
+    <div>
+      <label>วันเดือนปีเกิด</label>
+      <input id="p_dob" type="date">
+    </div>
+    <div class="row">
+      <div>
+        <label>น้ำหนัก (kg)</label>
+        <input id="p_wt" type="number" placeholder="น้ำหนัก">
+      </div>
+      <div>
+        <label>ส่วนสูง (cm)</label>
+        <input id="p_ht" type="number" placeholder="ส่วนสูง">
+      </div>
+    </div>
+    <button class="btn" style="margin-top:8px" onclick="updateProfileSettings()">อัปเดตข้อมูล</button>
+  </div>
+  <button class="btn ghost" style="margin-top:auto" onclick="logout()">ออกจากระบบ</button>
+</div>
+
+<!-- PAGE 6: DAILY WORKOUT DETAIL -->
+<div id="detail" class="page">
+  <h2>DAILY <span style="color:var(--lime)">WORKOUT</span></h2>
+  <p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ เพื่อปรับปรุงบุคลิกภาพ</p>
+  
+  <div id="tabs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
+  <div class="box" id="dinfo" style="padding:14px"></div>
+  
+  <button class="btn" onclick="train()">START WORKOUT →</button>
+  <button class="btn ghost" onclick="show('program')">← BACK TO PROGRAM</button>
+</div>
+
+<!-- PAGE 7: TRAIN / CAMERA SCREEN -->
+<div id="train" class="page">
+  <div class="top-header">
+    <strong id="tt" style="color:var(--lime);font-size:16px">Back to Balance - Day 1</strong>
+  </div>
+
+  <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
+
+  <div class="train-panel">
+    <div class="ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่าทุก 15 วินาที</p></div></div>
+    
+    <div class="dash-big">
+      <div><small>TIME REMAINING</small><b id="tm">15:00</b></div>
+      <div><small>SCORE</small><b id="sc">0</b></div>
+      <div><small>REPS</small><b id="rp">0</b></div>
+    </div>
+
+    <div class="bar"><i id="hb"></i></div>
+    <div id="tg" class="box" style="text-align:center;padding:10px;font-size:12px">กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที</div>
+    <div id="fb"></div>
+
+    <div class="row sp">
+      <button class="btn ghost" id="pz" onclick="pause()">PAUSE</button>
+      <button class="btn red" onclick="finish(true)">จบการฝึก</button>
+    </div>
+    <button class="btn" id="go" onclick="camStart()">เปิดกล้องและเริ่ม</button>
+  </div>
+</div>
+
+<!-- RESULT PAGE -->
+<div id="result" class="page" style="text-align:center">
+  <h2>WORKOUT <span style="color:var(--lime)">COMPLETED</span></h2>
+  <div class="box" style="margin-top:16px">
+    TOTAL POINTS<br><b id="r1" style="font-size:32px;color:var(--lime);font-family:'Antonio'">0</b><br>
+    <small style="color:var(--muted)">Exercise Time: <span id="r3">00:00</span> | Avg Accuracy: <span id="r4">0%</span></small>
+  </div>
+  <button class="btn sp" onclick="nextEx()">CONTINUE</button>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-program" onclick="show('program')">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" id="nav-exerciseGuide" onclick="show('exerciseGuide')">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+    <span>Guide</span>
+  </button>
+  <button class="nav-item" id="nav-history" onclick="show('history')">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 11h-5V7h2v4h3z"/></svg>
+    <span>History</span>
+  </button>
+  <button class="nav-item" id="nav-userProfile" onclick="show('userProfile')">
+    <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg>
+    <span>Profile</span>
+  </button>
+</div>
+
+</div>
 
 <script>
-window.addEventListener('error', function(event){
-  console.error('Back to Balance runtime error:', event.message, event.filename, event.lineno);
-  const active = document.querySelector('.page.on');
-  if(active) showPageError(active, new Error(event.message || 'Unknown JavaScript error'));
-});
-window.addEventListener('unhandledrejection', function(event){
-  console.error('Back to Balance async error:', event.reason);
-  const active = document.querySelector('.page.on');
-  if(active) showPageError(active, event.reason || new Error('Async operation failed'));
-});
-// วาง Web App URL ที่ไอค่อน Deploy ไดเรคทอรี่ที่นี่
-const API='https://script.google.com/macros/s/AKfycbxciDTKpaLhn26XG_IwLqqJPdQvReSR5JBNbgYROvrJZg5-JVWie9qt2NLX9NNVEQ_Pxg/exec';
+const API='PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const SEC=900,BLOCK=15,PREP=3,RELAX=3,DAYS=15,PER=3;
+const USER_RE=/^btb\d{2}$/;
+const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
-const SEC=900,BLOCK=15,PREP=3,DAYS=15,PER=3,MET={battle:3.8};
+const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
 
-const EXTENSIONS=['jpg','jpeg','png','webp','svg','JPG','JPEG','PNG','WEBP'];
-const FILES={iyt_i:['iyt_i','iyt-i','IYT_I','IYT-I'],iyt_y:['iyt_y','iyt-y','IYT_Y','IYT-Y'],iyt_t:['iyt_t','iyt-t','IYT_T','IYT-T'],w:['w','W'],neck:['neck','Neck'],pec:['pec','Pec','pectoral','Pectoral']};
-function candidates(key){return (FILES[key]||[key]).flatMap(name=>EXTENSIONS.map(ext=>'images/'+name+'.'+ext));}
-function setImage(el,key){const files=candidates(key);let n=0;el.onerror=()=>{if(++n<files.length)el.src=files[n];else{el.onerror=null;el.style.display='none';console.warn('ไม่พบภาพ',key);}};el.style.display='block';el.src=files[0];}
+function imageCandidates(id,st){
+ if(id==='iyt'){
+  if(st===null || st===undefined){
+   return IMAGE_EXTENSIONS.map(ext=>'images/iyt.'+ext);
+  }
+  const iytFiles=['iyt_i','iyt_y','iyt_t'];
+  const base=iytFiles[(Number.isInteger(st)&&st>=0&&st<=2)?st:0];
+  return IMAGE_EXTENSIONS.map(ext=>'images/'+base+'.'+ext);
+ }
+ return IMAGE_EXTENSIONS.map(ext=>'images/'+id+'.'+ext);
+}
+
+function loadExerciseImage(element,id,st){
+ const candidates=imageCandidates(id,st);
+ let index=0;
+ element.style.display='block';
+ element.onerror=function(){
+  index++;
+  if(index<candidates.length){element.src=candidates[index];}
+  else{element.onerror=null;element.style.display='none';}
+ };
+ element.src=candidates[index];
+}
+const IMG=(id,st)=>imageCandidates(id,st)[0];
+const img=(id,c,st)=><img class="${c}" src="${IMG(id,st)}" alt="" onerror="fallbackExerciseImage(this, '${id}', ${st===undefined||st===null?'null':st})">;
+function fallbackExerciseImage(element,id,st){
+ const candidates=imageCandidates(id,st);
+ let index=Math.max(0,candidates.indexOf(element.getAttribute('src')));
+ element.onerror=function(){index++;if(index<candidates.length){element.src=candidates[index]}else{element.onerror=null;element.style.display='none';}};
+ element.onerror();
+}
 
 const EX=[
-{id:'iyt',block:15,n:'Modified Band IYT',how:'ทำตามลำดับ I → Y → T โดยค้างท่าละ 5 วินาที รวม 15 วินาทีต่อ 1 รอบ',ben:'เสริมสร้างกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
-{id:'w',block:15,n:'Modified Band W',how:'ยืนตรง งอข้อศอกกางแขนคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 5 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและการจัดตำแหน่งไหล่'},
-{id:'neck',block:15,n:'Neck Isometric Extension',how:'ยืนตะแคงให้กล้องเห็นหูและไหล่ รักษาศีรษะให้ตรงกับไหล่และค้างไว้ 5 วินาที',ben:'ฝึกการควบคุมตำแหน่งศีรษะและกล้ามเนื้อคอ'},
-{id:'pec',block:30,n:'Pectoral Stretch',how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนเพื่อยืดหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}];
-const STAGES=[{file:'iyt_i',title:'ท่า I — ยกแขนขึ้นแนวตรง ค้าง 5 วินาที',range:[70,100]},{file:'iyt_y',title:'ท่า Y — กางแขนเฉียงเป็นรูปตัว Y ค้าง 5 วินาที',range:[25,65]},{file:'iyt_t',title:'ท่า T — กางแขนออกด้านข้าง ค้าง 5 วินาที',range:[-20,20]}];
+{id:'iyt',n:'MODIFIED BAND IYT',focus:'Shoulders, Upper Back',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที (รวม 15 วินาที/รอบ)',ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
+{id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 5 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
+{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
+{id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
+];
 
-const $=id=>document.getElementById(id);let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{};}catch(e){}S.done=S.done||{};const save=()=>localStorage.setItem('nbr',JSON.stringify(S));
+const STG=[
+{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[145,180]},
+{t:'ท่า Y: กางแขนเฉียงประมาณ 45° (ค้าง 5 วินาที)',r:[110,144]},
+{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่ (ค้าง 5 วินาที)',r:[75,109]}
+];
 
-let profFrom = 'program';
+const $=id=>document.getElementById(id);
+let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}
+S.done=S.done||{};
+S.history=S.history||[];
+const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 
-function send(action,data){
-  if(!/^https:\/\/script\.google\.com\//.test(API))return;
-  fetch(API,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action,...data})
-  }).catch(()=>{});
+function show(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+ $(id).classList.add('on');
+ const app = $('appFrame');
+ const navPages = ['program', 'exerciseGuide', 'history', 'userProfile', 'detail'];
+ if(navPages.includes(id) && S.user){
+  app.classList.add('has-nav');
+ }else{
+  app.classList.remove('has-nav');
+ }
+ document.querySelectorAll('.nav-item').forEach(btn=>btn.classList.remove('active'));
+ const activeNav = $('nav-' + id);
+ if(activeNav) activeNav.classList.add('active');
+
+ if(id==='program') renderProgram();
+ if(id==='exerciseGuide') renderExerciseGuide();
+ if(id==='history') renderHistory();
+ if(id==='userProfile') loadUserProfileSettings();
+ if(S.user&&typeof api==='function')api('event',{username:S.user.username,eventType:'PAGE_VIEW',page:id,detail:'เปิดหน้า '+id}).catch(()=>{});
 }
 
-if(/Line\/|FBAN|FBAV|Messenger|Instagram/i.test(navigator.userAgent))$('inapp').style.display='block';
-
-function start(){
-  if(S.user && S.user.username){
-    send('visit',{event:'open',username:S.user.username,email:S.user.email,ua:navigator.userAgent});
-    show('program');
-  } else {
-    show('login');
-  }
+function start(){if(S.user){show('program')}else show('login');}
+async function api(action,data={}){
+ if(!API||API.includes('PASTE_YOUR')) throw new Error('ยังไม่ได้ตั้งค่า Google Apps Script URL');
+ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:S.user?.token||'',...data})});
+ const out=await res.json();if(!res.ok||out.ok===false)throw new Error(out.message||'เชื่อมต่อระบบไม่สำเร็จ');return out;
 }
-
-function login(){
-  const u=$('un').value.trim(),e=$('em').value.trim();
-  if(!u||!/^\S+@\S+\.\S+$/.test(e))return alert('กรอกชื่อผู้ใช้และอีเมลให้ถูกต้อง');
-  S.user={...(S.user||{}),username:u,email:e};
-  save();
-  send('visit',{event:'login',username:u,email:e,ua:navigator.userAgent});
-  if(S.user.weight){
-    show('program');
-  } else {
-    profFrom = 'program';
-    show('profile');
-  }
+async function login(){
+ const u=$('un').value.trim().toLowerCase(),p=$('pw').value;
+ if(!USER_RE.test(u))return alert('ชื่อผู้ใช้ต้องอยู่ในรูปแบบ btbxx เช่น btb01');
+ if(!PASS_RE.test(p)||!p.endsWith('_'+u))return alert('รหัสผ่านต้องเป็น B ตามด้วยอักขระ 7 ตัว และ _'+u);
+ const btn=document.querySelector('#login .btn');btn.disabled=true;btn.textContent='กำลังตรวจสอบ...';
+ try{const out=await api('login',{username:u,password:p});$('pw').value='';S.user={...(S.user||{}),...out.user,username:u,token:out.token};S.done={};(out.doneDays||[]).forEach(d=>S.done[d]=true);if(out.history)S.history=out.history;save();show(S.user.dob?'program':'profile');}
+ catch(e){alert(e.message||'เข้าสู่ระบบไม่สำเร็จ');}
+ finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ';}
 }
-
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
+async function saveProfile(){
+ const w=$('wt').value ? +$('wt').value : null, h=$('ht').value ? +$('ht').value : null;
+ if(!S.tmpG||!$('dob').value)return alert('กรอกข้อมูลเพศและวันเกิดให้ครบ');
+ Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
+ save();
+ try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}});show('program')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+}
+async function logout(){if(confirm('ออกจากระบบ?')){try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}S.user=null;save();show('home');}}
 
-function saveProfile(){
-  const w=+$('wt').value,h=+$('ht').value;
-  if(!S.tmpG||!$('dob').value||!w||w<20||!h||h<100)return alert('กรอกข้อมูลให้ครบถ้วน');
-  Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
-  save();
-  
-  // บันทึกลง Sheet: Profiles
-  send('profile',{
-    email: S.user.email,
-    gender: S.user.gender,
-    dob: S.user.dob,
-    weight: S.user.weight,
-    height: S.user.height
-  });
-  
-  show(profFrom);
-  profFrom='program';
+function renderExerciseGuide(){
+ $('guideList').innerHTML = EX.map((e,i)=>`
+  <div class="guide-item">
+   <div class="guide-item-top">
+    ${img(e.id,'',null)}
+    <div class="guide-content">
+     <span class="guide-pill">FOCUS: ${e.focus}</span>
+     <h4>${e.n}</h4>
+     <div class="guide-benefit">✦ ${e.ben}</div>
+    </div>
+   </div>
+   <div class="guide-body">
+    <b>วิธีฝึก:</b> ${e.how}
+   </div>
+  </div>
+ `).join('');
 }
 
-function logout(){if(confirm('ออกจากระบบ?')){S.user=null;save();show('home');}}
-function curDay(){let d=1;while(d<=DAYS&&S.done[d])d++;return d;}
+async function renderHistory(){
+ if(S.user){try{const out=await api('history',{username:S.user.username});if(out.history){S.history=out.history;S.done={};out.history.filter(x=>x.completed).forEach(x=>S.done[x.day]=true);save();}}catch(e){console.warn('History sync:',e);}}
+ if(!S.history || S.history.length === 0){
+  $('historyList').innerHTML = <div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>;
+  return;
+ }
+ $('historyList').innerHTML = S.history.map(item => {
+  const isOk = item.completed;
+  return `
+   <div class="history-card">
+    <div class="history-left">
+     <div class="history-check ${isOk ? '' : 'failed'}">${isOk ? '✓' : '✕'}</div>
+     <div class="history-info">
+      <strong>DAY ${item.day} - ${isOk ? 'เสร็จสิ้น' : 'ไม่ครบเวลา'}</strong>
+      <small>${item.date} | เวลา ${item.time}</small>
+     </div>
+    </div>
+    <div class="history-badge ${isOk ? '' : 'failed'}">
+     ${item.score} คะแนน<br>
+     <small style="font-weight:normal;opacity:0.8">${item.time || "00:00"} นาที</small>
+    </div>
+   </div>
+  `;
+ }).reverse().join('');
+}
 
+function loadUserProfileSettings(){
+ if(!S.user) return;
+ $('p_un').value = S.user.username || '';
+ $('p_dob').value = S.user.dob || '';
+ $('p_wt').value = S.user.weight || '';
+ $('p_ht').value = S.user.height || '';
+ genP(S.user.gender || 'ชาย');
+}
+function genP(g){
+ S.tmpG = g;
+ $('pg1').classList.toggle('on', g==='ชาย');
+ $('pg2').classList.toggle('on', g==='หญิง');
+}
+async function updateProfileSettings(){
+ const w = $('p_wt').value ? +$('p_wt').value : null, h = $('p_ht').value ? +$('p_ht').value : null;
+ if(!S.tmpG || !$('p_dob').value) return alert('กรอกข้อมูลให้ถูกต้อง');
+ Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
+ save();
+ try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}});alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+}
+
+const dayDone=d=>!!S.done[d];
+function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c;}
 function renderProgram(){
-  const current=curDay(),done=Math.min(current-1,DAYS);
-  $('pbar').style.width=done/DAYS*100+'%';
-  $('ptxt').innerText=`เสร็จแล้ว ${done}/${DAYS} วัน (วันละ 15 นาที)`;
-  let out='';
-  for(let w=1;w<=5;w++){
-    out+=`<label>สัปดาห์ที่ ${w}</label><div class="grid">`;
-    for(let i=1;i<=3;i++){
-      let d=(w-1)*3+i,cls=S.done[d]?'done':d===current?'active':'lock';
-      out+=`<button class="tile ${cls}" ${cls==='lock'?'disabled':''} onclick="openDay(${d})">DAY ${d}</button>`;
-    }
-    out+='</div>';
-  } 
-  $('weeks').innerHTML=out;
+ const c=curDay(),n=Math.min(c-1,DAYS),pct=Math.round(n/DAYS*100);
+ $('ppercent').innerText=pct+'%';
+ $('circleProg').style.background=conic-gradient(var(--lime) ${pct*3.6}deg, #222c24 0deg);
+ $('pnumStr').innerText=${n} / 15 วัน ที่ทำสำเร็จ;
+ $('ptxt').innerText=n===DAYS?'ยอดเยี่ยม! ทำครบแล้ว':n===0?'พร้อมเริ่มต้นวันแรกหรือยัง?':'ทำต่อเนื่องอีกนิด!';
+ 
+ let html='';
+ for(let w=1;w<=5;w++){
+  const first=(w-1)*PER+1,last=w*PER,weekCount=[first,first+1,first+2].filter(dayDone).length;
+  html+=<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#a0a89c;font-weight:700;margin-bottom:6px"><span>สัปดาห์ที่ ${w}</span><small>${weekCount}/3 วันสำเร็จ</small></div><div class="grid-days">;
+  for(let d=first;d<=last;d++){
+   const state=dayDone(d)?'done':d===c?'active':'lock';
+   const status=state==='done'?'DONE':state==='active'?'START TODAY':'LOCKED';
+   html+=<button class="tile-day ${state}" ${state==='lock'?'disabled':''} onclick="openDay(${d})"><span class="d-title">DAY ${d}</span><span class="d-status">${status}</span></button>;
+  }
+  html+='</div></div>';
+ }
+ $('weeksList').innerHTML=html;
 }
 
-let day=1,sel=[0,1,2,3],md='battle';
-function openDay(d){day=d;sel=[0,1,2,3];md='battle';renderDetail();show('detail');}
-function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i);}else sel.push(i);renderDetail();}
+let day=1,sel=[0,1,2,3];
+function openDay(d){day=d;renderDetail();show('detail');}
 
 function renderDetail(){
-  $('weekBadge').innerText='WEEK '+String(Math.ceil(day/3)).padStart(2,'0');
-  $('selectCount').innerText=sel.length+' EXERCISES SELECTED';
-  $('selectBar').style.width=sel.length/EX.length*100+'%';
-  $('tabs').innerHTML=EX.map((e,i)=>`<button class="seg ex ${sel.includes(i)?'on':''}" onclick="tog(${i})"><img data-img="${e.id}" alt="${e.n}"><span class="ex-number">EXERCISE 0${i+1}</span><span class="ex-name">${e.n}</span><span class="ex-time">${e.id==='iyt'?'I / Y / T · 5 SEC EACH':e.id==='pec'?'15 SEC HOLD':'5 SEC HOLD'}</span><span class="selected-check">✓</span></button>`).join('');
-  document.querySelectorAll('#tabs img').forEach(el=>setImage(el,el.dataset.img));
-  $('dinfo').innerHTML=sel.map(i=>{const e=EX[i];return `<div class="ei"><img data-img="${e.id}" alt="${e.n}"><div class="exercise-name">${e.n}</div><div class="exercise-desc"><b>วิธีปฏิบัติ</b><br>${e.how}</div><div class="exercise-benefit"><b>ประโยชน์</b><br>${e.ben}</div></div>`;}).join('<hr style="border:0;border-top:1px solid #485147;margin:16px 0">');
-  document.querySelectorAll('#dinfo img').forEach(el=>setImage(el,el.dataset.img));
+ $('tabs').innerHTML=EX.map((e,i)=>`
+  <button class="seg ${sel.includes(i)?'on':''}" onclick="tog(${i})" style="flex-direction:column;padding:8px;gap:6px">
+   ${img(e.id,'detail-tab-img',null)}
+   <span style="font-size:11px;text-align:center">${e.n}</span>
+  </button>
+ `).join('');
+ 
+ $('dinfo').innerHTML=sel.map(i=>{
+  const e=EX[i];
+  return `
+   <div style="display:flex;gap:12px;align-items:center">
+    ${img(e.id,'detail-info-img',null)}
+    <div>
+     <b style="color:var(--lime);font-size:13px">${e.n}</b>
+     <p style="margin-top:4px;font-size:11px;color:#c2c9be">${e.how}</p>
+    </div>
+   </div>
+  `;
+ }).join('<hr style="border:0;border-top:1px solid #222b24;margin:10px 0">');
+}
+function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}else sel.push(i);renderDetail();}
+
+const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
+
+function evalPose(lm, id) {
+ const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.5);
+ 
+ const elbowL = ang(lm[11], lm[13], lm[15]);
+ const elbowR = ang(lm[12], lm[14], lm[16]);
+ const straightL = elbowL >= 145;
+ const straightR = elbowR >= 145;
+
+ const shoulderAngleL = ang(lm[23], lm[11], lm[13]);
+ const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
+ const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
+
+ if (id === 'neck') {
+  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
+  const left = vis([7, 11, 23]);
+  const ear = left ? lm[7] : lm[8];
+  const shoulder = left ? lm[11] : lm[12];
+  const hip = left ? lm[23] : lm[24];
+
+  const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
+  const neckAngle = ang(hip, shoulder, ear);
+  
+  const ok = trunkAngle <= 15 && neckAngle >= 40 && neckAngle <= 68;
+  return {
+    ok, h: 5,
+    t: 'แนวศีรษะและคอ (Isometric Extension)',
+    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
+    angle: Math.round(neckAngle)
+  };
+ }
+
+ if (!vis([11, 12, 13, 14, 15, 16])) return null;
+
+ if (id === 'iyt') {
+  const stage = STG[T.st || 0];
+  let ok = false;
+  let msg = '';
+
+  if (T.st === 0) {
+   ok = straightL && straightR && avgShoulderAngle >= 145;
+   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
+  } else if (T.st === 1) {
+   ok = straightL && straightR && avgShoulderAngle >= 110 && avgShoulderAngle < 145;
+   msg = ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงทำมุม Y ประมาณ 45 องศา';
+  } else if (T.st === 2) {
+   ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle < 110;
+   msg = ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างลำตัวระดับไหล่';
+  }
+
+  return { ok, h: 5, t: stage.t, m: msg, angle: Math.round(avgShoulderAngle) };
+ }
+
+ if (id === 'w') {
+  const avgElbow = (elbowL + elbowR) / 2;
+  const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
+  const ok = avgElbow >= 70 && avgElbow <= 115 && avgShoulderAngle >= 30 && avgShoulderAngle <= 70 && wristsAboveElbows;
+  return {
+    ok, h: 5,
+    t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
+    m: ok ? 'รักษาท่า W และบีบสะบัก' : 'ดึงศอกลงด้านข้าง งอศอก 90° และเกร็งสะบัก',
+    angle: Math.round(avgElbow)
+  };
+ }
+
+ if (id === 'pec') {
+  const ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle <= 110;
+  return {
+    ok, h: 15,
+    t: 'กางแขนระดับไหล่เพื่อยืดหน้าอก',
+    m: ok ? 'รักษาแขนระดับไหล่และเปิดอก' : 'เหยียดศอกตรงและกางแขนระดับไหล่',
+    angle: Math.round(avgShoulderAngle)
+  };
+ }
+ return null;
 }
 
-const angle=(a,b,c)=>{let v=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return v>180?360-v:v;};
-let T={},pose=null,stream=null,raf=null,iv=null,busy=false;
-
-function evaluate(lm,id){
-  if(id==='neck'){
-    let L=lm[7].visibility+lm[11].visibility,R=lm[8].visibility+lm[12].visibility,[ear,shoulder]=L>=R?[lm[7],lm[11]]:[lm[8],lm[12]];
-    if(Math.min(ear.visibility,shoulder.visibility)<.5)return null;
-    let cva=Math.atan2(shoulder.y-ear.y,Math.abs(ear.x-shoulder.x))*180/Math.PI,ok=cva>=50;
-    return{ok,h:5,t:'จัดศีรษะให้อยู่แนวเดียวกับไหล่',m:ok?'ค้างท่าไว้':'เก็บคางและจัดศีรษะให้ตรง'};
-  }
-  for(let i of [11,12,13,14,15,16])if(lm[i].visibility<.5)return null;
-  let sides=[[11,13,15],[12,14,16]],el=sides.map(a=>angle(lm[a[0]],lm[a[1]],lm[a[2]])),ev=sides.map(a=>Math.atan2(lm[a[0]].y-lm[a[2]].y,Math.abs(lm[a[2]].x-lm[a[0]].x))*180/Math.PI),shoulderWidth=Math.abs(lm[11].x-lm[12].x),handWidth=Math.abs(lm[15].x-lm[16].x),straight=el[0]>150&&el[1]>150;
-  if(id==='iyt'){
-    let st=STAGES[T.stage],ok=straight&&ev.every(v=>v>=st.range[0]&&v<=st.range[1]);
-    return{ok,h:5,t:st.title,m:ok?'ท่าถูกต้อง ค้างไว้ 5 วินาที':straight?'ปรับระดับแขนตามตัวอย่าง':'เหยียดข้อศอกให้ตรง'};
-  }
-  if(id==='w'){
-    let ok=el.every(v=>v>=50&&v<=115)&&lm[15].y<lm[13].y&&lm[16].y<lm[14].y;
-    return{ok,h:5,t:'งอข้อศอกเป็นตัว W และเก็บสะบัก',m:ok?'ท่าถูกต้อง ค้างไว้':'งอข้อศอกและยกมือขึ้นเล็กน้อย'};
-  }
-  let avg=(ev[0]+ev[1])/2,ok=straight&&avg>=-45&&avg<=15&&handWidth>2*shoulderWidth;
-  return{ok,h:15,t:'กางแขนออกด้านข้างเพื่อยืดหน้าอก',m:ok?'ค้างท่ายืดไว้':'เหยียดแขนและกางออกด้านข้าง'};
-}
-
-function feedback(t,c){$('fb').innerText=t;$('fb').style.color=c||'#e6b84c';}
-function score(){return Object.values(T.stats||{}).reduce((n,s)=>n+s.score,0);}
-function showCurrentExerciseImage(){const iyt=T.cur===0;setImage($('sym'),iyt?STAGES[T.stage].file:EX[T.cur].id);$('stg').style.display=iyt?'flex':'none';document.querySelectorAll('#stg span').forEach((el,i)=>el.classList.toggle('on',iyt&&i===T.stage));}
+function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
+const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 
 function onResults(r){
-  let c=$('cv'),ctx=c.getContext('2d'),w=r.image.width,h=r.image.height;
-  if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;
-  if(w&&h&&Math.abs(vidAR-w/h)>.01)setAR(w,h);
-  ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(w,0);ctx.scale(-1,1);ctx.drawImage(r.image,0,0,w,h);ctx.restore();
-  if(!T.run||T.pause)return;
-  T.lastFrame=performance.now();let now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
-  if(T.prep>0)return;
-  if(!r.poseLandmarks)return feedback('ไม่พบร่างกาย กรุณาจัดตำแหน่งให้อยู่ในกรอบ');
-  let lm=r.poseLandmarks,id=EX[T.cur].id,q=evaluate(lm,id);
-  if(!q)return feedback('ถอยให้เห็นลำตัว แขน และศีรษะชัดเจน');
-  
-  $('tg').innerText=q.t;ctx.lineWidth=4;ctx.strokeStyle=q.ok?'#bdf264':'#f5c451';
-  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{ctx.beginPath();ctx.moveTo((1-lm[p[0]].x)*w,lm[p[0]].y*h);ctx.lineTo((1-lm[p[1]].x)*w,lm[p[1]].y*h);ctx.stroke();});
-  
-  let s=T.stats[T.cur];T.total++;s.total++;
-  if(id==='iyt'){
-    if(q.ok){
-      T.good++;s.good++;
-      T.stageGood=(T.stageGood||0)+dt;
-      feedback(q.m+' · ค้างท่านี้ให้ครบ 5 วินาที','#bdf264');
+ const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
+ if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
+ const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
+ 
+ if(T.prep>0||T.relax>0)return;
+ 
+ if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
+ const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
+ $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
+ [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();});
+ const s=T.stats[T.cur];T.total++;s.total++;
+ if(q.ok){
+  T.good++;s.good++;T.hold+=dt;
+  fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
+  if(T.hold>=q.h){
+   T.hold=0;
+   if(id==='iyt'){
+    if(T.st<2){
+     T.st++;
+     setImg();
+     fb('กำลังเปลี่ยนท่า IYT ถัดไป...','#27ae60');
     }else{
-      feedback(q.m,'#ff7777');
+     T.st=0;
+     setImg();
+     T.reps++; s.reps++; s.score += 100;
+     T.relax=RELAX;
+     fb('ครบ IYT 1 รอบ! พัก 3 วินาที (+100)','#27ae60');
     }
-    $('hb').style.width=Math.min((T.stageGood||0)/5*100,100)+'%';
-  }else{
-    if(q.ok){
-      T.good++;s.good++;T.hold+=dt;feedback(q.m+' · อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที','#bdf264');
-      if(T.hold>=q.h){T.hold=0;T.reps++;s.reps++;s.score+=100;feedback('ครบ 1 ครั้ง +100 คะแนน','#bdf264');}
-    }else{T.hold=0;feedback(q.m,'#ff7777');}
-    $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';
+   }else{
+    T.reps++; s.reps++; s.score += 100;
+    T.relax=RELAX;
+    fb('ครบ 1 ครั้ง! พัก 3 วินาที (+100)','#27ae60');
+   }
   }
-  $('sc').innerText=Math.floor(score());$('rp').innerText=T.reps;
+ }else{
+  T.hold=0;fb(q.m,'#e74c3c');
+ }
+ $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
 
-function pick(){let pool=sel.length>1?sel.filter(i=>i!==T.cur):sel;return pool[Math.floor(Math.random()*pool.length)];}
-function setExercise(i){
-  T.cur=i;
-  T.stage=0;
-  T.stageGood=0;
-  T.stagePassed=[];
-  T.hold=0;
-  T.okAcc=0;
-  T.prep=PREP; // เวลานับถอยหลังก่อนเริ่ม/เปลี่ยนท่า 3 วินาที
-  T.blockLeft=EX[i].block;
-  showCurrentExerciseImage();
-  $('nm').innerText=EX[i].n;
-  $('bl').innerText=i===0?'ท่า I → Y → T ท่าละ 5 วินาที':'เปลี่ยนท่าอีก '+EX[i].block+' วินาที';
-  $('tg').innerText=i===0?STAGES[0].title:EX[i].how;
-  $('hb').style.width='0%';
-  if(navigator.vibrate)navigator.vibrate(100);
-}
-
+function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
+function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
+function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];T.blockLeft=e.id==='iyt'?15:BLOCK;setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ค้างท่า '+e.h+' วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
-  T={run:false,pause:false,prep:0,cur:null,blockLeft:BLOCK,stage:0,stageGood:0,stagePassed:[],hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
-  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
-  $('tt').innerText='Back to Balance - Day '+day;$('nm').innerText='พร้อมเริ่มออกกำลังกาย';
-  $('bl').innerText='สุ่มท่าจากรายการที่เลือก';$('stg').style.display='none';
-  setImage($('sym'),EX[sel[0]].id);$('tm').innerText='15:00';$('sc').innerText='0';
-  $('rp').innerText='0';$('hb').style.width='0%';
-  $('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';
-  feedback('');$('go').style.display='block';$('go').disabled=false;$('pz').innerText='PAUSE';
-  show('train');
+ T={run:false,pause:false,prep:0,relax:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่าทุก 15 วินาที';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
-
-let vidAR=1.3333;
-function setAR(w,h){if(!w||!h)return;vidAR=w/h;$('vidbox').style.setProperty('--ar',vidAR.toFixed(4));}
-const formatTime=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+let pose,stream,raf,iv,busy=false;
 async function camStart(){
-  if(T.run)return;
-  if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return feedback('ต้องเปิดเว็บไซต์ผ่าน HTTPS ใน Safari/Chrome','#ff7777');
-  $('go').disabled=true;feedback('กำลังขอสิทธิ์กล้อง...','#aaa');
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
-    let v=$('cam');v.srcObject=stream;await v.play();setAR(v.videoWidth,v.videoHeight);
-    feedback('กำลังโหลดระบบตรวจจับท่าทาง...','#aaa');
-    if(!pose){
-      pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});
-      pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});
-      pose.onResults(onResults);await pose.initialize();
-    }
-    T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;
-    setExercise(pick());iv=setInterval(tick,1000);loop();
-  }catch(e){
-    stopCamera();$('go').disabled=false;
-    feedback(e.name==='NotAllowedError'?'กรุณาอนุญาตการใช้กล้องใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#ff7777');
-  }
+ if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
+ $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+  const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
+  if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize();}
+  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setEx(pick());iv=setInterval(tick,1000);loop();
+ }catch(e){stopCam();$('go').disabled=false;fb(e.name==='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c');}
 }
-
-async function loop(){if(!T.run)return;let v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v});}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
+async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
 
 function tick(){
-  if(!T.run||T.pause) return;
-
-  if(performance.now()-T.lastFrame>3000){
-    feedback('กล้องค้างหรือเกิดปัญหาในการประมวลผล','#ff7777');
+ if(T.pause)return;
+ if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
+ T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
+ 
+ if(T.relax>0){
+  fb('RELAX • ผ่อนคลายกล้ามเนื้อ '+T.relax+' วินาที','#f1c40f');
+  $('tg').innerText='ผ่อนคลายกล้ามเนื้อ เตรียมความพร้อมสำหรับท่าถัดไป';
+  T.relax--;
+  if(T.relax===0&&T.pendingEx!==undefined){
+   const next=T.pendingEx;
+   delete T.pendingEx;
+   setEx(next);
   }
-
-  // นับถอยหลัง 3 วินาทีก่อนเริ่มท่า/เปลี่ยนไปท่าถัดไป
-  if(T.prep>0){
-    feedback('เตรียมพร้อมใน '+T.prep+' วินาที...','#c5f36b');
-    T.prep--;
-    return;
-  }
-
-  if(T.stats[T.cur]) T.stats[T.cur].sec++;
-
-  // IYT: เปลี่ยนภาพ I, Y, T ตามเวลา ท่าละ 5 วินาที
+ }else if(T.prep>0){
+  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');
+  T.prep--;
+ }else{
+  T.stats[T.cur].sec++;
   T.blockLeft--;
+ }
 
-  if(EX[T.cur].id==='iyt'){
-    if(T.blockLeft===10 || T.blockLeft===5){
-      // ประเมินว่าทำท่าช่วงก่อนหน้าได้ถูกต้องอย่างน้อย 3 วินาที
-      const stageIndex=T.stage;
-      if((T.stageGood||0)>=3) T.stagePassed[stageIndex]=true;
-      T.stage++;
-      T.stageGood=0;
-      showCurrentExerciseImage();
-      $('tg').innerText=STAGES[T.stage].title;
-      if(navigator.vibrate) navigator.vibrate(50);
-    }
-    if(T.blockLeft<=0){
-      if((T.stageGood||0)>=3) T.stagePassed[T.stage]=true;
-      if(T.stagePassed.length===3 && T.stagePassed.every(Boolean)){
-        T.reps++;
-        T.stats[T.cur].reps++;
-        T.stats[T.cur].score+=100;
-        feedback('ครบ IYT 1 รอบ +100 คะแนน','#bdf264');
-      }else{
-        feedback('จบลำดับ IYT 1 รอบ','#e6b84c');
-      }
-      $('sc').innerText=Math.floor(score());
-      $('rp').innerText=T.reps;
-      setExercise(pick());
-    }
-  }else if(T.blockLeft<=0){
-    setExercise(pick());
-  }else{
-    $('bl').innerText='เปลี่ยนท่าอีก '+T.blockLeft+' วินาที';
-  }
-
-  T.left--;
-  $('tm').innerText=formatTime(Math.max(0,T.left));
-  if(T.left<=0) finish(false);
-}
-function pause(){
-  if(!T.run) return;
-  T.pause = !T.pause;
-  $('pz').innerText = T.pause ? 'RESUME' : 'PAUSE';
-  if(T.pause){
-    feedback('พักชั่วคราว', '#fff4c8');
-  } else {
-    T.lastFrame = performance.now();
-  }
+ $('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
+ if(T.blockLeft<=0&&T.left>0&&T.relax===0&&T.prep===0){
+  T.pendingEx=pick();
+  T.relax=RELAX;
+ }
+ if(T.left<=0)finish(false);
 }
 
-function stopCamera(){
-  if(iv) clearInterval(iv);
-  if(raf) cancelAnimationFrame(raf);
-  if(stream){
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  }
-  busy = false;
-  T.run = false;
-  T.pause = false;
+function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('cam').srcObject=null;}
+function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE';}
+function finish(manual){
+ if(!T.run){show('detail');return;}const was=T.left<=0;
+ if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
+ const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';const sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
+ Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score);tot+=sc;});
+ if(was){S.done[day]=true;}
+ S.history.push({
+  day,
+  completed: was,
+  score: tot,
+  time: fmt(used),
+  date: new Date().toLocaleDateString('th-TH')
+ });
+ save();
+ api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:fmt(used),accuracy:acc,date:new Date().toISOString(),durationSeconds:used}}).catch(e=>console.error('Workout sync:',e));
+ $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
 }
-
-function finish(early){
-  stopCamera();
-  const totalSec = SEC - T.left;
-  const totPoints = Math.floor(score());
-  
-  const weight = (S.user && S.user.weight) || 65;
-  const metVal = MET['battle'] || 3.8;
-  const cal = Math.round((metVal * 3.5 * weight / 200) * (totalSec / 60));
-  
-  const accuracy = T.total > 0 ? Math.round((T.good / T.total) * 100) : 0;
-  const isCompleted = !early || totalSec >= 600;
-
-  $('rt').innerText = early ? 'Workout Ended' : 'Completed!';
-  $('r1').innerText = totPoints;
-  $('r2').innerText = cal;
-  $('r3').innerText = formatTime(totalSec);
-  $('r4').innerText = accuracy + '%';
-  $('r5').innerText = early ? 'ออกกำลังกายก่อนครบเวลา' : 'เก่งมาก! บริหารครบ 15 นาทีสำเร็จ';
-
-  if(!S.history) S.history = [];
-  const record = {
-    day,
-    date: new Date().toLocaleDateString('th-TH'),
-    time: formatTime(totalSec),
-    score: totPoints,
-    cal,
-    acc: accuracy,
-    mode: 'battle'
-  };
-  S.history.unshift(record);
-
-  if(isCompleted){
-    S.done[day] = true;
-  }
-  save();
-
-  // บันทึกลง Sheet: Sessions
-  send('session', {
-    email: (S.user ? S.user.email : ''),
-    sid: 'SESS-' + Date.now() + '-' + Math.floor(Math.random()*1000),
-    day: day,
-    exercise: sel.map(i => EX[i].n).join(', '),
-    mode: 'battle',
-    score: totPoints,
-    reps: T.reps,
-    accuracy: accuracy,
-    calories: cal,
-    seconds: totalSec,
-    total_seconds: SEC,
-    completed: isCompleted
-  });
-
-  show('result');
-}
-
-function nextEx(){
-  if(day < DAYS){
-    openDay(day + 1);
-  } else {
-    show('program');
-  }
-}
-
-function renderLibrary(){
-  $('libList').innerHTML = EX.map((e, i) => `
-    <div class="box lib">
-      <img data-img="${e.id}" alt="${e.n}">
-      <div class="exercise-name">0${i + 1}. ${e.n}</div>
-      <div class="exercise-desc"><b>วิธีปฏิบัติ:</b> ${e.how}</div>
-      <div class="exercise-benefit"><b>ประโยชน์:</b> ${e.ben}</div>
-    </div>
-  `).join('');
-  document.querySelectorAll('#libList img').forEach(el => setImage(el, el.dataset.img));
-}
-
-function renderHistory(){
-  const hist = S.history || [];
-  const totalCal = hist.reduce((a, b) => a + (b.cal || 0), 0);
-  
-  $('histSum').innerHTML = `
-    <div><b>${hist.length}</b><small>ครั้งที่ฝึก</small></div>
-    <div><b>${totalCal}</b><small>แคลอรีรวม</small></div>
-    <div><b>${Object.keys(S.done).length}/${DAYS}</b><small>วันสำเร็จ</small></div>
-  `;
-
-  if(hist.length === 0){
-    $('histList').innerHTML = '<div class="box" style="text-align:center">ยังไม่มีประวัติการออกกำลังกาย</div>';
-    return;
-  }
-
-  $('histList').innerHTML = hist.map(h => `
-    <div class="box hist">
-      <div>
-        <b>Day ${h.day}</b> <small>(ยางยืด)</small>
-        <br><small>${h.date} · เวลา ${h.time}</small>
-      </div>
-      <div class="hr">
-        <b>${h.score}</b>
-        <small>${h.cal} kcal · แม่นยำ ${h.acc}%</small>
-      </div>
-    </div>
-  `).join('');
-}
-
-function editProfile(){
-  profFrom = 'me';
-  if(S.user){
-    if(S.user.gender) gen(S.user.gender);
-    if(S.user.dob) $('dob').value = S.user.dob;
-    $('wt').value = S.user.weight || '';
-    $('ht').value = S.user.height || '';
-  }
-  show('profile');
-}
-
-function renderProfile(){
-  const u = S.user || {};
-  $('meInfo').innerHTML = `
-    <div><small>ชื่อผู้ใช้</small><b>${u.username || '-'}</b></div>
-    <div><small>อีเมล</small><b>${u.email || '-'}</b></div>
-    <div><small>เพศ</small><b>${u.gender || '-'}</b></div>
-    <div><small>วันเกิด</small><b>${u.dob || '-'}</b></div>
-    <div><small>น้ำหนัก</small><b>${u.weight ? u.weight + ' kg' : '-'}</b></div>
-    <div><small>ส่วนสูง</small><b>${u.height ? u.height + ' cm' : '-'}</b></div>
-  `;
-}
-
-let historyStack = ['home'];
-
-function show(pageId){
-  const target = $(pageId);
-  if(!target){
-    console.error('ไม่พบหน้า:', pageId);
-    return;
-  }
-
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  target.classList.add('on');
-
-  const showBar = ['program', 'detail', 'library', 'history', 'me'].includes(pageId);
-  const showNav = ['program', 'library', 'history', 'me'].includes(pageId);
-  document.body.classList.toggle('bar', showBar);
-  document.body.classList.toggle('nav', showNav);
-  document.querySelectorAll('#nav button').forEach(b => {
-    b.classList.toggle('on', b.dataset.p === pageId);
-  });
-
-  // Render the selected page without allowing one render error to leave a blank screen.
-  try {
-    if(pageId === 'program') renderProgram();
-    if(pageId === 'library') renderLibrary();
-    if(pageId === 'history') renderHistory();
-    if(pageId === 'me') renderProfile();
-  } catch(err) {
-    console.error('Page render error:', pageId, err);
-    showPageError(target, err);
-  }
-
-  // Reset both possible scroll containers (document on mobile, app on desktop).
-  window.scrollTo({top:0,left:0,behavior:'auto'});
-  const appEl = document.querySelector('.app');
-  if(appEl && window.matchMedia('(min-width:700px)').matches) appEl.scrollTop = 0;
-
-  if(historyStack[historyStack.length - 1] !== pageId) historyStack.push(pageId);
-}
-
-function showPageError(page, err){
-  let box = page.querySelector('.page-error');
-  if(!box){
-    box = document.createElement('div');
-    box.className = 'page-error';
-    box.style.cssText = 'display:block;background:#fff0f0;color:#9b1c1c;border:1px solid #efb7b7;border-radius:12px;padding:12px;margin:8px 0;font:12px/1.5 system-ui,sans-serif;overflow-wrap:anywhere;';
-    page.prepend(box);
-  }
-  box.textContent = 'ไม่สามารถโหลดเนื้อหาหน้านี้ได้: ' + (err && err.message ? err.message : String(err));
-}
-
-function goBack(){
-  if(T.run){
-    if(confirm('กำลังออกกำลังกายอยู่ ต้องการยกเลิกและย้อนกลับใช่หรือไม่?')){
-      finish(true);
-      show('program');
-    }
-    return;
-  }
-  if(historyStack.length > 1){
-    historyStack.pop();
-    const prev = historyStack[historyStack.length - 1];
-    show(prev);
-  } else {
-    show('program');
-  }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  try {
-    if(S.user && S.user.username) show('program');
-    else show('home');
-  } catch(err) {
-    console.error('Initial page error:', err);
-    const fallback = $('home');
-    if(fallback){
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-      fallback.classList.add('on');
-      document.body.classList.remove('bar','nav');
-      showPageError(fallback, err);
-    }
-  }
-});
+function nextEx(){show('program');}
 </script>
 </body>
 </html>
