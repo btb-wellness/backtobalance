@@ -808,6 +808,15 @@ function tick(){
  }else{
   T.stats[T.cur].sec++;
   T.blockLeft--;
+
+  // สลับรูปภาพอัตโนมัติสำหรับท่า IYT ทุกๆ 5 วินาทีระหว่างออกกำลังกาย แม้กล้องจะจับท่าไม่เจอ
+  if(EX[T.cur].id==='iyt'){
+   const autoStage=Math.floor((15-T.blockLeft)/5)%3;
+   if(autoStage!==T.st){
+    T.st=autoStage;
+    setImg();
+   }
+  }
  }
 
  $('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
