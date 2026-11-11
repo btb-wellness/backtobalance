@@ -357,9 +357,8 @@ input:focus{outline:0;border-color:var(--lime)}
 <!-- PAGE 6: DAILY WORKOUT DETAIL -->
 <div id="detail" class="page">
   <h2>DAILY <span style="color:var(--lime)">WORKOUT</span></h2>
-  <p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ เพื่อปรับปรุงบุคลิกภาพ</p>
+  <p>โปรแกรมบริหารกล้ามเนื้อคอ บ่า และไหล่ ทั้งหมด 4 ท่า</p>
   
-  <div id="tabs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
   <div class="box" id="dinfo" style="padding:14px"></div>
   
   <button class="btn" onclick="train()">START WORKOUT →</button>
@@ -375,7 +374,7 @@ input:focus{outline:0;border-color:var(--lime)}
   <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
 
   <div class="train-panel">
-    <div class="ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่า ทำให้ครบแล้วจึงเปลี่ยนท่า</p></div></div>
+    <div class="ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">หมุนเวียนฝึกให้ครบทั้ง 4 ท่า</p></div></div>
     
     <div class="dash-big">
       <div><small>TIME REMAINING</small><b id="tm">15:00</b></div>
@@ -685,19 +684,11 @@ function renderProgram(){
  $('weeksList').innerHTML=html;
 }
 
-let day=1,sel=[0,1,2,3];
+let day=1;
 function openDay(d){day=d;renderDetail();show('detail');}
 
 function renderDetail(){
- $('tabs').innerHTML=EX.map((e,i)=>`
-  <button class="seg ${sel.includes(i)?'on':''}" onclick="tog(${i})" style="flex-direction:column;padding:8px;gap:6px">
-   ${img(e.id,'detail-tab-img',null)}
-   <span style="font-size:11px;text-align:center">${e.n}</span>
-  </button>
- `).join('');
- 
- $('dinfo').innerHTML=sel.map(i=>{
-  const e=EX[i];
+ $('dinfo').innerHTML=EX.map(e=>{
   return `
    <div style="display:flex;gap:12px;align-items:center">
     ${img(e.id,'detail-info-img',null)}
@@ -709,7 +700,6 @@ function renderDetail(){
   `;
  }).join('<hr style="border:0;border-top:1px solid #222b24;margin:10px 0">');
 }
-function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}else sel.push(i);renderDetail();}
 
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
 
@@ -778,8 +768,6 @@ function evalPose(lm, id) {
  }
 
  if (id === 'pec') {
-  // ข้อ 2: ท่า PECTORAL STRETCH มือถือยางไว้ด้านหลังลำตัวด้านล่าง แล้วเหยียด/กางออกไปด้านหลัง
-  // ตรวจจับว่าแขนเหยียดตรง (ศอก >= 130) และแขนกางออกจากลำตัวด้านล่าง (มุมไหล่กับลำตัว 15-75 องศา)
   const wristsBelowShoulders = lm[15].y > lm[11].y && lm[16].y > lm[12].y;
   const ok = straightL && straightR && avgShoulderAngle >= 15 && avgShoulderAngle <= 75 && wristsBelowShoulders;
   return {
@@ -805,7 +793,6 @@ function onResults(r){
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
  
- // ข้อ 1: ตรวจจับท่าแรกสำเร็จแล้วจึงเริ่มเริ่มนับเวลาถอยหลัง 15 นาที
  if(!T.started && q.ok){
   T.started = true;
   fb('เริ่มการออกกำลังกาย! เริ่มนับเวลาถอยหลัง 15 นาที','#27ae60');
@@ -849,13 +836,17 @@ function onResults(r){
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
 
-function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
+function pick(){
+ const all=[0,1,2,3];
+ const c=all.filter(i=>i!==T.cur);
+ return c[Math.floor(Math.random()*c.length)];
+}
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
 function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ค้างท่า '+e.h+' วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
  T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
- sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
@@ -875,7 +866,6 @@ function tick(){
  if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  
- // ข้อ 1: หากยังไม่ได้เริ่มแสดงท่าแรกสำเร็จ เวลาถอยหลัง 15 นาทีจะยังไม่ทำงาน
  if(!T.started) return;
 
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
@@ -924,7 +914,6 @@ function finish(manual){
 }
 function nextEx(){show('program');}
 
-// สั่งทำงานฟังก์ชัน Preload รูปภาพทันทีที่โหลดสคริปต์
 preloadAllImages();
 </script>
 </body>
