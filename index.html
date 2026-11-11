@@ -78,11 +78,13 @@ input:focus{outline:0;border-color:var(--lime)}
 .progress-info strong{font-size:14px;color:#fff}
 .progress-info b{font-size:18px;color:var(--lime);font-family:'Antonio',sans-serif}
 .btn-start-today{background:var(--lime);color:var(--ink);border:0;border-radius:20px;padding:8px 14px;font-size:11px;font-weight:800;white-space:nowrap;margin-left:auto}
+.btn-start-today:disabled{opacity:.5;cursor:not-allowed}
 
 .grid-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 .tile-day{background:#131815;border:1px solid #222a23;border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;color:#707a6c;transition:.2s;position:relative}
 .tile-day.active{background:var(--card);border:1.5px solid var(--lime);color:#fff;box-shadow:0 4px 16px rgba(196,243,107,0.15)}
 .tile-day.done{background:#18281a;border-color:#2d4a2f;color:var(--lime)}
+.tile-day.wait{background:var(--card);border-color:#3a4a2e;color:#a0a89c}
 .tile-day .d-title{font-family:'Antonio',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.5px}
 .tile-day .d-status{font-size:8px;font-weight:700;letter-spacing:0.5px}
 .tile-day.active .d-status{color:var(--lime)}
@@ -373,7 +375,7 @@ input:focus{outline:0;border-color:var(--lime)}
   <div class="vid"><video id="cam" playsinline muted autoplay></video><canvas id="cv"></canvas></div>
 
   <div class="train-panel">
-    <div class="ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่าทุก 15 วินาที</p></div></div>
+    <div class="ban"><img id="sym" class="exImg" alt=""><div class="cap"><b id="nm">พร้อมเริ่มออกกำลังกาย</b><p id="bl">สุ่มท่า ทำให้ครบแล้วจึงเปลี่ยนท่า</p></div></div>
     
     <div class="dash-big">
       <div><small>TIME REMAINING</small><b id="tm">15:00</b></div>
@@ -427,7 +429,7 @@ input:focus{outline:0;border-color:var(--lime)}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbwBxmUqxGsTdMaByzZTHffXuiWZPFocx6nA9bETr09zG6XH3Zz01JqjPPEJciqgvN13SA/exec';
-const SEC=900,BLOCK=15,PREP=3,RELAX=3,DAYS=15,PER=3;
+const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
@@ -467,8 +469,8 @@ function fallbackExerciseImage(element,id,st){
 
 const EX=[
 {id:'iyt',n:'MODIFIED BAND IYT',focus:'Shoulders, Upper Back',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที (รวม 15 วินาที/รอบ)',ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
-{id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:5,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 5 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
-{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:5,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 5 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
+{id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:15,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 15 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
+{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:15,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
@@ -497,6 +499,7 @@ const $=id=>document.getElementById(id);
 let S={};try{S=JSON.parse(localStorage.getItem('nbr'))||{}}catch(e){}
 S.done=S.done||{};
 S.history=S.history||[];
+S.lastDone=S.lastDone||{};
 const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 
 function show(id){
@@ -612,21 +615,33 @@ async function updateProfileSettings(){
 
 const dayDone=d=>!!S.done[d];
 function curDay(){let c=1;while(c<=DAYS&&dayDone(c))c++;return c;}
+
+// ===== ล็อกการฝึก: ทำสำเร็จแล้ว 1 ครั้งต่อวัน (ตามวันที่ในเครื่อง) =====
+const dKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function doneToday(){
+ const t=dKey(new Date()),u=S.user&&S.user.username;
+ if(u&&S.lastDone&&S.lastDone[u]===t)return true;
+ return (S.history||[]).some(x=>{if(!x.completed)return false;const d=new Date(x.date);return !isNaN(d)&&dKey(d)===t;});
+}
+
 function renderProgram(){
  const c=curDay(),n=Math.min(c-1,DAYS),pct=Math.round(n/DAYS*100);
+ const wait=doneToday()&&n<DAYS;
  $('ppercent').innerText=pct+'%';
  $('circleProg').style.background=`conic-gradient(var(--lime) ${pct*3.6}deg, #222c24 0deg)`;
  $('pnumStr').innerText=`${n} / 15 วัน ที่ทำสำเร็จ`;
- $('ptxt').innerText=n===DAYS?'ยอดเยี่ยม! ทำครบแล้ว':n===0?'พร้อมเริ่มต้นวันแรกหรือยัง?':'ทำต่อเนื่องอีกนิด!';
+ $('ptxt').innerText=n===DAYS?'ยอดเยี่ยม! ทำครบแล้ว':wait?'วันนี้ทำครบแล้ว พรุ่งนี้มาต่อกันนะ':n===0?'พร้อมเริ่มต้นวันแรกหรือยัง?':'ทำต่อเนื่องอีกนิด!';
+ const bs=document.querySelector('.btn-start-today');
+ bs.disabled=wait||n===DAYS;bs.textContent=wait?'พรุ่งนี้ →':'เริ่มวันนี้ →';
  
  let html='';
  for(let w=1;w<=5;w++){
   const first=(w-1)*PER+1,last=w*PER,weekCount=[first,first+1,first+2].filter(dayDone).length;
   html+=`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#a0a89c;font-weight:700;margin-bottom:6px"><span>สัปดาห์ที่ ${w}</span><small>${weekCount}/3 วันสำเร็จ</small></div><div class="grid-days">`;
   for(let d=first;d<=last;d++){
-   const state=dayDone(d)?'done':d===c?'active':'lock';
-   const status=state==='done'?'DONE':state==='active'?'START TODAY':'LOCKED';
-   html+=`<button class="tile-day ${state}" ${state==='lock'?'disabled':''} onclick="openDay(${d})"><span class="d-title">DAY ${d}</span><span class="d-status">${status}</span></button>`;
+   const state=dayDone(d)?'done':d===c?(wait?'wait':'active'):'lock';
+   const status=state==='done'?'DONE':state==='active'?'START TODAY':state==='wait'?'พรุ่งนี้':'LOCKED';
+   html+=`<button class="tile-day ${state}" ${(state==='lock'||state==='wait')?'disabled':''} onclick="openDay(${d})"><span class="d-title">DAY ${d}</span><span class="d-status">${status}</span></button>`;
   }
   html+='</div></div>';
  }
@@ -634,7 +649,10 @@ function renderProgram(){
 }
 
 let day=1,sel=[0,1,2,3];
-function openDay(d){day=d;renderDetail();show('detail');}
+function openDay(d){
+ if(doneToday()){alert('วันนี้ออกกำลังกายครบแล้ว กลับมาต่อในวันพรุ่งนี้นะ');return;}
+ day=d;renderDetail();show('detail');
+}
 
 function renderDetail(){
  $('tabs').innerHTML=EX.map((e,i)=>`
@@ -661,84 +679,66 @@ function tog(i){if(sel.includes(i)){if(sel.length>1)sel=sel.filter(x=>x!==i)}els
 
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
 
+// ===== ตรวจท่า (ผ่อนเกณฑ์ ดูแค่ว่าทำถูกท่าหรือไม่) =====
 function evalPose(lm, id) {
- const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.5);
- 
- const elbowL = ang(lm[11], lm[13], lm[15]);
- const elbowR = ang(lm[12], lm[14], lm[16]);
- const straightL = elbowL >= 145;
- const straightR = elbowR >= 145;
-
- const shoulderAngleL = ang(lm[23], lm[11], lm[13]);
- const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
- const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
+ const vis = (ids, t = 0.4) => ids.every(i => (lm[i]?.visibility ?? 0) >= t);
 
  if (id === 'neck') {
-  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
-  const left = vis([7, 11, 23]);
-  const ear = left ? lm[7] : lm[8];
-  const shoulder = left ? lm[11] : lm[12];
-  const hip = left ? lm[23] : lm[24];
-
-  const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
-  const neckAngle = ang(hip, shoulder, ear);
-  
-  const ok = trunkAngle <= 15 && neckAngle >= 40 && neckAngle <= 68;
-  return {
-    ok, h: 5,
-    t: 'แนวศีรษะและคอ (Isometric Extension)',
-    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
-    angle: Math.round(neckAngle)
-  };
+  const left = vis([7, 11, 23]), right = vis([8, 12, 24]);
+  if (!left && !right) return null;
+  const ear = left ? lm[7] : lm[8], sh = left ? lm[11] : lm[12], hip = left ? lm[23] : lm[24];
+  const trunk = Math.abs(Math.atan2(hip.x - sh.x, hip.y - sh.y) * 180 / Math.PI);
+  const neck = ang(hip, sh, ear);
+  const ok = trunk <= 25 && neck >= 135;
+  return { ok, h: 15, t: 'แนวศีรษะและคอ (Isometric Extension)',
+    m: ok ? 'รักษาศีรษะตรง ออกแรงต้านยางต่อไป' : 'ยืนตะแคงให้เห็นด้านข้าง ลำตัวตรง ศีรษะอยู่เหนือไหล่',
+    angle: Math.round(neck) };
  }
 
  if (!vis([11, 12, 13, 14, 15, 16])) return null;
 
+ const elbow = (ang(lm[11], lm[13], lm[15]) + ang(lm[12], lm[14], lm[16])) / 2;
+ const shoulder = (ang(lm[23], lm[11], lm[13]) + ang(lm[24], lm[12], lm[14])) / 2;
+
  if (id === 'iyt') {
-  const stage = STG[T.st || 0];
-  let ok = false;
-  let msg = '';
-
-  if (T.st === 0) {
-   ok = straightL && straightR && avgShoulderAngle >= 145;
-   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
-  } else if (T.st === 1) {
-   ok = straightL && straightR && avgShoulderAngle >= 110 && avgShoulderAngle < 145;
-   msg = ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงทำมุม Y ประมาณ 45 องศา';
-  } else if (T.st === 2) {
-   ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle < 110;
-   msg = ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างลำตัวระดับไหล่';
-  }
-
-  return { ok, h: 5, t: stage.t, m: msg, angle: Math.round(avgShoulderAngle) };
+  const st = T.st || 0, straight = elbow >= 120;
+  const ok = straight && (st === 0 ? shoulder >= 130 : st === 1 ? (shoulder >= 100 && shoulder <= 155) : (shoulder >= 60 && shoulder <= 115));
+  const msg = [
+   ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดแขนและยกขึ้นเหนือศีรษะ',
+   ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงเป็นตัว Y',
+   ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างระดับไหล่'][st];
+  return { ok, h: 5, t: STG[st].t, m: msg, angle: Math.round(shoulder) };
  }
 
  if (id === 'w') {
-  const avgElbow = (elbowL + elbowR) / 2;
-  const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
-  const ok = avgElbow >= 70 && avgElbow <= 115 && avgShoulderAngle >= 30 && avgShoulderAngle <= 70 && wristsAboveElbows;
-  return {
-    ok, h: 5,
-    t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
-    m: ok ? 'รักษาท่า W และบีบสะบัก' : 'ดึงศอกลงด้านข้าง งอศอก 90° และเกร็งสะบัก',
-    angle: Math.round(avgElbow)
-  };
+  const up = lm[15].y < lm[13].y + 0.05 && lm[16].y < lm[14].y + 0.05;
+  const ok = elbow >= 50 && elbow <= 130 && shoulder >= 20 && shoulder <= 90 && up;
+  return { ok, h: 15, t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
+    m: ok ? 'รักษาท่า W และบีบสะบัก' : 'งอศอกยกมือขึ้นเป็นตัว W แล้วบีบสะบักเข้าหากัน',
+    angle: Math.round(elbow) };
  }
 
  if (id === 'pec') {
-  const ok = straightL && straightR && avgShoulderAngle >= 75 && avgShoulderAngle <= 110;
-  return {
-    ok, h: 15,
-    t: 'กางแขนระดับไหล่เพื่อยืดหน้าอก',
-    m: ok ? 'รักษาแขนระดับไหล่และเปิดอก' : 'เหยียดศอกตรงและกางแขนระดับไหล่',
-    angle: Math.round(avgShoulderAngle)
-  };
+  const ok = elbow >= 120 && shoulder >= 55 && shoulder <= 125;
+  return { ok, h: 15, t: 'กางแขนระดับไหล่เพื่อยืดหน้าอก',
+    m: ok ? 'รักษาแขนระดับไหล่และเปิดอก' : 'เหยียดแขนและกางออกข้างระดับไหล่',
+    angle: Math.round(shoulder) };
  }
  return null;
 }
 
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
+
+// ===== ให้คะแนนตามเวลาที่ใช้ทำท่าให้ถูกต้องครบ =====
+// 15-20 วิ = 30 | 21-25 วิ = 28 | 26 วิขึ้นไป = 25
+function completeRep(s){
+ const el=T.elapsed,pts=el<=20?30:el<=25?28:25;
+ T.reps++;s.reps++;s.score+=pts;
+ T.st=0;T.hold=0;
+ T.relax=RELAX;T.pendingEx=pick();
+ fb('ทำท่าสำเร็จใน '+el+' วินาที! +'+pts+' คะแนน','#27ae60');
+}
 
 function onResults(r){
  const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
@@ -753,41 +753,36 @@ function onResults(r){
  [[11,12],[11,13],[13,15],[12,14],[14,16]].forEach(p=>{x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();});
  const s=T.stats[T.cur];T.total++;s.total++;
  if(q.ok){
+  // สะสมเวลาที่ทำถูก ไม่รีเซ็ตเมื่อหลุดชั่วครู่
   T.good++;s.good++;T.hold+=dt;
   fb(q.m+' (อีก '+Math.max(0,Math.ceil(q.h-T.hold))+' วินาที)','#27ae60');
   if(T.hold>=q.h){
-   T.hold=0;
-   if(id==='iyt'){
-    if(T.st<2){
-     T.st++;
-     setImg();
-     fb('กำลังเปลี่ยนท่า IYT ถัดไป...','#27ae60');
-    }else{
-     T.st=0;
-     setImg();
-     T.reps++; s.reps++; s.score += 100;
-     T.relax=RELAX;
-     fb('ครบ IYT 1 รอบ! พัก 3 วินาที (+100)','#27ae60');
-    }
+   if(id==='iyt'&&T.st<2){
+    T.hold=0;T.st++;setImg();
+    fb('เปลี่ยนเป็นท่าถัดไปของ IYT...','#27ae60');
    }else{
-    T.reps++; s.reps++; s.score += 100;
-    T.relax=RELAX;
-    fb('ครบ 1 ครั้ง! พัก 3 วินาที (+100)','#27ae60');
+    completeRep(s);
    }
   }
  }else{
-  T.hold=0;fb(q.m,'#e74c3c');
+  fb(q.m,'#e74c3c');
  }
  $('hb').style.width=Math.min(T.hold/q.h*100,100)+'%';$('sc').innerText=Math.floor(sumScore());$('rp').innerText=T.reps;
 }
 
 function pick(){const c=sel.length>1?sel.filter(i=>i!==T.cur):sel;return c[Math.floor(Math.random()*c.length)];}
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
-function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];T.blockLeft=e.id==='iyt'?15:BLOCK;setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ค้างท่า '+e.h+' วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
+function setEx(i){
+ T.cur=i;T.st=0;T.hold=0;T.elapsed=0;T.prep=PREP;T.relax=0;
+ const e=EX[i];setImg();$('nm').innerText=e.n;
+ $('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ทำท่าให้ถูกต้องครบ 15 วินาที';
+ $('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);
+}
 function train(){
- T={run:false,pause:false,prep:0,relax:0,cur:null,blockLeft:BLOCK,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ if(doneToday()){alert('วันนี้ออกกำลังกายครบแล้ว กลับมาต่อในวันพรุ่งนี้นะ');show('program');return;}
+ T={run:false,pause:false,prep:0,relax:0,cur:null,st:0,elapsed:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  sel.forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่าทุก 15 วินาที';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[sel[0]].id,EX[sel[0]].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='สุ่มท่า ทำให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง ระบบจะสุ่มท่าและนับเวลา 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
@@ -807,7 +802,7 @@ function tick(){
  if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
- 
+
  if(T.relax>0){
   fb('RELAX • ผ่อนคลายกล้ามเนื้อ '+T.relax+' วินาที','#f1c40f');
   $('tg').innerText='ผ่อนคลายกล้ามเนื้อ เตรียมความพร้อมสำหรับท่าถัดไป';
@@ -822,22 +817,8 @@ function tick(){
   T.prep--;
  }else{
   T.stats[T.cur].sec++;
-  T.blockLeft--;
-
-  // สลับรูปภาพอัตโนมัติสำหรับท่า IYT ทุกๆ 5 วินาทีระหว่างออกกำลังกาย แม้กล้องจะจับท่าไม่เจอ
-  if(EX[T.cur].id==='iyt'){
-   const autoStage=Math.floor((15-T.blockLeft)/5)%3;
-   if(autoStage!==T.st){
-    T.st=autoStage;
-    setImg();
-   }
-  }
- }
-
- $('bl').innerText='เปลี่ยนท่าใน '+Math.max(T.blockLeft,0)+' วินาที';
- if(T.blockLeft<=0&&T.left>0&&T.relax===0&&T.prep===0){
-  T.pendingEx=pick();
-  T.relax=RELAX;
+  T.elapsed++;
+  $('bl').innerText='เวลาที่ใช้ในท่านี้ '+T.elapsed+' วินาที';
  }
  if(T.left<=0)finish(false);
 }
@@ -849,7 +830,7 @@ function finish(manual){
  if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
  const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';const sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
  Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score);tot+=sc;});
- if(was){S.done[day]=true;}
+ if(was){S.done[day]=true;S.lastDone=S.lastDone||{};S.lastDone[S.user.username]=dKey(new Date());}
  S.history.push({
   day,
   completed: was,
