@@ -109,8 +109,8 @@ input:focus{outline:0;border-color:var(--lime)}
 .history-check{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--lime);background:rgba(196,243,107,0.1);color:var(--lime);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
 .history-check.failed{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
 .history-info strong{display:block;font-size:13px;color:#fff}
-.history-info small{color:#808a7c;font-size:10px}
-.history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;text-align:right}
+.history-info small{color:#808a7c;font-size:11px}
+.history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;text-align:right}
 .history-badge.failed{background:#2b1d1d;border-color:#442f2f;color:#fca5a5}
 
 /* PAGE 6: TRAIN / CAMERA */
@@ -383,7 +383,7 @@ input:focus{outline:0;border-color:var(--lime)}
     </div>
 
     <div class="bar"><i id="hb"></i></div>
-    <div id="tg" class="box" style="text-align:center;padding:10px;font-size:12px">กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที</div>
+    <div id="tg" class="box" style="text-align:center;padding:10px;font-size:12px">กดเปิดกล้อง เพื่อเริ่มการฝึก 15 นาที</div>
     <div id="fb"></div>
 
     <div class="row sp">
@@ -551,26 +551,46 @@ function renderExerciseGuide(){
 }
 
 function formatDurationText(item) {
- // 1. ดึงจากฟิลด์จำนวนวินาทีโดยตรง (ไม่ว่าจะชื่อ durationSeconds, duration หรือ seconds)
  const secVal = item.durationSeconds ?? item.duration ?? item.seconds;
- if (secVal !== undefined && secVal !== null && secVal !== '' && !isNaN(Number(secVal))) {
-  return fmt(Math.max(0, Math.round(Number(secVal))));
+ if (secVal !== undefined && secVal !== null && secVal !== '' && !isNaN(Number(secVal)) && Number(secVal) > 0) {
+  return fmt(Math.round(Number(secVal)));
  }
  const str = String(item.time || '').replace(/^'/, '').trim();
- // 2. รูปแบบ MM:SS ปกติ เช่น "01:27"
- if (/^\d{1,2}:\d{2}$/.test(str)) {
+ if (/^\d{1,2}:\d{2}$/.test(str) && str !== '00:00') {
   return str;
  }
- // 3. รูปแบบ ISO Date หรือ Google Sheets Date String เช่น "1899-12-30T01:27:00.000Z" หรือ "Sat Dec 30 1899 01:27:00..."
- const timeMatch = str.match(/(?:T|\s|^)(\d{2}):(\d{2}):\d{2}/);
+ const timeMatch = str.match(/(\d{1,2}):(\d{2}):(\d{2})/);
  if (timeMatch) {
-  return `${timeMatch[1]}:${timeMatch[2]}`;
+  const h = parseInt(timeMatch[1], 10);
+  const m = parseInt(timeMatch[2], 10);
+  const s = parseInt(timeMatch[3], 10);
+  if (s === 0 && (h > 0 || m > 0)) {
+   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  }
+  return fmt(h * 3600 + m * 60 + s);
  }
- return '00:00';
+ return str && /^\d{1,2}:\d{2}$/.test(str) ? str : '00:00';
 }
 
 async function renderHistory(){
- if(S.user){try{const out=await api('history',{username:S.user.username});if(out.history){S.history=out.history;S.done={};out.history.filter(x=>x.completed).forEach(x=>S.done[x.day]=true);save();}}catch(e){console.warn('History sync:',e);}}
+ if(S.user){
+  try{
+   const localBackup = [...(S.history || [])];
+   const out=await api('history',{username:S.user.username});
+   if(out.history){
+    S.history = out.history.map((srvItem, idx) => {
+     const t = formatDurationText(srvItem);
+     if (t === '00:00' && localBackup[idx]) {
+      return { ...srvItem, time: formatDurationText(localBackup[idx]) };
+     }
+     return { ...srvItem, time: t };
+    });
+    S.done={};
+    S.history.filter(x=>x.completed).forEach(x=>S.done[x.day]=true);
+    save();
+   }
+  }catch(e){console.warn('History sync:',e);}
+ }
  if(!S.history || S.history.length === 0){
   $('historyList').innerHTML = `<div class="box" style="text-align:center;color:var(--muted)">ยังไม่มีประวัติการฝึก</div>`;
   return;
@@ -584,12 +604,11 @@ async function renderHistory(){
      <div class="history-check ${isOk ? '' : 'failed'}">${isOk ? '✓' : '✕'}</div>
      <div class="history-info">
       <strong>DAY ${item.day} - ${isOk ? 'เสร็จสิ้น' : 'ไม่ครบเวลา'}</strong>
-      <small>${item.date} | เวลาที่ใช้ไป ${cleanTime} นาที</small>
+      <small>เวลาที่ใช้ไป ${cleanTime} นาที</small>
      </div>
     </div>
     <div class="history-badge ${isOk ? '' : 'failed'}">
-     ${item.score} คะแนน<br>
-     <small style="font-weight:normal;opacity:0.8">${cleanTime} นาที</small>
+     ${item.score} คะแนน
     </div>
    </div>
   `;
@@ -723,7 +742,6 @@ function evalPose(lm, id) {
  if (!vis([11, 12, 13, 14, 15, 16])) return null;
 
  if (id === 'neck') {
-  // ตรวจจับครบทั้ง แขน ลำตัว และคอ
   const hasEar = (lm[7]?.visibility ?? 0) >= 0.35 || (lm[8]?.visibility ?? 0) >= 0.35;
   if (!hasEar) return null;
 
@@ -731,15 +749,12 @@ function evalPose(lm, id) {
   const ear = left ? lm[7] : lm[8];
   const shoulder = left ? lm[11] : lm[12];
 
-  // 1. ตรวจจับแขน: ยกมือขึ้นมาจับยางระดับศีรษะ/หัวไหล่ (ข้อมืออยู่สูงกว่าข้อศอก และอยู่ใกล้ระดับไหล่/ศีรษะ)
   const handsUp = lm[15].y < lm[13].y && lm[16].y < lm[14].y &&
                   lm[15].y <= lm[11].y + 0.12 && lm[16].y <= lm[12].y + 0.12;
 
-  // 2. ตรวจจับลำตัว: ไหล่ทั้งสองข้างสมดุล ไม่เอียงลำตัว
   const shoulderTilt = Math.abs(lm[11].y - lm[12].y);
   const trunkStraight = shoulderTilt <= 0.12;
 
-  // 3. ตรวจจับคอและศีรษะ: แนวใบหูตั้งตรงกับหัวไหล่ (ไม่ยื่นคางไปข้างหน้ามากเกินไป)
   const dx = Math.abs(ear.x - shoulder.x);
   const dy = Math.abs(shoulder.y - ear.y);
   const headTiltAngle = Math.atan2(dx, dy) * 180 / Math.PI;
@@ -820,18 +835,8 @@ function onResults(r){
  
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัว แขน และศีรษะชัดเจน');
- 
- if(!T.started && q.ok){
-  T.started = true;
-  fb('เริ่มการออกกำลังกาย! เริ่มนับเวลาถอยหลัง 15 นาที','#27ae60');
- }
-
- if(!T.started){
-  fb('แสดงท่าทางให้ถูกต้องเพื่อเริ่มนับเวลา 15 นาที','#e67e22');
- }
 
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
- // วาดเส้นเชื่อมแขนและลำตัวทุกท่า และเพิ่มเส้นคอ (หู-ไหล่) สำหรับท่า neck
  const pairs = id === 'neck'
   ? [[11,12],[11,13],[13,15],[12,14],[14,16],[7,11],[8,12]]
   : [[11,12],[11,13],[13,15],[12,14],[14,16]];
@@ -897,9 +902,9 @@ function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'
 function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.repGood=0;T.repTotal=0;T.prep=PREP;T.relax=0;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ค้างท่า '+e.h+' วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
  deck = [];
- T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,repGood:0,repTotal:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ T={run:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,repGood:0,repTotal:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,elapsed:0,stats:{}};
  [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง เพื่อเริ่มการฝึก 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
@@ -926,9 +931,9 @@ function tick(){
   return;
  }
 
- if(!T.started) return;
-
- T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
+ T.elapsed = (T.elapsed || 0) + 1;
+ T.left--;
+ $('tm').innerText=fmt(Math.max(T.left,0));
  
  if(T.relax>0){
   fb('RELAX • ผ่อนคลายกล้ามเนื้อ '+T.relax+' วินาที','#f1c40f');
@@ -951,7 +956,9 @@ function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'P
 function finish(manual){
  if(!T.run){show('detail');return;}const was=T.left<=0;
  if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
- const used=SEC-Math.max(T.left,0);stopCam();$('pz').innerText='PAUSE';const sid=Date.now(),acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
+ const used = was ? SEC : Math.max(T.elapsed || 0, SEC - Math.max(T.left, 0));
+ const usedStr = fmt(used);
+ stopCam();$('pz').innerText='PAUSE';const acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
  Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score);tot+=sc;});
  if(was){
   S.done[day]=true;
@@ -962,13 +969,11 @@ function finish(manual){
   day,
   completed: was,
   score: tot,
-  time: fmt(used),
-  durationSeconds: used,
-  date: new Date().toLocaleDateString('th-TH')
+  time: usedStr
  });
  save();
- api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:"'"+fmt(used),accuracy:acc,date:new Date().toISOString(),durationSeconds:used}}).catch(e=>console.error('Workout sync:',e));
- $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
+ api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:usedStr,accuracy:acc,date:new Date().toISOString()}}).catch(e=>console.error('Workout sync:',e));
+ $('r1').innerText=tot;$('r3').innerText=usedStr;$('r4').innerText=acc+'%';show('result');
 }
 function nextEx(){show('program');}
 </script>
