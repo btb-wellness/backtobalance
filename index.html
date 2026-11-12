@@ -555,7 +555,7 @@ function formatDurationText(item) {
  if (secVal !== undefined && secVal !== null && secVal !== '' && !isNaN(Number(secVal)) && Number(secVal) > 0) {
   return fmt(Math.round(Number(secVal)));
  }
- const str = String(item.time || '').replace(/^'/, '').trim();
+ const str = String(item.timeText || item.time || '').replace(/^'/, '').trim();
  if (/^\d{1,2}:\d{2}$/.test(str) && str !== '00:00') {
   return str;
  }
@@ -581,7 +581,7 @@ async function renderHistory(){
     S.history = out.history.map((srvItem, idx) => {
      const t = formatDurationText(srvItem);
      if (t === '00:00' && localBackup[idx]) {
-      return { ...srvItem, time: formatDurationText(localBackup[idx]) };
+      return { ...srvItem, time: formatDurationText(localBackup[idx]), durationSeconds: localBackup[idx].durationSeconds };
      }
      return { ...srvItem, time: t };
     });
@@ -709,7 +709,7 @@ function renderProgram(){
 }
 
 let day=1;
-function openDay(d){day=d;renderDetail();show('detail');}
+function openDay(d){day=Number(d)||1;renderDetail();show('detail');}
 
 function renderDetail(){
  $('dinfo').innerHTML=EX.map(e=>{
@@ -958,27 +958,59 @@ function tick(){
 
 function stopCam(){T.run=false;clearInterval(iv);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('cam').srcObject=null;}
 function pause(){T.pause=!T.pause;T.last=0;$('pz').innerText=T.pause?'RESUME':'PAUSE';}
-function finish(manual){
- if(!T.run){show('detail');return;}const was=T.left<=0;
+async function finish(manual){
+ if(!T.run){show('detail');return;}
+ const was=T.left<=0;
  if(manual&&!was&&!confirm('ยังไม่ครบ 15 นาที หากจบตอนนี้จะไม่นับว่าเสร็จสิ้นวันนี้ ต้องการจบจริงหรือไม่?'))return;
+ 
+ const currentDay = Number(day) || curDay();
  const used = was ? SEC : Math.max(T.elapsed || 0, SEC - Math.max(T.left, 0));
  const usedStr = fmt(used);
- stopCam();$('pz').innerText='PAUSE';const acc=T.total?Math.round(T.good/T.total*100):0;let tot=0;
+ 
+ stopCam();
+ $('pz').innerText='PAUSE';
+ const acc=T.total?Math.round(T.good/T.total*100):0;
+ let tot=0;
  Object.keys(T.stats).forEach(k=>{const s=T.stats[k],sc=Math.round(s.score);tot+=sc;});
+ 
  if(was){
-  S.done[day]=true;
+  S.done[currentDay]=true;
   S.lastDone=S.lastDone||{};
-  S.lastDone[day]=dKey(new Date());
+  S.lastDone[currentDay]=dKey(new Date());
  }
+ 
  S.history.push({
-  day,
+  day: currentDay,
   completed: was,
   score: tot,
-  time: usedStr
+  time: usedStr,
+  durationSeconds: used
  });
  save();
- api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:usedStr,accuracy:acc,date:new Date().toISOString()}}).catch(e=>console.error('Workout sync:',e));
- $('r1').innerText=tot;$('r3').innerText=usedStr;$('r4').innerText=acc+'%';show('result');
+
+ $('r1').innerText=tot;
+ $('r3').innerText=usedStr;
+ $('r4').innerText=acc+'%';
+ show('result');
+
+ try {
+  await api('workout', {
+   username: S.user.username,
+   record: {
+    day: currentDay,
+    completed: was,
+    score: tot,
+    durationSeconds: used,
+    time: usedStr,
+    timeText: usedStr,
+    accuracy: acc,
+    date: new Date().toISOString()
+   }
+  });
+ } catch (e) {
+  console.error('Workout sync error:', e);
+  alert('บันทึกในเครื่องแล้ว แต่ส่งขึ้น Google Sheets ไม่สำเร็จ: ' + (e.message || 'กรุณาล็อกอินใหม่อีกครั้ง'));
+ }
 }
 function nextEx(){show('program');}
 </script>
