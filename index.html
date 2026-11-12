@@ -432,7 +432,7 @@ const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
-const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
+const IMAGE_EXTENSIONS=['jpg','png','webp'];
 
 function imageCandidates(id,st){
  if(id==='iyt'){
@@ -472,21 +472,6 @@ const EX=[
 {id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:15,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
-
-// ฟังก์ชันสำหรับแอบโหลดรูปภาพทั้งหมดเตรียมไว้ล่วงหน้า (Preload)
-function preloadAllImages() {
- const imagesToPreload = [];
- EX.forEach(e => {
-  imagesToPreload.push(...imageCandidates(e.id, null));
- });
- [0, 1, 2].forEach(st => {
-  imagesToPreload.push(...imageCandidates('iyt', st));
- });
- imagesToPreload.forEach(src => {
-  const img = new Image();
-  img.src = src;
- });
-}
 
 const STG=[
 {t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[135,180]},
@@ -708,7 +693,6 @@ function evalPose(lm, id) {
  
  const elbowL = ang(lm[11], lm[13], lm[15]);
  const elbowR = ang(lm[12], lm[14], lm[16]);
- // ผ่อนปรนความตรงของศอกให้ติดง่ายขึ้น (>= 120 องศา)
  const straightL = elbowL >= 120;
  const straightR = elbowR >= 120;
 
@@ -726,7 +710,6 @@ function evalPose(lm, id) {
   const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
   const neckAngle = ang(hip, shoulder, ear);
   
-  // ขยายโซนองศาให้ตรวจจับติดง่ายขึ้น
   const ok = trunkAngle <= 25 && neckAngle >= 30 && neckAngle <= 80;
   return {
     ok, h: 15,
@@ -743,7 +726,6 @@ function evalPose(lm, id) {
   let ok = false;
   let msg = '';
 
-  // ขยายช่วงองศาให้แต่ละขั้น (I -> Y -> T) ตรวจจับติดง่ายขึ้น
   if (T.st === 0) {
    ok = straightL && straightR && avgShoulderAngle >= 135;
    msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
@@ -761,7 +743,6 @@ function evalPose(lm, id) {
  if (id === 'w') {
   const avgElbow = (elbowL + elbowR) / 2;
   const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
-  // ขยายโซนองศาข้อศอกและไหล่ให้ติดง่ายขึ้น
   const ok = avgElbow >= 50 && avgElbow <= 135 && avgShoulderAngle >= 15 && avgShoulderAngle <= 85 && wristsAboveElbows;
   return {
     ok, h: 15,
@@ -772,7 +753,6 @@ function evalPose(lm, id) {
  }
 
  if (id === 'pec') {
-  // ท่า PECTORAL STRETCH เอาแขนไว้ด้านหลังด้านล่าง และกางแขนยืดออก (โซนกว้าง 10 - 85 องศา)
   const wristsBelowShoulders = lm[15].y > lm[11].y && lm[16].y > lm[12].y;
   const ok = straightL && straightR && avgShoulderAngle >= 10 && avgShoulderAngle <= 85 && wristsBelowShoulders;
   return {
@@ -798,7 +778,6 @@ function onResults(r){
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
  
- // ข้อ 1: เมื่อทำท่าแรกถูกต้องจึงเริ่มนับเวลาถอยหลัง 15 นาที
  if(!T.started && q.ok){
   T.started = true;
   fb('เริ่มการออกกำลังกาย! เริ่มนับเวลาถอยหลัง 15 นาที','#27ae60');
@@ -857,7 +836,6 @@ function train(){
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
 
-// ใช้โครงสร้างการเปิดกล้องและโหลดโมเดลตามลำดับเดิมทั้งหมดเพื่อความเสถียร 100%
 async function camStart(){
  if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
  $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
@@ -874,6 +852,12 @@ function tick(){
  if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  
+ if(T.prep>0){
+  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');
+  T.prep--;
+  return;
+ }
+
  // ยังไม่นับเวลาถอยหลังจนกว่าจะทำท่าแรกถูก
  if(!T.started) return;
 
@@ -888,9 +872,6 @@ function tick(){
    delete T.pendingEx;
    setEx(next);
   }
- }else if(T.prep>0){
-  fb('เตรียมตัว: '+EX[T.cur].n+' ('+T.prep+')','#7f8c8d');
-  T.prep--;
  }else{
   T.stats[T.cur].sec++;
  }
@@ -922,8 +903,6 @@ function finish(manual){
  $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
 }
 function nextEx(){show('program');}
-
-preloadAllImages();
 </script>
 </body>
 </html>
