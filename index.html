@@ -701,21 +701,29 @@ function evalPose(lm, id) {
  const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
 
  if (id === 'neck') {
-  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
-  const left = vis([7, 11, 23]);
+  // เช็กแค่จุดหู (7 หรือ 8) และหัวไหล่ (11 หรือ 12) ไม่ต้องบังคับให้เห็นสะโพกเผื่อกล้องถ่ายครึ่งตัว
+  const hasLeft = (lm[7]?.visibility ?? 0) >= 0.35 && (lm[11]?.visibility ?? 0) >= 0.35;
+  const hasRight = (lm[8]?.visibility ?? 0) >= 0.35 && (lm[12]?.visibility ?? 0) >= 0.35;
+  if (!hasLeft && !hasRight) return null;
+
+  // เลือกข้างที่กล้องเห็นชัดเจนที่สุด
+  const left = (lm[7]?.visibility ?? 0) >= (lm[8]?.visibility ?? 0);
   const ear = left ? lm[7] : lm[8];
   const shoulder = left ? lm[11] : lm[12];
-  const hip = left ? lm[23] : lm[24];
 
-  const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
-  const neckAngle = ang(hip, shoulder, ear);
-  
-  const ok = trunkAngle <= 25 && neckAngle >= 30 && neckAngle <= 80;
+  // คำนวณมุมของแนว "ไหล่ -> หู" เทียบกับแกนแนวดิ่ง (0 องศา = ศีรษะตั้งตรงเหนือไหล่พอดี)
+  const dx = Math.abs(ear.x - shoulder.x);
+  const dy = Math.abs(shoulder.y - ear.y);
+  const headTiltAngle = Math.atan2(dx, dy) * 180 / Math.PI;
+
+  // ถ้าศีรษะตั้งตรงสมดุล (ไม่ยื่นคางไปข้างหน้ามากเกินไป) มุมเอียงจะไม่เกิน 35 องศา
+  const ok = headTiltAngle <= 35 && ear.y < shoulder.y;
+
   return {
     ok, h: 15,
     t: 'แนวศีรษะและคอ (Isometric Extension)',
-    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
-    angle: Math.round(neckAngle)
+    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'เก็บคางเข้าหาลำตัว ให้ใบหูตรงกับแนวหัวไหล่',
+    angle: Math.round(headTiltAngle)
   };
  }
 
