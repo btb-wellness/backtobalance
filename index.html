@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d110e">
 <title>Back to Balance</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,7 +100,6 @@ input:focus{outline:0;border-color:var(--lime)}
 .guide-benefit{font-size:12px;color:var(--lime);display:flex;align-items:center;gap:6px;font-weight:700}
 
 /* PAGE 4: DAILY WORKOUT DETAIL */
-.detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
 .detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
 
 /* PAGE 5: WORKOUT HISTORY */
@@ -433,7 +431,8 @@ const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
-const IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','gif','bmp','avif','svg','JPG','JPEG','PNG','WEBP','GIF','BMP','AVIF','SVG'];
+// ลดนามสกุลรูปภาพให้เหลือเฉพาะที่ใช้จริง ป้องกันเบราว์เซอร์ยิง Request 404 จนเน็ตค้าง
+const IMAGE_EXTENSIONS=['jpg','png','JPG','PNG'];
 
 function imageCandidates(id,st){
  if(id==='iyt'){
@@ -474,15 +473,11 @@ const EX=[
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
-// ฟังก์ชันสำหรับแอบโหลดรูปภาพทั้งหมดเตรียมไว้ล่วงหน้า (Preload)
 function preloadAllImages() {
- const imagesToPreload = [];
- EX.forEach(e => {
-  imagesToPreload.push(...imageCandidates(e.id, null));
- });
- [0, 1, 2].forEach(st => {
-  imagesToPreload.push(...imageCandidates('iyt', st));
- });
+ const imagesToPreload = [
+  'images/iyt.jpg', 'images/iyt_i.jpg', 'images/iyt_y.jpg', 'images/iyt_t.jpg',
+  'images/w.jpg', 'images/neck.jpg', 'images/pec.jpg'
+ ];
  imagesToPreload.forEach(src => {
   const img = new Image();
   img.src = src;
@@ -501,9 +496,6 @@ S.done=S.done||{};
 S.history=S.history||[];
 S.lastDone=S.lastDone||{};
 const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
-
-// สถานะการฝึก (ประกาศไว้ก่อน เพื่อให้โมเดลวอร์มอัปตอนเปิดหน้าเว็บไม่เกิด error)
-let T={run:false,started:false,pause:false,prep:0,relax:0,cur:0,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
 
 function show(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
@@ -693,8 +685,7 @@ function openDay(d){
  day=d;
  renderDetail();
  show('detail');
- // โหลดโมเดล AI เตรียมไว้ล่วงหน้า (ถ้าโหลดไว้แล้วจะไม่ทำซ้ำ)
- preloadPoseModel().catch(()=>{});
+ warmupPoseModel();
 }
 
 function renderDetail(){
@@ -794,9 +785,10 @@ function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 
 function onResults(r){
- if(warming)return; // ผลจากการวอร์มอัปโมเดล ไม่ต้องประมวลผล
+ if(!modelReady) modelReady = true;
+ if(!T.run) return;
  const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
- if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
+ T.lastFrame=performance.now();if(T.pause)return;
  const now=performance.now(),dt=T.last?Math.min((now-T.last)/1000,.5):0;T.last=now;
  
  if(T.prep>0||T.relax>0)return;
@@ -855,67 +847,74 @@ function pick(){
 function setImg(){const e=EX[T.cur];loadExerciseImage($('sym'),e.id,e.id==='iyt'?T.st:null);}
 function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;const e=EX[i];setImg();$('nm').innerText=e.n;$('bl').innerText=e.id==='iyt'?'I → Y → T • ค้างท่าละ 5 วินาที (รวม 15 วินาที)':'ค้างท่า '+e.h+' วินาที';$('tg').innerText=e.how;$('hb').style.width=0;if(navigator.vibrate)navigator.vibrate(200);}
 function train(){
- T={run:false,started:false,pause:false,prep:0,relax:0,cur:0,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
+ T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
  $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
- preloadPoseModel().catch(()=>{});
+ warmupPoseModel();
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-let pose,poseInitPromise=null,poseReady=false,warming=false,stream,raf,iv,busy=false;
+let pose,warmupPromise=null,modelReady=false,stream,raf,iv,busy=false;
 
-// ===== โหลดโมเดล AI ให้เร็ว =====
-// 1) เริ่มโหลดตั้งแต่เปิดเว็บ (ไม่รอให้กดเริ่มฝึก)  2) ใช้โมเดลแบบเบา (modelComplexity:0)
-// 3) วอร์มอัป 1 เฟรมหลังโหลดเสร็จ เพื่อให้เฟรมแรกของกล้องไม่ค้าง
-async function warmUpPose(){
- try{
-  const c=document.createElement('canvas');c.width=256;c.height=256;
-  const g=c.getContext('2d');g.fillStyle='#222';g.fillRect(0,0,256,256);
-  warming=true;
-  await pose.send({image:c});
- }catch(e){}
- warming=false;
-}
-function preloadPoseModel(){
- if(poseInitPromise) return poseInitPromise;
- poseInitPromise = (async()=>{
+// ส่งภาพหลอก (Dummy Canvas) เข้าโมเดลล่วงหน้า เพื่อบังคับโหลด WASM และคอมไพล์ WebGL ทันทีที่เปิดเว็บ
+function warmupPoseModel(){
+ if(warmupPromise) return warmupPromise;
+ warmupPromise = (async()=>{
   try{
-   pose = new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});
-   pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});
-   pose.onResults(onResults);
+   if(!pose){
+    pose = new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});
+    pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});
+    pose.onResults(onResults);
+   }
    await pose.initialize();
-   await warmUpPose();
-   poseReady=true;
+   const dummy = document.createElement('canvas');
+   dummy.width = 16; dummy.height = 16;
+   dummy.getContext('2d').fillRect(0,0,16,16);
+   await pose.send({image: dummy});
+   modelReady = true;
   }catch(e){
-   poseReady=false;pose=null;poseInitPromise=null;
+   warmupPromise = null;
    throw e;
   }
  })();
- return poseInitPromise;
+ return warmupPromise;
 }
 
 async function camStart(){
  if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
- $('go').disabled=true;fb(poseReady?'กำลังเปิดกล้อง...':'กำลังเปิดกล้องและเตรียมระบบ...','#7f8c8d');
- const t0=performance.now();
- const wait=setInterval(()=>{if(!poseReady)fb('กำลังโหลดโมเดล... '+Math.round((performance.now()-t0)/1000)+' วินาที','#7f8c8d');},500);
+ $('go').disabled=true;fb('กำลังเปิดกล้อง...','#7f8c8d');
  try{
-  const camPromise = navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
-  const modelPromise = preloadPoseModel();
-  
-  stream = await camPromise;
+  stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
   const v=$('cam');v.srcObject=stream;await v.play();
   
-  await modelPromise;
+  // เปิดภาพกล้องขึ้นจอทันที ไม่ปล่อยให้หน้าจอดำค้างรอโมเดล
+  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;
+  setEx(pick());
+  iv=setInterval(tick,1000);
   
-  T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setEx(pick());iv=setInterval(tick,1000);loop();
+  if(!modelReady){
+   fb('กำลังเตรียมระบบจับท่าทางสักครู่...','#7f8c8d');
+   await warmupPoseModel();
+  }
+  loop();
  }catch(e){stopCam();$('go').disabled=false;fb(e.name==='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c');}
- finally{clearInterval(wait);}
 }
-async function loop(){if(!T.run)return;const v=$('cam');if(!busy&&v.readyState>=2){busy=true;try{await pose.send({image:v})}catch(e){}busy=false;}raf=requestAnimationFrame(loop);}
+
+async function loop(){
+ if(!T.run)return;
+ const v=$('cam');
+ if(!busy&&v.readyState>=2){
+  busy=true;
+  try{
+   await pose.send({image:v});
+  }catch(e){}
+  busy=false;
+ }
+ raf=requestAnimationFrame(loop);
+}
 
 function tick(){
  if(T.pause)return;
- if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
+ if(performance.now()-T.lastFrame>3000 && modelReady){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  
  if(!T.started) return;
 
@@ -965,9 +964,8 @@ function finish(manual){
 }
 function nextEx(){show('program');}
 
-// เริ่มโหลดรูปภาพและโมเดลทันทีที่เปิดเว็บ (ไม่รอให้ผู้ใช้กดเริ่มฝึก)
 preloadAllImages();
-preloadPoseModel().catch(()=>{});
+setTimeout(warmupPoseModel, 500);
 </script>
 </body>
 </html>
