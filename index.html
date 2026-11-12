@@ -472,6 +472,7 @@ const EX=[
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
+// ฟังก์ชันสำหรับแอบโหลดรูปภาพทั้งหมดเตรียมไว้ล่วงหน้า (Preload)
 function preloadAllImages() {
  const imagesToPreload = [];
  EX.forEach(e => {
@@ -487,9 +488,9 @@ function preloadAllImages() {
 }
 
 const STG=[
-{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[145,180]},
-{t:'ท่า Y: กางแขนเฉียงประมาณ 45° (ค้าง 5 วินาที)',r:[110,144]},
-{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่ (ค้าง 5 วินาที)',r:[75,109]}
+{t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[135,180]},
+{t:'ท่า Y: กางแขนเฉียงประมาณ 45° (ค้าง 5 วินาที)',r:[95,134]},
+{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่ (ค้าง 5 วินาที)',r:[60,94]}
 ];
 
 const $=id=>document.getElementById(id);
@@ -706,20 +707,20 @@ function renderDetail(){
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
 
 function evalPose(lm, id) {
- const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.5);
+ const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.35);
  
  const elbowL = ang(lm[11], lm[13], lm[15]);
  const elbowR = ang(lm[12], lm[14], lm[16]);
- const straightL = elbowL >= 130;
- const straightR = elbowR >= 130;
+ const straightL = elbowL >= 115;
+ const straightR = elbowR >= 115;
 
  const shoulderAngleL = ang(lm[23], lm[11], lm[13]);
  const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
  const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
 
  if (id === 'neck') {
-  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
-  const left = vis([7, 11, 23]);
+  if (!vis([7, 11]) && !vis([8, 12])) return null;
+  const left = vis([7, 11]);
   const ear = left ? lm[7] : lm[8];
   const shoulder = left ? lm[11] : lm[12];
   const hip = left ? lm[23] : lm[24];
@@ -727,16 +728,16 @@ function evalPose(lm, id) {
   const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
   const neckAngle = ang(hip, shoulder, ear);
   
-  const ok = trunkAngle <= 20 && neckAngle >= 35 && neckAngle <= 75;
+  const ok = trunkAngle <= 25 && neckAngle >= 30 && neckAngle <= 85;
   return {
     ok, h: 15,
     t: 'แนวศีรษะและคอ (Isometric Extension)',
-    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
+    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ยืนหันข้างให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
     angle: Math.round(neckAngle)
   };
  }
 
- if (!vis([11, 12, 13, 14, 15, 16])) return null;
+ if (!vis([11, 12, 13, 14])) return null;
 
  if (id === 'iyt') {
   const stage = STG[T.st || 0];
@@ -744,13 +745,13 @@ function evalPose(lm, id) {
   let msg = '';
 
   if (T.st === 0) {
-   ok = straightL && straightR && avgShoulderAngle >= 140;
-   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
+   ok = straightL && straightR && avgShoulderAngle >= 135;
+   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'ยกแขนขึ้นเหนือศีรษะ';
   } else if (T.st === 1) {
-   ok = straightL && straightR && avgShoulderAngle >= 100 && avgShoulderAngle < 140;
+   ok = straightL && straightR && avgShoulderAngle >= 95 && avgShoulderAngle < 135;
    msg = ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงทำมุม Y ประมาณ 45 องศา';
   } else if (T.st === 2) {
-   ok = straightL && straightR && avgShoulderAngle >= 65 && avgShoulderAngle < 100;
+   ok = straightL && straightR && avgShoulderAngle >= 60 && avgShoulderAngle < 95;
    msg = ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างลำตัวระดับไหล่';
   }
 
@@ -760,7 +761,7 @@ function evalPose(lm, id) {
  if (id === 'w') {
   const avgElbow = (elbowL + elbowR) / 2;
   const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
-  const ok = avgElbow >= 60 && avgElbow <= 125 && avgShoulderAngle >= 25 && avgShoulderAngle <= 75 && wristsAboveElbows;
+  const ok = avgElbow >= 45 && avgElbow <= 135 && avgShoulderAngle >= 15 && avgShoulderAngle <= 85 && wristsAboveElbows;
   return {
     ok, h: 15,
     t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
@@ -770,8 +771,7 @@ function evalPose(lm, id) {
  }
 
  if (id === 'pec') {
-  const wristsBelowShoulders = lm[15].y > lm[11].y && lm[16].y > lm[12].y;
-  const ok = straightL && straightR && avgShoulderAngle >= 15 && avgShoulderAngle <= 75 && wristsBelowShoulders;
+  const ok = straightL && straightR && avgShoulderAngle >= 10 && avgShoulderAngle <= 80;
   return {
     ok, h: 15,
     t: 'จับยางไว้ด้านหลัง เหยียดแขนกางออกเพื่อยืดอก',
@@ -785,7 +785,6 @@ function evalPose(lm, id) {
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 
-let T={};
 function onResults(r){
  const cv=$('cv'),x=cv.getContext('2d'),w=cv.width=r.image.width,h=cv.height=r.image.height;x.drawImage(r.image,0,0,w,h);
  if(!T.run)return;T.lastFrame=performance.now();if(T.pause)return;
@@ -849,7 +848,7 @@ function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;c
 function train(){
  T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='หมุนเวียนฝึกให้ครบทั้ง 4 ท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
