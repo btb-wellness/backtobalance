@@ -100,6 +100,7 @@ input:focus{outline:0;border-color:var(--lime)}
 .guide-benefit{font-size:12px;color:var(--lime);display:flex;align-items:center;gap:6px;font-weight:700}
 
 /* PAGE 4: DAILY WORKOUT DETAIL */
+.detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
 .detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
 
 /* PAGE 5: WORKOUT HISTORY */
@@ -490,7 +491,7 @@ function preloadAllImages() {
 const STG=[
 {t:'ท่า I: ยกแขนขึ้นเหนือศีรษะในแนวตรง (ค้าง 5 วินาที)',r:[135,180]},
 {t:'ท่า Y: กางแขนเฉียงประมาณ 45° (ค้าง 5 วินาที)',r:[95,134]},
-{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่ (ค้าง 5 วินาที)',r:[60,94]}
+{t:'ท่า T: กางแขนออกด้านข้างระดับไหล่ (ค้าง 5 วินาที)',r:[55,94]}
 ];
 
 const $=id=>document.getElementById(id);
@@ -684,11 +685,7 @@ function renderProgram(){
 }
 
 let day=1;
-function openDay(d){
- day=d;
- renderDetail();
- show('detail');
-}
+function openDay(d){day=d;renderDetail();show('detail');}
 
 function renderDetail(){
  $('dinfo').innerHTML=EX.map(e=>{
@@ -707,20 +704,21 @@ function renderDetail(){
 const ang=(a,b,c)=>{let r=Math.abs((Math.atan2(c.y-b.y,c.x-b.x)-Math.atan2(a.y-b.y,a.x-b.x))*180/Math.PI);return r>180?360-r:r;};
 
 function evalPose(lm, id) {
- const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.35);
+ const vis = ids => ids.every(i => (lm[i]?.visibility ?? 0) >= 0.45);
  
  const elbowL = ang(lm[11], lm[13], lm[15]);
  const elbowR = ang(lm[12], lm[14], lm[16]);
- const straightL = elbowL >= 115;
- const straightR = elbowR >= 115;
+ // ผ่อนปรนความตรงของศอกให้ติดง่ายขึ้น (>= 120 องศา)
+ const straightL = elbowL >= 120;
+ const straightR = elbowR >= 120;
 
  const shoulderAngleL = ang(lm[23], lm[11], lm[13]);
  const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
  const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
 
  if (id === 'neck') {
-  if (!vis([7, 11]) && !vis([8, 12])) return null;
-  const left = vis([7, 11]);
+  if (!vis([7, 11, 23]) && !vis([8, 12, 24])) return null;
+  const left = vis([7, 11, 23]);
   const ear = left ? lm[7] : lm[8];
   const shoulder = left ? lm[11] : lm[12];
   const hip = left ? lm[23] : lm[24];
@@ -728,30 +726,32 @@ function evalPose(lm, id) {
   const trunkAngle = Math.abs(Math.atan2(hip.x - shoulder.x, hip.y - shoulder.y) * 180 / Math.PI);
   const neckAngle = ang(hip, shoulder, ear);
   
-  const ok = trunkAngle <= 25 && neckAngle >= 30 && neckAngle <= 85;
+  // ขยายโซนองศาให้ตรวจจับติดง่ายขึ้น
+  const ok = trunkAngle <= 25 && neckAngle >= 30 && neckAngle <= 80;
   return {
     ok, h: 15,
     t: 'แนวศีรษะและคอ (Isometric Extension)',
-    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ยืนหันข้างให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
+    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'ปรับลำตัวให้ตรงและเกร็งคอไปด้านหลังเล็กน้อย',
     angle: Math.round(neckAngle)
   };
  }
 
- if (!vis([11, 12, 13, 14])) return null;
+ if (!vis([11, 12, 13, 14, 15, 16])) return null;
 
  if (id === 'iyt') {
   const stage = STG[T.st || 0];
   let ok = false;
   let msg = '';
 
+  // ขยายช่วงองศาให้แต่ละขั้น (I -> Y -> T) ตรวจจับติดง่ายขึ้น
   if (T.st === 0) {
    ok = straightL && straightR && avgShoulderAngle >= 135;
-   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'ยกแขนขึ้นเหนือศีรษะ';
+   msg = ok ? 'รักษาท่า I (ชูแขนขึ้น)' : 'เหยียดศอกและยกแขนขึ้นเหนือศีรษะ';
   } else if (T.st === 1) {
    ok = straightL && straightR && avgShoulderAngle >= 95 && avgShoulderAngle < 135;
    msg = ok ? 'รักษาท่า Y (เฉียงแขน)' : 'กางแขนเฉียงทำมุม Y ประมาณ 45 องศา';
   } else if (T.st === 2) {
-   ok = straightL && straightR && avgShoulderAngle >= 60 && avgShoulderAngle < 95;
+   ok = straightL && straightR && avgShoulderAngle >= 55 && avgShoulderAngle < 95;
    msg = ok ? 'รักษาท่า T (กางแขน)' : 'กางแขนออกข้างลำตัวระดับไหล่';
   }
 
@@ -761,7 +761,8 @@ function evalPose(lm, id) {
  if (id === 'w') {
   const avgElbow = (elbowL + elbowR) / 2;
   const wristsAboveElbows = lm[15].y < lm[13].y && lm[16].y < lm[14].y;
-  const ok = avgElbow >= 45 && avgElbow <= 135 && avgShoulderAngle >= 15 && avgShoulderAngle <= 85 && wristsAboveElbows;
+  // ขยายโซนองศาข้อศอกและไหล่ให้ติดง่ายขึ้น
+  const ok = avgElbow >= 50 && avgElbow <= 135 && avgShoulderAngle >= 15 && avgShoulderAngle <= 85 && wristsAboveElbows;
   return {
     ok, h: 15,
     t: 'งอข้อศอกเป็นตัว W และบีบสะบักเข้าหากัน',
@@ -771,7 +772,9 @@ function evalPose(lm, id) {
  }
 
  if (id === 'pec') {
-  const ok = straightL && straightR && avgShoulderAngle >= 10 && avgShoulderAngle <= 80;
+  // ท่า PECTORAL STRETCH เอาแขนไว้ด้านหลังด้านล่าง และกางแขนยืดออก (โซนกว้าง 10 - 85 องศา)
+  const wristsBelowShoulders = lm[15].y > lm[11].y && lm[16].y > lm[12].y;
+  const ok = straightL && straightR && avgShoulderAngle >= 10 && avgShoulderAngle <= 85 && wristsBelowShoulders;
   return {
     ok, h: 15,
     t: 'จับยางไว้ด้านหลัง เหยียดแขนกางออกเพื่อยืดอก',
@@ -795,13 +798,14 @@ function onResults(r){
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
  const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
  
+ // ข้อ 1: เมื่อทำท่าแรกถูกต้องจึงเริ่มนับเวลาถอยหลัง 15 นาที
  if(!T.started && q.ok){
   T.started = true;
   fb('เริ่มการออกกำลังกาย! เริ่มนับเวลาถอยหลัง 15 นาที','#27ae60');
  }
 
  if(!T.started){
-  fb('แสดงท่าทางให้ถูกต้องเพื่อเริ่มการฝึก','#e67e22');
+  fb('แสดงท่าทางให้ถูกต้องเพื่อเริ่มนับเวลา 15 นาที','#e67e22');
  }
 
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
@@ -848,10 +852,12 @@ function setEx(i){T.cur=i;T.st=0;T.stageTimer=0;T.hold=0;T.prep=PREP;T.relax=0;c
 function train(){
  T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
- $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='หมุนเวียนฝึกให้ครบทั้ง 4 ท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 let pose,stream,raf,iv,busy=false;
+
+// ใช้โครงสร้างการเปิดกล้องและโหลดโมเดลตามลำดับเดิมทั้งหมดเพื่อความเสถียร 100%
 async function camStart(){
  if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
  $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
@@ -868,6 +874,7 @@ function tick(){
  if(T.pause)return;
  if(performance.now()-T.lastFrame>3000){fb('กล้องหยุดทำงาน เวลาหยุดนับชั่วคราว (อย่าสลับแอป)','#e74c3c');return;}
  
+ // ยังไม่นับเวลาถอยหลังจนกว่าจะทำท่าแรกถูก
  if(!T.started) return;
 
  T.left--;$('tm').innerText=fmt(Math.max(T.left,0));
