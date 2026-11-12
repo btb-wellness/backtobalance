@@ -469,7 +469,7 @@ function fallbackExerciseImage(element,id,st){
 const EX=[
 {id:'iyt',n:'MODIFIED BAND IYT',focus:'Shoulders, Upper Back',h:5,how:'ยืนตรง ถือยางด้วยมือสองข้าง เคลื่อนแขนตามลำดับ I → Y → T ค้างท่าละ 5 วินาที (รวม 15 วินาที/รอบ)',ben:'เสริมแรงกล้ามเนื้อหลังส่วนบนและกล้ามเนื้อรอบหัวไหล่'},
 {id:'w',n:'MODIFIED BAND W',focus:'Upper Back, Rear Shoulders',h:15,how:'ยืนตรง งอข้อศอกกางแขนเล็กน้อยคล้ายตัว W ดึงยางพร้อมเก็บสะบักเข้าหากัน ค้างไว้ 15 วินาที',ben:'ช่วยฝึกกล้ามเนื้อรอบสะบักและส่งเสริมการจัดตำแหน่งไหล่'},
-{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:15,how:'ยืนตะแคงให้กล้องเห็นด้านข้าง คล้องยางที่ท้ายทอย ออกแรงต้านไปด้านหน้า รักษาศีรษะให้ตรงกับไหล่ ค้างไว้ 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
+{id:'neck',n:'NECK ISOMETRIC EXTENSION',focus:'Neck, Upper Spine',h:15,how:'ยืนตรง คล้องยางที่ท้ายทอย มือทั้งสองจับปลายยางดึงต้านไปด้านหน้า รักษาศีรษะและลำตัวให้ตรง ค้างไว้ 15 วินาที',ben:'กระตุ้นกล้ามเนื้อเหยียดคอและฝึกการควบคุมตำแหน่งศีรษะ'},
 {id:'pec',n:'PECTORAL STRETCH',focus:'Chest, Front Shoulders',h:15,how:'ยืนตรง จับยางไว้ด้านหลังลำตัว ค่อย ๆ กางแขนออกเพื่อยืดกล้ามเนื้อหน้าอก ค้างไว้ 15 วินาที',ben:'ช่วยยืดกล้ามเนื้อหน้าอกและเพิ่มความยืดหยุ่นบริเวณหัวไหล่'}
 ];
 
@@ -550,17 +550,21 @@ function renderExerciseGuide(){
  `).join('');
 }
 
-function formatDurationText(t, durSec) {
- if (typeof durSec === 'number' && !isNaN(durSec) && durSec >= 0) {
-  return fmt(Math.round(durSec));
+function formatDurationText(item) {
+ // 1. ดึงจากฟิลด์จำนวนวินาทีโดยตรง (ไม่ว่าจะชื่อ durationSeconds, duration หรือ seconds)
+ const secVal = item.durationSeconds ?? item.duration ?? item.seconds;
+ if (secVal !== undefined && secVal !== null && secVal !== '' && !isNaN(Number(secVal))) {
+  return fmt(Math.max(0, Math.round(Number(secVal))));
  }
- const str = String(t || '').trim();
+ const str = String(item.time || '').replace(/^'/, '').trim();
+ // 2. รูปแบบ MM:SS ปกติ เช่น "01:27"
  if (/^\d{1,2}:\d{2}$/.test(str)) {
   return str;
  }
- const match = str.match(/(\d{2}):(\d{2}):\d{2}/);
- if (match) {
-  return `${match[1]}:${match[2]}`;
+ // 3. รูปแบบ ISO Date หรือ Google Sheets Date String เช่น "1899-12-30T01:27:00.000Z" หรือ "Sat Dec 30 1899 01:27:00..."
+ const timeMatch = str.match(/(?:T|\s|^)(\d{2}):(\d{2}):\d{2}/);
+ if (timeMatch) {
+  return `${timeMatch[1]}:${timeMatch[2]}`;
  }
  return '00:00';
 }
@@ -573,14 +577,14 @@ async function renderHistory(){
  }
  $('historyList').innerHTML = S.history.map(item => {
   const isOk = item.completed;
-  const cleanTime = formatDurationText(item.time, item.durationSeconds);
+  const cleanTime = formatDurationText(item);
   return `
    <div class="history-card">
     <div class="history-left">
      <div class="history-check ${isOk ? '' : 'failed'}">${isOk ? '✓' : '✕'}</div>
      <div class="history-info">
       <strong>DAY ${item.day} - ${isOk ? 'เสร็จสิ้น' : 'ไม่ครบเวลา'}</strong>
-      <small>${item.date} | เวลา ${cleanTime} นาที</small>
+      <small>${item.date} | เวลาที่ใช้ไป ${cleanTime} นาที</small>
      </div>
     </div>
     <div class="history-badge ${isOk ? '' : 'failed'}">
@@ -716,29 +720,44 @@ function evalPose(lm, id) {
  const shoulderAngleR = ang(lm[24], lm[12], lm[14]);
  const avgShoulderAngle = (shoulderAngleL + shoulderAngleR) / 2;
 
+ if (!vis([11, 12, 13, 14, 15, 16])) return null;
+
  if (id === 'neck') {
-  const hasLeft = (lm[7]?.visibility ?? 0) >= 0.35 && (lm[11]?.visibility ?? 0) >= 0.35;
-  const hasRight = (lm[8]?.visibility ?? 0) >= 0.35 && (lm[12]?.visibility ?? 0) >= 0.35;
-  if (!hasLeft && !hasRight) return null;
+  // ตรวจจับครบทั้ง แขน ลำตัว และคอ
+  const hasEar = (lm[7]?.visibility ?? 0) >= 0.35 || (lm[8]?.visibility ?? 0) >= 0.35;
+  if (!hasEar) return null;
 
   const left = (lm[7]?.visibility ?? 0) >= (lm[8]?.visibility ?? 0);
   const ear = left ? lm[7] : lm[8];
   const shoulder = left ? lm[11] : lm[12];
 
+  // 1. ตรวจจับแขน: ยกมือขึ้นมาจับยางระดับศีรษะ/หัวไหล่ (ข้อมืออยู่สูงกว่าข้อศอก และอยู่ใกล้ระดับไหล่/ศีรษะ)
+  const handsUp = lm[15].y < lm[13].y && lm[16].y < lm[14].y &&
+                  lm[15].y <= lm[11].y + 0.12 && lm[16].y <= lm[12].y + 0.12;
+
+  // 2. ตรวจจับลำตัว: ไหล่ทั้งสองข้างสมดุล ไม่เอียงลำตัว
+  const shoulderTilt = Math.abs(lm[11].y - lm[12].y);
+  const trunkStraight = shoulderTilt <= 0.12;
+
+  // 3. ตรวจจับคอและศีรษะ: แนวใบหูตั้งตรงกับหัวไหล่ (ไม่ยื่นคางไปข้างหน้ามากเกินไป)
   const dx = Math.abs(ear.x - shoulder.x);
   const dy = Math.abs(shoulder.y - ear.y);
   const headTiltAngle = Math.atan2(dx, dy) * 180 / Math.PI;
+  const neckAligned = headTiltAngle <= 38 && ear.y < shoulder.y;
 
-  const ok = headTiltAngle <= 35 && ear.y < shoulder.y;
+  const ok = handsUp && trunkStraight && neckAligned;
+  let msg = 'รักษาท่าจับยางดึงต้าน ศีรษะและลำตัวตรง';
+  if (!handsUp) msg = 'ยกมือสองข้างจับยางระดับศีรษะ/ท้ายทอย ดึงต้านไปด้านหน้า';
+  else if (!trunkStraight) msg = 'ปรับลำตัวและหัวไหล่ให้ตรงสมดุล';
+  else if (!neckAligned) msg = 'เก็บคางเข้าหาลำตัว ให้ศีรษะตั้งตรงกับแนวไหล่';
+
   return {
     ok, h: 15,
-    t: 'แนวศีรษะและคอ (Isometric Extension)',
-    m: ok ? 'รักษาศีรษะตรง ไม่ยื่นคาง' : 'เก็บคางเข้าหาลำตัว ให้ใบหูตรงกับแนวหัวไหล่',
+    t: 'จับยางคล้องท้ายทอย ดึงต้านไปด้านหน้า (แขน ลำตัว คอตรง)',
+    m: msg,
     angle: Math.round(headTiltAngle)
   };
  }
-
- if (!vis([11, 12, 13, 14, 15, 16])) return null;
 
  if (id === 'iyt') {
   const stage = STG[T.st || 0];
@@ -800,7 +819,7 @@ function onResults(r){
  if(T.prep>0||T.relax>0)return;
  
  if(!r.poseLandmarks)return fb('ไม่พบตัวคุณในภาพ');
- const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัวและแขน/ศีรษะชัดเจน');
+ const lm=r.poseLandmarks,id=EX[T.cur].id,q=evalPose(lm,id);if(!q)return fb('ถอยให้เห็นลำตัว แขน และศีรษะชัดเจน');
  
  if(!T.started && q.ok){
   T.started = true;
@@ -812,7 +831,10 @@ function onResults(r){
  }
 
  $('tg').innerText=q.t;x.lineWidth=4;x.strokeStyle=q.ok?'#2ecc71':'#f1c40f';
- const pairs = id === 'neck' ? [[7,11],[8,12],[11,12]] : [[11,12],[11,13],[13,15],[12,14],[14,16]];
+ // วาดเส้นเชื่อมแขนและลำตัวทุกท่า และเพิ่มเส้นคอ (หู-ไหล่) สำหรับท่า neck
+ const pairs = id === 'neck'
+  ? [[11,12],[11,13],[13,15],[12,14],[14,16],[7,11],[8,12]]
+  : [[11,12],[11,13],[13,15],[12,14],[14,16]];
  pairs.forEach(p=>{
   if((lm[p[0]]?.visibility??0)>=0.35 && (lm[p[1]]?.visibility??0)>=0.35){
    x.beginPath();x.moveTo(lm[p[0]].x*w,lm[p[0]].y*h);x.lineTo(lm[p[1]].x*w,lm[p[1]].y*h);x.stroke();
@@ -945,7 +967,7 @@ function finish(manual){
   date: new Date().toLocaleDateString('th-TH')
  });
  save();
- api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:fmt(used),accuracy:acc,date:new Date().toISOString(),durationSeconds:used}}).catch(e=>console.error('Workout sync:',e));
+ api('workout',{username:S.user.username,record:{day,completed:was,score:tot,time:"'"+fmt(used),accuracy:acc,date:new Date().toISOString(),durationSeconds:used}}).catch(e=>console.error('Workout sync:',e));
  $('r1').innerText=tot;$('r3').innerText=fmt(used);$('r4').innerText=acc+'%';show('result');
 }
 function nextEx(){show('program');}
