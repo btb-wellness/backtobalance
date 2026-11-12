@@ -685,7 +685,13 @@ function renderProgram(){
 }
 
 let day=1;
-function openDay(d){day=d;renderDetail();show('detail');}
+function openDay(d){
+ day=d;
+ renderDetail();
+ show('detail');
+ // แอบโหลดโมเดล AI เตรียมไว้ล่วงหน้าทันทีที่เข้าหน้านี้
+ preloadPoseModel();
+}
 
 function renderDetail(){
  $('dinfo').innerHTML=EX.map(e=>{
@@ -847,16 +853,41 @@ function train(){
  T={run:false,started:false,pause:false,prep:0,relax:0,cur:null,st:0,stageTimer:0,hold:0,reps:0,good:0,total:0,last:0,lastFrame:0,left:SEC,stats:{}};
  [0,1,2,3].forEach(i=>T.stats[i]={score:0,reps:0,good:0,total:0,sec:0});
  $('tt').innerText='Back to Balance - Day '+day;loadExerciseImage($('sym'),EX[0].id,EX[0].id==='iyt'?0:null);$('nm').innerText='พร้อมเริ่มออกกำลังกาย';$('bl').innerText='ทำท่าให้ครบแล้วจึงเปลี่ยนท่า';$('tm').innerText=fmt(T.left);$('sc').innerText=0;$('rp').innerText=0;$('hb').style.width=0;$('tg').innerText='กดเปิดกล้อง และแสดงท่าแรกเพื่อเริ่มนับเวลาถอยหลัง 15 นาที';fb('');$('go').style.display='block';$('go').disabled=false;show('train');
+ preloadPoseModel();
 }
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-let pose,stream,raf,iv,busy=false;
+let pose,poseInitPromise=null,stream,raf,iv,busy=false;
+
+// ฟังก์ชันสร้างและเตรียมโมเดล AI ล่วงหน้า (ใช้ modelComplexity: 0 เพื่อความรวดเร็ว)
+function preloadPoseModel(){
+ if(poseInitPromise) return poseInitPromise;
+ poseInitPromise = (async()=>{
+  try{
+   pose = new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});
+   pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});
+   pose.onResults(onResults);
+   await pose.initialize();
+  }catch(e){
+   poseInitPromise = null;
+   throw e;
+  }
+ })();
+ return poseInitPromise;
+}
+
 async function camStart(){
  if(T.run)return;if(!window.isSecureContext||!navigator.mediaDevices)return fb('ต้องเปิดผ่าน HTTPS ใน Safari/Chrome','#e74c3c');
- $('go').disabled=true;fb('กำลังขอสิทธิ์กล้อง...','#7f8c8d');
+ $('go').disabled=true;fb('กำลังเปิดกล้องและเตรียมระบบ...','#7f8c8d');
  try{
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
-  const v=$('cam');v.srcObject=stream;await v.play();fb('กำลังโหลดโมเดล...','#7f8c8d');
-  if(!pose){pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/'+f});pose.setOptions({modelComplexity:1,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.5});pose.onResults(onResults);await pose.initialize();}
+  const camPromise = navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+  const modelPromise = preloadPoseModel();
+  
+  stream = await camPromise;
+  const v=$('cam');v.srcObject=stream;await v.play();
+  
+  fb('กำลังจัดเตรียมโมเดล (เกือบเสร็จแล้ว)...','#7f8c8d');
+  await modelPromise;
+  
   T.run=true;T.lastFrame=performance.now();$('go').style.display='none';$('go').disabled=false;setEx(pick());iv=setInterval(tick,1000);loop();
  }catch(e){stopCam();$('go').disabled=false;fb(e.name==='NotAllowedError'?'ไม่ได้รับอนุญาตใช้กล้อง กรุณาอนุญาตหรือเปิดใน Safari/Chrome':'เปิดกล้องไม่ได้: '+e.name,'#e74c3c');}
 }
@@ -914,7 +945,9 @@ function finish(manual){
 }
 function nextEx(){show('program');}
 
+// สั่งแอบโหลดรูปภาพและโมเดลล่วงหน้าทันทีที่เข้าหน้าเว็บ
 preloadAllImages();
+setTimeout(preloadPoseModel, 1000);
 </script>
 </body>
 </html>
