@@ -113,6 +113,12 @@ input:focus{outline:0;border-color:var(--lime)}
 .history-badge{background:#1f2b1d;border:1px solid #32442f;color:var(--lime);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;text-align:right}
 .history-badge.failed{background:#2b1d1d;border-color:#442f2f;color:#fca5a5}
 
+/* PROFILE SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.summary-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+.summary-box small{display:block;font-size:10px;color:#808a7c;font-weight:700}
+.summary-box b{display:block;font-family:'Antonio',sans-serif;font-size:28px;color:var(--lime);margin-top:4px}
+
 /* PAGE 6: TRAIN / CAMERA */
 #train{background:var(--ink);justify-content:flex-start}
 .vid{position:relative;width:100%;height:48dvh;min-height:300px;background:#000;border-radius:20px;overflow:hidden;border:1px solid #222b24;flex:none}
@@ -212,6 +218,7 @@ input:focus{outline:0;border-color:var(--lime)}
 <!-- LOGIN PAGE -->
 <div id="login" class="page">
   <h2>Log In</h2>
+  <p style="font-size:12px">เข้าสู่ระบบ 1 ครั้ง ใช้งานได้ต่อเนื่อง 60 วัน</p>
   <label>ชื่อผู้ใช้</label><input id="un" autocomplete="username" placeholder="btb01">
   <label>รหัสผ่าน</label><input id="pw" type="password" autocomplete="current-password" placeholder="Bxxxxxxx_btb01">
   <button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
@@ -324,7 +331,18 @@ input:focus{outline:0;border-color:var(--lime)}
   </div>
 
   <h2>MY <span style="color:var(--lime)">PROFILE</span></h2>
-  <p>จัดการข้อมูลส่วนตัวของคุณ</p>
+  <p>ภาพรวมความสำเร็จและข้อมูลส่วนตัวของคุณ</p>
+
+  <div class="summary-grid">
+    <div class="summary-box">
+      <small>วันที่ออกกำลังกายสำเร็จ</small>
+      <b id="profDoneDays">0 วัน</b>
+    </div>
+    <div class="summary-box">
+      <small>คะแนนรวม (เฉพาะวันที่สำเร็จ)</small>
+      <b id="profTotalScore">0</b>
+    </div>
+  </div>
 
   <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
     <div>
@@ -429,6 +447,7 @@ input:focus{outline:0;border-color:var(--lime)}
 <script>
 const API='https://script.google.com/macros/s/AKfycbwBxmUqxGsTdMaByzZTHffXuiWZPFocx6nA9bETr09zG6XH3Zz01JqjPPEJciqgvN13SA/exec';
 const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
+const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000; // อายุการใช้งาน Session 60 วัน
 const USER_RE=/^btb\d{2}$/;
 const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
@@ -486,6 +505,24 @@ S.history=S.history||[];
 S.lastDone=S.lastDone||{};
 const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 
+// ตรวจสอบว่า Session ยังไม่หมดอายุ 60 วัน
+function isSessionValid() {
+ if (!S.user || !S.user.token) return false;
+ if (S.user.expiresAt && Date.now() > Number(S.user.expiresAt)) {
+  return false;
+ }
+ return true;
+}
+
+function handleSessionExpired() {
+ const oldUser = S.user?.username || '';
+ S.user = null;
+ save();
+ alert('ครบกำหนดการใช้งาน 60 วันแล้ว กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
+ if (oldUser) $('un').value = oldUser;
+ show('login');
+}
+
 function show(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
  $(id).classList.add('on');
@@ -507,28 +544,65 @@ function show(id){
  if(S.user&&typeof api==='function')api('event',{username:S.user.username,eventType:'PAGE_VIEW',page:id,detail:'เปิดหน้า '+id}).catch(()=>{});
 }
 
-function start(){if(S.user){show('program')}else show('login');}
+function start(){
+ if(isSessionValid()){
+  show('program');
+ }else{
+  if(S.user){
+   handleSessionExpired();
+  }else{
+   show('login');
+  }
+ }
+}
+
 async function api(action,data={}){
  if(!API||API.includes('PASTE_YOUR')) throw new Error('ยังไม่ได้ตั้งค่า Google Apps Script URL');
  const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:S.user?.token||'',...data})});
- const out=await res.json();if(!res.ok||out.ok===false)throw new Error(out.message||'เชื่อมต่อระบบไม่สำเร็จ');return out;
+ const out=await res.json();
+ if(out && out.code === 'SESSION_EXPIRED'){
+  handleSessionExpired();
+  throw new Error(out.message || 'Session หมดอายุ กรุณาเข้าสู่ระบบใหม่');
+ }
+ if(!res.ok||out.ok===false)throw new Error(out.message||'เชื่อมต่อระบบไม่สำเร็จ');
+ return out;
 }
+
 async function login(){
  const u=$('un').value.trim().toLowerCase(),p=$('pw').value;
  if(!USER_RE.test(u))return alert('ชื่อผู้ใช้ต้องอยู่ในรูปแบบ btbxx เช่น btb01');
  if(!PASS_RE.test(p)||!p.endsWith('_'+u))return alert('รหัสผ่านต้องเป็น B ตามด้วยอักขระ 7 ตัว และ _'+u);
  const btn=document.querySelector('#login .btn');btn.disabled=true;btn.textContent='กำลังตรวจสอบ...';
- try{const out=await api('login',{username:u,password:p});$('pw').value='';S.user={...(S.user||{}),...out.user,username:u,token:out.token};S.done={};(out.doneDays||[]).forEach(d=>S.done[d]=true);if(out.history)S.history=out.history;save();show(S.user.dob?'program':'profile');}
+ try{
+  const out=await api('login',{username:u,password:p});
+  $('pw').value='';
+  const expiresAt = out.expiresAt || (Date.now() + SESSION_TTL_MS);
+  S.user={...(S.user||{}),...out.user,username:u,token:out.token,expiresAt:expiresAt};
+  S.done={};
+  (out.doneDays||[]).forEach(d=>S.done[d]=true);
+  if(out.history)S.history=out.history;
+  save();
+  show(S.user.dob?'program':'profile');
+ }
  catch(e){alert(e.message||'เข้าสู่ระบบไม่สำเร็จ');}
  finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ';}
 }
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
 async function saveProfile(){
- const w=$('wt').value ? +$('wt').value : null, h=$('ht').value ? +$('ht').value : null;
+ const w=$('wt').value !== '' ? Number($('wt').value) : null;
+ const h=$('ht').value !== '' ? Number($('ht').value) : null;
  if(!S.tmpG||!$('dob').value)return alert('กรอกข้อมูลเพศและวันเกิดให้ครบ');
  Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
  save();
- try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}});show('program')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+ try{
+  await api('profile',{
+   username:S.user.username,
+   profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}
+  });
+  show('program');
+ }catch(e){
+  alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message);
+ }
 }
 async function logout(){if(confirm('ออกจากระบบ?')){try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}S.user=null;save();show('home');}}
 
@@ -570,6 +644,22 @@ function formatDurationText(item) {
   return fmt(h * 3600 + m * 60 + s);
  }
  return str && /^\d{1,2}:\d{2}$/.test(str) ? str : '00:00';
+}
+
+function calcCompletedOverview() {
+ const completedMap = {};
+ (S.history || []).forEach(item => {
+  if (item.completed) {
+   const d = Number(item.day) || 1;
+   const sc = Number(item.score) || 0;
+   if (!completedMap[d] || sc > completedMap[d]) {
+    completedMap[d] = sc;
+   }
+  }
+ });
+ const daysCount = Object.keys(completedMap).length;
+ const totalScore = Object.values(completedMap).reduce((sum, v) => sum + v, 0);
+ return { daysCount, totalScore };
 }
 
 async function renderHistory(){
@@ -622,6 +712,10 @@ function loadUserProfileSettings(){
  $('p_wt').value = S.user.weight || '';
  $('p_ht').value = S.user.height || '';
  genP(S.user.gender || 'ชาย');
+
+ const overview = calcCompletedOverview();
+ $('profDoneDays').innerText = overview.daysCount + ' วัน';
+ $('profTotalScore').innerText = overview.totalScore;
 }
 function genP(g){
  S.tmpG = g;
@@ -629,11 +723,20 @@ function genP(g){
  $('pg2').classList.toggle('on', g==='หญิง');
 }
 async function updateProfileSettings(){
- const w = $('p_wt').value ? +$('p_wt').value : null, h = $('p_ht').value ? +$('p_ht').value : null;
+ const w = $('p_wt').value !== '' ? Number($('p_wt').value) : null;
+ const h = $('p_ht').value !== '' ? Number($('p_ht').value) : null;
  if(!S.tmpG || !$('p_dob').value) return alert('กรอกข้อมูลให้ถูกต้อง');
  Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
  save();
- try{await api('profile',{username:S.user.username,profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}});alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว')}catch(e){alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message)}
+ try{
+  await api('profile',{
+   username:S.user.username,
+   profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}
+  });
+  alert('อัปเดตข้อมูลส่วนตัว น้ำหนัก และส่วนสูงเรียบร้อยแล้ว');
+ }catch(e){
+  alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message);
+ }
 }
 
 const dayDone=d=>!!S.done[d];
@@ -821,8 +924,6 @@ function evalPose(lm, id) {
 function fb(m,c){$('fb').innerText=m;$('fb').style.color=c||'#e67e22';}
 const sumScore=()=>Object.values(T.stats).reduce((a,s)=>a+s.score,0);
 
-// เกณฑ์ให้คะแนนตามเวลาที่ใช้ในการทำท่านั้นจนสำเร็จ
-// 15-20 วิ = 30 คะแนน | 21-25 วิ = 28 คะแนน | 26 วิขึ้นไป = 25 คะแนน
 function calcRepScoreByTime(sec){
  const t = Math.round(sec);
  if (t <= 20) return 30;
@@ -1009,7 +1110,7 @@ async function finish(manual){
   });
  } catch (e) {
   console.error('Workout sync error:', e);
-  alert('บันทึกในเครื่องแล้ว แต่ส่งขึ้น Google Sheets ไม่สำเร็จ: ' + (e.message || 'กรุณาล็อกอินใหม่อีกครั้ง'));
+  alert('บันทึกในเครื่องแล้ว แต่ส่งขึ้น Google Sheets ไม่สำเร็จ: ' + (e.message || 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'));
  }
 }
 function nextEx(){show('program');}
