@@ -219,14 +219,14 @@ input:focus{outline:0;border-color:var(--lime)}
   <h2>Personalize Your Plan</h2>
   <p style="font-size:12px">สร้างบัญชีผู้ใช้งานใหม่และกรอกข้อมูลส่วนตัวของคุณ</p>
 
-  <label>ชื่อ Account (ตั้งเองได้ตามต้องการ)</label>
-  <input id="reg_acc" type="text" autocomplete="username" placeholder="เช่น somchai_01 หรือชื่อเล่นภาษาอังกฤษ/ไทย">
+  <label>ชื่อ Account</label>
+  <input id="reg_acc" type="text" autocomplete="username">
 
   <label>ชื่อจริง - นามสกุล</label>
-  <input id="reg_name" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี">
+  <input id="reg_name" type="text" autocomplete="name">
 
-  <label>เบอร์โทรศัพท์ (ใช้สำหรับเข้าสู่ระบบ)</label>
-  <input id="reg_phone" type="tel" inputmode="numeric" maxlength="10" placeholder="เช่น 0812345678">
+  <label>เบอร์โทรศัพท์</label>
+  <input id="reg_phone" type="tel" inputmode="numeric" maxlength="10">
 
   <label>เพศ</label>
   <div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
@@ -235,8 +235,8 @@ input:focus{outline:0;border-color:var(--lime)}
   <input id="dob" type="date">
 
   <div class="row">
-    <div><label>น้ำหนัก (kg)</label><input id="wt" type="number" placeholder="เช่น 60"></div>
-    <div><label>ส่วนสูง (cm)</label><input id="ht" type="number" placeholder="เช่น 170"></div>
+    <div><label>น้ำหนัก (kg)</label><input id="wt" type="number"></div>
+    <div><label>ส่วนสูง (cm)</label><input id="ht" type="number"></div>
   </div>
 
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:10px">
@@ -250,9 +250,9 @@ input:focus{outline:0;border-color:var(--lime)}
   <h2>Log In</h2>
   <p style="font-size:12px">เข้าสู่ระบบ 1 ครั้ง ใช้งานได้ต่อเนื่อง 60 วัน</p>
   <label>ชื่อ Account</label>
-  <input id="un" type="text" autocomplete="username" placeholder="กรอกชื่อ Account ที่ตั้งไว้">
+  <input id="un" type="text" autocomplete="username">
   <label>เบอร์โทรศัพท์</label>
-  <input id="pw" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="กรอกเบอร์โทรศัพท์ 10 หลัก">
+  <input id="pw" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel">
 
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto">
     <button class="btn" onclick="login()">เข้าสู่ระบบ</button>
@@ -374,7 +374,7 @@ input:focus{outline:0;border-color:var(--lime)}
     </div>
     <div>
       <label>ชื่อจริง - นามสกุล</label>
-      <input id="p_fullname" type="text" placeholder="ชื่อจริง">
+      <input id="p_fullname" type="text">
     </div>
     <div>
       <label>เบอร์โทรศัพท์</label>
@@ -391,11 +391,11 @@ input:focus{outline:0;border-color:var(--lime)}
     <div class="row">
       <div>
         <label>น้ำหนัก (kg)</label>
-        <input id="p_wt" type="number" placeholder="น้ำหนัก">
+        <input id="p_wt" type="number">
       </div>
       <div>
         <label>ส่วนสูง (cm)</label>
-        <input id="p_ht" type="number" placeholder="ส่วนสูง">
+        <input id="p_ht" type="number">
       </div>
     </div>
     <button class="btn" style="margin-top:8px" onclick="updateProfileSettings()">อัปเดตข้อมูล</button>
@@ -478,7 +478,7 @@ input:focus{outline:0;border-color:var(--lime)}
 <script>
 const API='https://script.google.com/macros/s/AKfycbw1tXGGuyzeu_4bxdm_5F_8bONcaDgCOQm2Gv-rMP1Us0K9r8eHJ_n-v0SLV6iRDVI7/exec';
 const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
-const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000; // อายุการใช้งาน Session 60 วัน
+const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000;
 
 const IMAGE_EXTENSIONS=['jpg','png','webp'];
 
@@ -609,7 +609,6 @@ function start(){
   if(S.user){
    handleSessionExpired();
   }else{
-   // เริ่มต้นที่หน้า Personalize ก่อนหน้า Log In ตามที่กำหนด
    show('profile');
   }
  }
@@ -633,7 +632,6 @@ function normalizePhone(raw) {
 
 function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
 
-// ลงทะเบียนจากหน้า Personalize และพาไปหน้า Log In
 async function saveProfile(){
  const acc = $('reg_acc').value.trim();
  const fullName = $('reg_name').value.trim();
@@ -665,7 +663,6 @@ async function saveProfile(){
    }
   });
 
-  // เติมข้อมูลลงหน้า Login ให้อัตโนมัติและย้ายไปหน้า Log In
   $('un').value = acc;
   $('pw').value = phone;
   alert('บันทึกข้อมูลสำเร็จ! กรุณากด "เข้าสู่ระบบ" เพื่อเริ่มใช้งาน');
@@ -678,7 +675,6 @@ async function saveProfile(){
  }
 }
 
-// เข้าสู่ระบบด้วยชื่อ Account และเบอร์โทรเท่านั้น
 async function login(){
  const u = $('un').value.trim();
  const phone = normalizePhone($('pw').value);
