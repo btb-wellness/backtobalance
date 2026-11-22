@@ -31,11 +31,9 @@ button{cursor:pointer}
 h2,h3{margin:0;font-family:'Antonio','Noto Sans Thai',sans-serif;letter-spacing:.04em}
 h2{font-size:32px;text-align:left;color:#fff}h3{font-size:22px}
 p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
-label{font-size:12px;font-weight:700;color:#a0a89c;margin-top:8px;display:block}
-input[type="text"],input[type="password"],input[type="date"],input[type="number"],input:not([type="checkbox"]){width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:#141a16;color:#fff;font-size:14px}
+label{font-size:12px;font-weight:700;color:#a0a89c;margin-top:6px;display:block}
+input[type="text"],input[type="password"],input[type="tel"],input[type="date"],input[type="number"],input:not([type="checkbox"]){width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:#141a16;color:#fff;font-size:14px}
 input:focus{outline:0;border-color:var(--lime)}
-.chk-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:#a0a89c;cursor:pointer;user-select:none}
-.chk-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--lime);cursor:pointer;margin:0}
 .btn{width:100%;padding:14px;border:0;border-radius:14px;background:var(--lime);color:var(--ink);font-size:14px;font-weight:800;letter-spacing:.05em;transition:.15s;display:flex;justify-content:center;align-items:center;gap:6px}
 .btn:active,.tile:active{transform:scale(.98)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -102,7 +100,6 @@ input:focus{outline:0;border-color:var(--lime)}
 .guide-benefit{font-size:12px;color:var(--lime);display:flex;align-items:center;gap:6px;font-weight:700}
 
 /* PAGE 4: DAILY WORKOUT DETAIL */
-.detail-tab-img{width:100%;max-height:80px;object-fit:contain;border-radius:8px;background:#000}
 .detail-info-img{width:90px;height:75px;object-fit:contain;border-radius:8px;background:#000;flex:none}
 
 /* PAGE 5: WORKOUT HISTORY */
@@ -217,30 +214,50 @@ input:focus{outline:0;border-color:var(--lime)}
   <button class="btn" style="position:relative;z-index:2" onclick="start()">GET STARTED →</button>
 </div>
 
-<!-- LOGIN PAGE -->
-<div id="login" class="page">
-  <h2>Log In</h2>
-  <p style="font-size:12px">เข้าสู่ระบบ 1 ครั้ง ใช้งานได้ต่อเนื่อง 60 วัน</p>
-  <label>ชื่อผู้ใช้</label><input id="un" type="text" autocomplete="username" placeholder="btb01">
-  <label>รหัสผ่าน</label><input id="pw" type="password" autocomplete="current-password" placeholder="Bxxxxxxx_btb01">
-  <label class="chk-row">
-    <input type="checkbox" id="showPwChk" onchange="togglePassword(this.checked)">
-    <span>แสดงรหัสผ่าน</span>
-  </label>
-  <button class="btn sp" onclick="login()">เข้าสู่ระบบ</button>
-</div>
-
-<!-- PROFILE INITIAL PAGE -->
+<!-- PERSONALIZE / REGISTER PAGE (มาก่อนหน้า Login) -->
 <div id="profile" class="page">
   <h2>Personalize Your Plan</h2>
+  <p style="font-size:12px">สร้างบัญชีผู้ใช้งานใหม่และกรอกข้อมูลส่วนตัวของคุณ</p>
+
+  <label>ชื่อ Account (ตั้งเองได้ตามต้องการ)</label>
+  <input id="reg_acc" type="text" autocomplete="username" placeholder="เช่น somchai_01 หรือชื่อเล่นภาษาอังกฤษ/ไทย">
+
+  <label>ชื่อจริง - นามสกุล</label>
+  <input id="reg_name" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี">
+
+  <label>เบอร์โทรศัพท์ (ใช้สำหรับเข้าสู่ระบบ)</label>
+  <input id="reg_phone" type="tel" inputmode="numeric" maxlength="10" placeholder="เช่น 0812345678">
+
   <label>เพศ</label>
   <div class="row"><button class="seg" id="g1" onclick="gen('ชาย')">ชาย</button><button class="seg" id="g2" onclick="gen('หญิง')">หญิง</button></div>
-  <label>วันเกิด</label><input id="dob" type="date">
+
+  <label>วันเกิด</label>
+  <input id="dob" type="date">
+
   <div class="row">
     <div><label>น้ำหนัก (kg)</label><input id="wt" type="number" placeholder="เช่น 60"></div>
     <div><label>ส่วนสูง (cm)</label><input id="ht" type="number" placeholder="เช่น 170"></div>
   </div>
-  <button class="btn sp" onclick="saveProfile()">บันทึกข้อมูล →</button>
+
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:10px">
+    <button class="btn" id="btnRegister" onclick="saveProfile()">บันทึกข้อมูล →</button>
+    <button class="btn ghost" onclick="show('login')">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ (Log In)</button>
+  </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="login" class="page">
+  <h2>Log In</h2>
+  <p style="font-size:12px">เข้าสู่ระบบ 1 ครั้ง ใช้งานได้ต่อเนื่อง 60 วัน</p>
+  <label>ชื่อ Account</label>
+  <input id="un" type="text" autocomplete="username" placeholder="กรอกชื่อ Account ที่ตั้งไว้">
+  <label>เบอร์โทรศัพท์</label>
+  <input id="pw" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="กรอกเบอร์โทรศัพท์ 10 หลัก">
+
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto">
+    <button class="btn" onclick="login()">เข้าสู่ระบบ</button>
+    <button class="btn ghost" onclick="show('profile')">← สร้างบัญชีใหม่ (Personalize)</button>
+  </div>
 </div>
 
 <!-- PAGE 2: PROGRAM -->
@@ -350,10 +367,18 @@ input:focus{outline:0;border-color:var(--lime)}
     </div>
   </div>
 
-  <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
     <div>
-      <label>ชื่อผู้ใช้</label>
+      <label>ชื่อ Account</label>
       <input id="p_un" type="text" readonly style="opacity:0.7">
+    </div>
+    <div>
+      <label>ชื่อจริง - นามสกุล</label>
+      <input id="p_fullname" type="text" placeholder="ชื่อจริง">
+    </div>
+    <div>
+      <label>เบอร์โทรศัพท์</label>
+      <input id="p_phone" type="tel" readonly style="opacity:0.7">
     </div>
     <div>
       <label>เพศ</label>
@@ -451,11 +476,9 @@ input:focus{outline:0;border-color:var(--lime)}
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbzRo0NlvE1GBagQExlMc9_fKSuSd6TubjrSyBPy1dx43vkbSYNCQ1AGwwyDXpca8Rg/exec';
+const API='https://script.google.com/macros/s/AKfycbw1tXGGuyzeu_4bxdm_5F_8bONcaDgCOQm2Gv-rMP1Us0K9r8eHJ_n-v0SLV6iRDVI7/exec';
 const SEC=900,PREP=3,RELAX=3,DAYS=15,PER=3;
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000; // อายุการใช้งาน Session 60 วัน
-const USER_RE=/^btb\d{2}$/;
-const PASS_RE=/^B[A-Za-z0-9]{7}_btb\d{2}$/;
 
 const IMAGE_EXTENSIONS=['jpg','png','webp'];
 
@@ -514,7 +537,6 @@ const save=()=>{try{localStorage.setItem('nbr',JSON.stringify(S))}catch(e){}};
 
 const dKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 
-// แปลง timestamp จากประวัติ (เช่น "18/11/2026, 22:15:00" หรือ ISO) เป็น YYYY-MM-DD
 function parseTimestampToDateKey(ts) {
  if (!ts) return null;
  const str = String(ts).trim();
@@ -531,7 +553,6 @@ function parseTimestampToDateKey(ts) {
  return null;
 }
 
-// ตรวจสอบว่าวันนี้ผู้ใช้ออกกำลังกายสำเร็จไปแล้วหรือยัง (ล็อกจนกว่าจะเลยเที่ยงคืน 00:00 น.)
 function hasCompletedWorkoutToday() {
  const todayKey = dKey(new Date());
  if (S.completedDates && S.completedDates[todayKey]) return true;
@@ -543,12 +564,6 @@ function hasCompletedWorkoutToday() {
  });
 }
 
-function togglePassword(checked) {
- const pwInput = $('pw');
- if (pwInput) pwInput.type = checked ? 'text' : 'password';
-}
-
-// ตรวจสอบว่า Session ยังไม่หมดอายุ 60 วัน
 function isSessionValid() {
  if (!S.user || !S.user.token) return false;
  if (S.user.expiresAt && Date.now() > Number(S.user.expiresAt)) {
@@ -594,7 +609,8 @@ function start(){
   if(S.user){
    handleSessionExpired();
   }else{
-   show('login');
+   // เริ่มต้นที่หน้า Personalize ก่อนหน้า Log In ตามที่กำหนด
+   show('profile');
   }
  }
 }
@@ -611,19 +627,76 @@ async function api(action,data={}){
  return out;
 }
 
+function normalizePhone(raw) {
+ return String(raw || '').replace(/[\s\-()]/g, '').trim();
+}
+
+function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
+
+// ลงทะเบียนจากหน้า Personalize และพาไปหน้า Log In
+async function saveProfile(){
+ const acc = $('reg_acc').value.trim();
+ const fullName = $('reg_name').value.trim();
+ const phone = normalizePhone($('reg_phone').value);
+ const dob = $('dob').value;
+ const w = $('wt').value !== '' ? Number($('wt').value) : null;
+ const h = $('ht').value !== '' ? Number($('ht').value) : null;
+
+ if(!acc) return alert('กรุณากรอกชื่อ Account');
+ if(acc.includes('|')) return alert('ชื่อ Account ห้ามมีเครื่องหมาย |');
+ if(!fullName) return alert('กรุณากรอกชื่อจริง');
+ if(!/^\d{9,10}$/.test(phone)) return alert('กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 9-10 หลัก)');
+ if(!S.tmpG || !dob) return alert('กรุณาเลือกเพศและวันเกิดให้ครบถ้วน');
+
+ const btn = $('btnRegister');
+ btn.disabled = true;
+ btn.textContent = 'กำลังบันทึกข้อมูล...';
+
+ try {
+  await api('register', {
+   username: acc,
+   fullName: fullName,
+   phone: phone,
+   profile: {
+    gender: S.tmpG,
+    dob: dob,
+    weight: w,
+    height: h
+   }
+  });
+
+  // เติมข้อมูลลงหน้า Login ให้อัตโนมัติและย้ายไปหน้า Log In
+  $('un').value = acc;
+  $('pw').value = phone;
+  alert('บันทึกข้อมูลสำเร็จ! กรุณากด "เข้าสู่ระบบ" เพื่อเริ่มใช้งาน');
+  show('login');
+ } catch (e) {
+  alert(e.message || 'ไม่สามารถบันทึกข้อมูลได้');
+ } finally {
+  btn.disabled = false;
+  btn.textContent = 'บันทึกข้อมูล →';
+ }
+}
+
+// เข้าสู่ระบบด้วยชื่อ Account และเบอร์โทรเท่านั้น
 async function login(){
- const u=$('un').value.trim().toLowerCase(),p=$('pw').value;
- if(!USER_RE.test(u))return alert('ชื่อผู้ใช้ต้องอยู่ในรูปแบบ btbxx เช่น btb01');
- if(!PASS_RE.test(p)||!p.endsWith('_'+u))return alert('รหัสผ่านต้องเป็น B ตามด้วยอักขระ 7 ตัว และ _'+u);
- const btn=document.querySelector('#login .btn');btn.disabled=true;btn.textContent='กำลังตรวจสอบ...';
+ const u = $('un').value.trim();
+ const phone = normalizePhone($('pw').value);
+
+ if(!u) return alert('กรุณากรอกชื่อ Account');
+ if(!phone) return alert('กรุณากรอกเบอร์โทรศัพท์');
+
+ const btn=document.querySelector('#login .btn');
+ btn.disabled=true;
+ btn.textContent='กำลังตรวจสอบ...';
  try{
-  const out=await api('login',{username:u,password:p});
+  const out=await api('login',{username:u,phone:phone});
   $('pw').value='';
-  $('pw').type='password';
-  if($('showPwChk')) $('showPwChk').checked=false;
   const expiresAt = out.expiresAt || (Date.now() + SESSION_TTL_MS);
-  S.user={...(S.user||{}),...out.user,username:u,token:out.token,expiresAt:expiresAt};
+  S.user={...(S.user||{}),...out.user,username:out.user.username || u,token:out.token,expiresAt:expiresAt};
   S.done={};
+  S.completedDates={};
+  S.lastDone={};
   (out.doneDays||[]).forEach(d=>S.done[d]=true);
   if(out.history){
    S.history=out.history;
@@ -638,29 +711,24 @@ async function login(){
    });
   }
   save();
-  show(S.user.dob?'program':'profile');
+  show('program');
  }
- catch(e){alert(e.message||'เข้าสู่ระบบไม่สำเร็จ');}
+ catch(e){alert(e.message||'ชื่อ Account หรือเบอร์โทรศัพท์ไม่ถูกต้อง');}
  finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ';}
 }
-function gen(g){S.tmpG=g;$('g1').classList.toggle('on',g==='ชาย');$('g2').classList.toggle('on',g==='หญิง');}
-async function saveProfile(){
- const w=$('wt').value !== '' ? Number($('wt').value) : null;
- const h=$('ht').value !== '' ? Number($('ht').value) : null;
- if(!S.tmpG||!$('dob').value)return alert('กรอกข้อมูลเพศและวันเกิดให้ครบ');
- Object.assign(S.user,{gender:S.tmpG,dob:$('dob').value,weight:w,height:h});
- save();
- try{
-  await api('profile',{
-   username:S.user.username,
-   profile:{gender:S.tmpG,dob:$('dob').value,weight:w,height:h}
-  });
-  show('program');
- }catch(e){
-  alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message);
+
+async function logout(){
+ if(confirm('ออกจากระบบ?')){
+  try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}
+  S.user=null;
+  S.done={};
+  S.history=[];
+  S.completedDates={};
+  S.lastDone={};
+  save();
+  show('home');
  }
 }
-async function logout(){if(confirm('ออกจากระบบ?')){try{await api('event',{username:S.user?.username,eventType:'LOGOUT',page:'userProfile',detail:'ออกจากระบบ'});}catch(e){}S.user=null;save();show('home');}}
 
 function renderExerciseGuide(){
  $('guideList').innerHTML = EX.map((e,i)=>`
@@ -769,6 +837,8 @@ async function renderHistory(){
 function loadUserProfileSettings(){
  if(!S.user) return;
  $('p_un').value = S.user.username || '';
+ $('p_fullname').value = S.user.fullName || '';
+ $('p_phone').value = S.user.phone || '';
  $('p_dob').value = S.user.dob || '';
  $('p_wt').value = S.user.weight || '';
  $('p_ht').value = S.user.height || '';
@@ -784,17 +854,18 @@ function genP(g){
  $('pg2').classList.toggle('on', g==='หญิง');
 }
 async function updateProfileSettings(){
+ const fullName = $('p_fullname').value.trim();
  const w = $('p_wt').value !== '' ? Number($('p_wt').value) : null;
  const h = $('p_ht').value !== '' ? Number($('p_ht').value) : null;
- if(!S.tmpG || !$('p_dob').value) return alert('กรอกข้อมูลให้ถูกต้อง');
- Object.assign(S.user, { gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
+ if(!fullName || !S.tmpG || !$('p_dob').value) return alert('กรอกข้อมูลชื่อจริง เพศ และวันเกิดให้ครบถ้วน');
+ Object.assign(S.user, { fullName: fullName, gender: S.tmpG, dob: $('p_dob').value, weight: w, height: h });
  save();
  try{
   await api('profile',{
    username:S.user.username,
-   profile:{gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}
+   profile:{fullName:fullName,gender:S.tmpG,dob:$('p_dob').value,weight:w,height:h}
   });
-  alert('อัปเดตข้อมูลส่วนตัว น้ำหนัก และส่วนสูงเรียบร้อยแล้ว');
+  alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว');
  }catch(e){
   alert('บันทึกในเครื่องแล้ว แต่ส่ง Google Sheets ไม่สำเร็จ: '+e.message);
  }
@@ -809,7 +880,6 @@ function renderProgram(){
  $('circleProg').style.background=`conic-gradient(var(--lime) ${pct*3.6}deg, #222c24 0deg)`;
  $('pnumStr').innerText=`${n} / 15 วัน ที่ทำสำเร็จ`;
 
- // ตรวจสอบว่าวันนี้ออกกำลังกายสำเร็จไปแล้วหรือยัง (ต้องรอหลังเที่ยงคืนจึงจะออกได้อีก)
  const doneToday = hasCompletedWorkoutToday();
 
  if(n===DAYS){
@@ -848,7 +918,6 @@ function renderProgram(){
    if(isDone){
     state = 'done';
     status = 'DONE';
-    // หากวันนี้ออกกำลังกายสำเร็จไปแล้ว ล็อกไม่ให้กดเข้าฝึกซ้ำจนกว่าจะถึงเที่ยงคืน
     disabled = doneToday;
    }else if(isCurrent){
     if(doneToday){
